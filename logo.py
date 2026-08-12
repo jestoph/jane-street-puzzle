@@ -13,7 +13,7 @@ def logo():
         for path in cell.paths:
             cell.remove(path)
 
-    library.write_gds("logo.gds")
+    library.write_gds("outputs/logo.gds")
 
 
 

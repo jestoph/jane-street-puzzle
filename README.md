@@ -260,9 +260,9 @@ So theoretically I should be able to extract just the jane street logo, right?
 
 ### On extracting the logo
 
-It's on the top right, so I would guess x>8000 and y>70000 should roughly do it.
+It's on the top right, so I would guess x>8000 and y>70000 should roughly do it. Right?
 
-Ok not at all, it was way harder than I though. Things seem to be normalised to the range (0,100) or something,
+No not at all, it was way harder than I thought. Things seem to be normalised to the range (0,100) or something,
 and there's the concept of repetitions that makes it hard to exactly tell where things are.
 
 I'm still confused about
@@ -275,7 +275,6 @@ code, maybe the library I'm using doesn't expose that.
 
 ```python
 import gdstk
-
 def logo():
     library = gdstk.read_gds("warmup/04_final.gds")
 
@@ -289,16 +288,82 @@ def logo():
         for path in cell.paths:
             cell.remove(path)
 
-    library.write_gds("logo.gds")
+    library.write_gds("outputs/logo.gds")
+if __name__ == '__main__':
+    logo()
 ```
 
+It turns out later that this worked by accident as I didn't understand yet that each cell uses its own coordinates
+so this was just filtering out 'small' elements, and the top adder element happens to be large. The filtering on
+the adder looks to be correct though.
+
+### What are layer and data types?
+
+Looking at the layer types, it seems that all layers from 64 to 72 have type '20', so that must be metal, which
+I'll need for analysing how wires connect.
+
+```
+% make stats | grep datatype=20
+   layer=64 datatype=20
+   layer=65 datatype=20
+   layer=66 datatype=20
+   layer=67 datatype=20
+   layer=68 datatype=20
+   layer=69 datatype=20
+   layer=70 datatype=20
+   layer=71 datatype=20
+   layer=72 datatype=20    # <- All good up to here
+   layer=94 datatype=20    # <- Wait, what?
+   layer=95 datatype=20
+```
+But what's with the wierd gaps? It seems there's no layer 73 for example,
+but the viewer shows no spaces. Does the format just implicitly say that missing layers are filled in with a
+previous line?
+
+Anyway, what data types do we have anyway?
+
+```
+% make stats | grep -o 'datatype=\d*' | sort -n | uniq -c
+   1 datatype=0   # <- Probably the base layer I guess, maybe plastic or epoxy?
+   2 datatype=4
+   7 datatype=16
+  11 datatype=20  # <- metal I guess
+   9 datatype=44
+```
+
+I also now realise that the axes of the whole design are in (0,0), (100,100) rather than the units in the text
+file from gds2txt. What's that about? Is that just a gdstk library thing? I'd prefer to work in consistent
+units
+
+### Ok time to look at the individual elements
+
+There's 27 elements, lets get a good look at all of them.
+
+```python
+import gdstk
+
+def cells(filename):
+
+    library = gdstk.read_gds(filename)
+
+    for cell in library.cells:
+        name = cell.name
+        cell.write_svg(f"outputs/{name}.svg")
+        lib = gdstk.Library(name)
+        lib.add(cell)
+        lib.write_gds(f"outputs/{name}.gds")
 
 
 if __name__ == '__main__':
-    logo()
+    cells("warmup/04_final.gds")
+```
+
+Can I render the labels so I can see where and what is labelled?
+
+
+
 
 
 
 ### What are those sky things anyway?
-
 Google is my friend - https://sky130-unofficial.readthedocs.io/en/latest/

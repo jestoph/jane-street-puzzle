@@ -11,9 +11,7 @@ logo:
 	${PYTHON} logo.py
 
 cells:
-	mkdir -p cells
-	${PYTHON} cells.py warmup/04_final.gds
+	${PYTHON} cells.py
 
 stats:
-	${PYTHON} stats.py warmup/04_final.gds
-	${PYTHON} stats.py puzzle.gds
+	${PYTHON} stats.py
