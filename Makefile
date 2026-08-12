@@ -18,4 +18,4 @@ stats:
 
 network:
 	${PYTHON} network.py
-	dot -Tsvg outputs/graph.dot -o outputs/graph.svg
+#	dot -Tsvg outputs/graph.dot -o outputs/graph.svg

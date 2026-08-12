@@ -4,6 +4,7 @@ def mdtable(data):
     """
     Added as a convenience - my vim tool will do this for me
     """
+    if not data: return
     maxlens = {k: len(k) for k in data[0]}
     header_list = list(data[0].keys()) # To ensure consistent sorting
 
@@ -39,6 +40,8 @@ def stats(filename):
     print(f"{len(library.top_level())=}")
     print(f"{len(library.cells)=}")
     print()
+
+    library['adder_demo'].flatten()
 
     data = []
     for cell in sorted(library.cells, key=lambda x: x.name.lower()):

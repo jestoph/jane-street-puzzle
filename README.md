@@ -335,7 +335,23 @@ Can I render the labels so I can see where and what is labelled?
 
 ## I think I can make a graph now?
 
+This isn't going to be easy. When I flatten out the top element (adder_demo), it has 1k paths and almost 17k polygons.
+I thought that filtering on datatype=20 would clean things up but after filtering it barely made a dint.
 
+I can simplify the filtering when searching for 'touching' pairs by doing the following.
+1. Create an Index by layer
+2. For a given element, only check adjacent layers
+3. Filter initially on bounding box overlap - 4 float comparisons
+4. Finaly check for true overlap
+
+If I need to I could also chunk up the total area as a step 2a.
+
+If I do that, I 'should' be able to create a dot graph of the network.
+
+Luckily there are only 233 circuit elements (with prefix 'sky'), and I think I can exclude the 'decap' elements as
+they seem to be signal decoupling capacitors on the edge of the circuit. That brings it down to 175 circuit elements.
+
+So the real challenge is following wires I think
 
 
 ### What are those sky things anyway?
