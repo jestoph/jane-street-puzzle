@@ -15,3 +15,7 @@ cells:
 
 stats:
 	${PYTHON} stats.py
+
+network:
+	${PYTHON} network.py
+	dot -Tsvg outputs/graph.dot -o outputs/graph.svg

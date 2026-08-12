@@ -13,14 +13,8 @@ def cells(filename):
 
 def cells_with_visible_labels(filename):
 
-    library = gdstk.read_gds(filename)
-
-    for cell in library.cells:
-        name = cell.name
-        cell.write_svg(f"outputs/{name}.visible.svg")
-        lib = gdstk.Library(name)
-        lib.add(cell)
-        lib.write_gds(f"outputs/{name}.visible.gds")
+    # TODO
+    pass
 
 if __name__ == '__main__':
     cells("warmup/04_final.gds")

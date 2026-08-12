@@ -1,7 +1,13 @@
 
-## What's in a GDS file?
+## Challenge Accepted
 
-Rather than googling, lets have a look. There's familiar words like 'clk' (clock), 'rst' (reset) and 'VGND' and 'VPWR' (ground and power).
+Hey this looks fun. There's some file called 'gds' and some verilog or something. I have a EE degree that's rotting away unused in my
+brain somewhere, could be good to learn something.
+
+### What's in the files?
+
+Rather than googling, lets have a look at these files. There's familiar words like 'clk' (clock), 'rst' (reset) and 'VGND' and
+'VPWR' (ground and power).
 
 There's a bunch of `sky130...` whatever things. If we strip that we get a more managable set of things. We'll start with the example that's
 a bit smaller and group them together
@@ -57,7 +63,7 @@ There's a library 'gdstk' in python that seems to be able to read them. It gives
 27
 ```
 
-## What's in the circuit simulation?
+### What's in the circuit simulation?
 
 I can see in the example_inputs.vcd that there's some signal being sent in or something when the character '%' is present. Maybe I can grep it?
 
@@ -87,9 +93,7 @@ b1001110 %
 b0 %
 ```
 
-
 It looks like characters (7 bit ascii maybe?). Let's see
-
 
 ```C
 #include <stdio.h>
@@ -140,12 +144,12 @@ Ok we're on to something
 
 ## On building a circuit simulator
 
-Here we need to do a huge yak shave and of course build our own circuit simulator. We'll need at a very minimum the following elements
-```
-Standard circuit elements - wires, and, clk, mux, nand, nor, inv, (is 'inv' a 'not'?), xor, xnow, adder
-diode - Implies we'll need high impedance as a value. I hope we won't need analogue signals like pull downs
-buf - Maybe this is like a register? So we'll need edge triggers some how
-```
+Here we need to do a huge yak shave and of course build our own circuit simulator. For reasons. We'll need at a
+very minimum the following elements from the list of strings above
+
+* Standard circuit elements - wires, and, clk, mux, nand, nor, inv, (is 'inv' a 'not'?), xor, xnow, adder
+* diode - Implies we'll need high impedance as a value. I hope we won't need analogue signals like pull downs
+* buf - Maybe this is like a register? So we'll need edge triggers some how
 
 ### Several days later
 
@@ -164,38 +168,6 @@ Ok so I built a harness for my circuit simulator. But it's really hard to visual
 ### Several days later
 
 Ok so I built a waveform and circuit viewer in Raylib. Where were we again?
-
-## Looking at gds file
-
-|          cell_name                 | cnt  | Ideas
-|----------------------------------------------------
-|`sky130_fd_sc_hd__and2_2`           |      | and
-|`sky130_fd_sc_hd__and4bb_2`         |      | and - maybe 4-port?
-|`sky130_fd_sc_hd__and3_2`           |      | another and?
-|`sky130_fd_sc_hd__xor2_2`           |      | xor
-|`sky130_fd_sc_hd__xnor2_2`          |      | xnor
-|`sky130_fd_sc_hd__or2_2`            |      | or
-|`sky130_fd_sc_hd__nand2_2`          |      | nand
-|`sky130_fd_sc_hd__mux2_1`           |      | 2-bit mux?
-|`sky130_fd_sc_hd__nor2_2`           |      | nor
-|`sky130_fd_sc_hd__clkbuf_16`        |      | Looks to just help distribute the clk signal
-|`VIA_M2M3_PR`                       |      | Power rail?
-|`sky130_fd_sc_hd__dfrtp_2`          | 16   | Some sort of flip flop (see sky-130 unofficial below)
-|`sky130_fd_sc_hd__tapvpwrvgnd_1`    |      | Looks like pins to power and ground - can probably ignore
-|`sky130_fd_sc_hd__decap_3`          |      | Maybe debouncing capacitors - they're at the edge so I think I can ignore them
-|`sky130_fd_sc_hd__a31o_2`           | 5    | Maybe io?
-|`sky130_fd_sc_hd__a21o_2`           | 1    | Maybe io?
-|`sky130_fd_sc_hd__a21boi_2`         | 1    | Maybe io?
-|`sky130_fd_sc_hd__o21bai_2`         | 1    | Maybe io?
-|`sky130_fd_sc_hd__a21bo_2`          | 2    | Maybe io?
-|`adder_demo`                        | 1    | Whole module
-|`VIA_via5_6_2000_2000_1_1_1600_1600`| lots | some sort of via
-|`VIA_via4_5_2000_480_1_5_400_400`   | lots | some sort of via
-|`VIA_M1M2_PR`                       | lots | some sort of via
-|`VIA_via3_4_2000_480_1_5_400_400`   | lots | some sort of via
-|`VIA_M3M4_PR`                       | lots | some sort of via
-|`VIA_via2_3_2000_480_1_6_320_320`   | lots | some sort of via
-|`VIA_L1M1_PR_MR`                    | lots | some sort of via
 
 ## Looking at the actual gds file
 
@@ -361,6 +333,7 @@ if __name__ == '__main__':
 Can I render the labels so I can see where and what is labelled?
 
 
+## I think I can make a graph now?
 
 
 
