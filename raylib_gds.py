@@ -1,86 +1,102 @@
 import raylib as R1 # Need this for GetRandomValue and Fade?
 import pyray as R
 
+"""
+Bravely stolen from the 3d raylib examples and roughly ported to python
+https://www.raylib.com/examples/core/loader.html?name=core_3d_camera_first_person
+
+My understanding of the zlib/libpng license is that the copyright notice must be attached,
+so here it is -
+
+/*******************************************************************************************
+*
+*   raylib [core] example - 3d camera first person
+*
+*   Example complexity rating: [★★☆☆] 2/4
+*
+*   Example originally created with raylib 1.3, last time updated with raylib 1.3
+*
+*   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software
+*
+*   Copyright (c) 2015-2025 Ramon Santamaria (@raysan5)
+*
+********************************************************************************************/
+
+
+I intend to heavily modify this, so maybe it's not needed.
 
 """
-void CameraYaw(Camera *camera, float angle, bool rotateAroundTarget)
-{
-    // Rotation axis
-    Vector3 up = GetCameraUp(camera);
 
-    // View vector
-    Vector3 targetPosition = Vector3Subtract(camera->target, camera->position);
 
-    // Rotate view vector around up axis
-    targetPosition = Vector3RotateByAxisAngle(targetPosition, up, angle);
+# Rotates the camera around its up vector
+# Yaw is "looking left and right"
+# If rotateAroundTarget is false, the camera rotates around its position
+# Note: angle must be provided in radians
+def CameraYaw(camera, angle, rotateAroundTarget):
 
-    if (rotateAroundTarget)
-    {
-        // Move position relative to target
-        camera->position = Vector3Subtract(camera->target, targetPosition);
-    }
-    else // rotate around camera.position
-    {
-        // Move target relative to position
-        camera->target = Vector3Add(camera->position, targetPosition);
-    }
-}
+    # Rotation axis
+    up = R.GetCameraUp(camera);
 
-// Rotates the camera around its right vector, pitch is "looking up and down"
-//  - lockView prevents camera overrotation (aka "somersaults")
-//  - rotateAroundTarget defines if rotation is around target or around its position
-//  - rotateUp rotates the up direction as well (typically only useful in CAMERA_FREE)
-// NOTE: [angle] must be provided in radians
-void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTarget, bool rotateUp)
-{
-    // Up direction
-    Vector3 up = GetCameraUp(camera);
+    # View vector
+    targetPosition = R.Vector3Subtract(camera.target, camera.position)
 
-    // View vector
-    Vector3 targetPosition = Vector3Subtract(camera->target, camera->position);
+    # Rotate view vector around up axis
+    targetPosition = R.Vector3RotateByAxisAngle(targetPosition, up, angle)
 
-    if (lockView)
-    {
-        // In these camera modes, clamp the Pitch angle
-        // to allow only viewing straight up or down
+    if (rotateAroundTarget):
+        # Move position relative to target
+        camera.position = R.Vector3Subtract(camera.target, targetPosition)
+    else: # rotate around camera.position
+        # Move target relative to position
+        camera.target = R.Vector3Add(camera.position, targetPosition)
 
-        // Clamp view up
-        float maxAngleUp = Vector3Angle(up, targetPosition);
-        maxAngleUp -= 0.001f; // avoid numerical errors
-        if (angle > maxAngleUp) angle = maxAngleUp;
+# Rotates the camera around its right vector, pitch is "looking up and down"
+#  - lockView prevents camera overrotation (aka "somersaults")
+#  - rotateAroundTarget defines if rotation is around target or around its position
+#  - rotateUp rotates the up direction as well (typically only useful in CAMERA_FREE)
+# NOTE: [angle] must be provided in radians
+def CameraPitch(camera, angle, lockView, rotateAroundTarget, rotateUp):
 
-        // Clamp view down
-        float maxAngleDown = Vector3Angle(Vector3Negate(up), targetPosition);
-        maxAngleDown *= -1.0f; // downwards angle is negative
-        maxAngleDown += 0.001f; // avoid numerical errors
-        if (angle < maxAngleDown) angle = maxAngleDown;
-    }
+    # Rotation axis
+    up = R.GetCameraUp(camera);
 
-    // Rotation axis
-    Vector3 right = GetCameraRight(camera);
+    # View vector
+    targetPosition = R.Vector3Subtract(camera.target, camera.position)
 
-    // Rotate view vector around right axis
-    targetPosition = Vector3RotateByAxisAngle(targetPosition, right, angle);
+    if(lockView):
+        # In these camera modes, clamp the Pitch angle
+        # to allow only viewing straight up or down
 
-    if (rotateAroundTarget)
-    {
-        // Move position relative to target
-        camera->position = Vector3Subtract(camera->target, targetPosition);
-    }
-    else // Rotate around camera.position
-    {
-        // Move target relative to position
-        camera->target = Vector3Add(camera->position, targetPosition);
-    }
+        # Clamp view up
+        maxAngleUp = R.Vector3Angle(up, targetPosition);
+        maxAngleUp -= 0.001; # avoid numerical errors
+        if (angle > maxAngleUp):
+            angle = maxAngleUp;
 
-    if (rotateUp)
-    {
-        // Rotate up direction around right axis
-        camera->up = Vector3RotateByAxisAngle(camera->up, right, angle);
-    }
-}
+        # Clamp view down
+        maxAngleDown = R.Vector3Angle(R.Vector3Negate(up), targetPosition);
+        maxAngleDown *= -1.0; # downwards angle is negative
+        maxAngleDown += 0.001; # avoid numerical errors
+        if (angle < maxAngleDown):
+            angle = maxAngleDown;
 
-"""
+    # Rotation axis
+    right = R.GetCameraRight(camera);
+
+    # Rotate view vector around right axis
+    targetPosition = R.Vector3RotateByAxisAngle(targetPosition, right, angle);
+
+    if (rotateAroundTarget):
+        # Move position relative to target
+        camera.position = R.Vector3Subtract(camera.target, targetPosition);
+    else: # Rotate around camera.position
+        # Move target relative to position
+        camera.target = R.Vector3Add(camera.position, targetPosition);
+
+    if (rotateUp):
+        # Rotate up direction around right axis
+        camera.up = R.Vector3RotateByAxisAngle(camera.up, right, angle);
 
 def main():
     MAX_COLUMNS=20
@@ -152,8 +168,8 @@ def main():
                 camera.up = R.Vector3(0,1,0)
                 camera.projection = R.CAMERA_ORTHOGRAPHIC;
                 camera.fovy = 20.0; # near plane width in R.CAMERA_ORTHOGRAPHIC
-                # camera_yaw(camera, -135*R.DEG2RAD, rotate_around_target=True);                        # TODO Can't get this to work?
-                # R1.CameraYaw(camera, -45*R.DEG2RAD, lock_view=True, rotate_around_target=True, rotate_up=False);          # TODO Can't get this to work?
+                CameraYaw(camera, -135*R.DEG2RAD, rotate_around_target=True) # TODO: Maybe we don't want yaw?
+                CameraPitch(camera, -45*R.DEG2RAD, lock_view=True, rotate_around_target=True, rotate_up=False)
             elif (camera.projection == R.CAMERA_ORTHOGRAPHIC):
                 # Reset to default view
                 cameraMode = R.CAMERA_THIRD_PERSON;
