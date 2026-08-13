@@ -7,7 +7,7 @@
 [x] Turn this into a proper repo on my github
 [ ] Find a local GDS viewer - could I use Raylib + voxels? Probably not a good idea but ....
   [x] Start gds viewer in raylib - steal an example
-  [ ] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
+  [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
   [ ] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
 [ ] Look at circuit elements made by cells.py
 [ ] Work out how to show labels (maybe convert to text?) and add them to cells.py
