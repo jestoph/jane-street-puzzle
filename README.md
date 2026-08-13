@@ -330,8 +330,42 @@ if __name__ == '__main__':
     cells("warmup/04_final.gds")
 ```
 
-Can I render the labels so I can see where and what is labelled?
+### What can I see in the SVGs?
 
+The design is much clearer to understand with all the labels! And the wires are all the same size now which is nice. I can
+really get a sense for it in this format
+
+Now lets look at the 'sky130' components.
+
+file            | Best-Guess  | In          | Out | notes
+----------------------------------------------------------------------------------------------------------------------------------------
+`a21bo_2`       |             | A1,A2       | X   | A1, A2 on right, B1_N on middle, X on left
+`a21boi_2`      |             | A1,A2,B1_N  | Y   | A1, A2 on right, B1_N on left, Y in middle
+`a21o_2`        |             | A1,A2,B1    | X   | A1's, A2 on right, B1 in middle, X top right
+`a31o_2`        |             | A1,A2,A3,B1 | X   | A1, A2, A3 in middle, B1 on right, X's on left
+`o21bai_2`      |             | A1,A2,B1_N  | Y   | B1_N & A1 and A2 on middle (reflected vertically), Y on upper area
+`and2_2`        | AND         | A,B         | X   | A on left, B middle, X's right
+`and3_2`        | 3-port AND  | A,B,C       | X   | A left, B & C middlish, X on right
+`and4bb_2`      | 4-port AND? | A_N,B_N,C,D | X   | A_N left, X's mid-left, C's and a D mid-right, B_N on right
+`clkbuf_16`     | clk buffer  | A           | X   | A on left X's on right - Looks like a basic buffer, I think I can emulate this as a 'Nop' element in my sim
+`mux2_1`        | 2-bit mux   |             | X   | Complicated. A0, A1's, S's (S=Signal?) towards middle, X's on left
+`nand2_2`       | NAND        | A,B         | Y   | A & B on middle, Y's on right
+`nor2_2`        | NOR         | A,B         | Y   | A & B on middle strip, Y on upper right
+`or2_2`         | OR          | A,B         | X   | B & A in middle strip, X on upper right
+`xnor2_2`       | XNOR        |             | Y   | B on top half, A on middle strip, Y on right
+`xor2_2`        | XOR         |             | X   | A top left, B on middle strip, X on right
+`dfrtp_2`       | flip flop?  |             |     | CLK, D, Q, RESET_B. Looks like a flip flop of some sort.
+`decap_3`       | decaps      |             |     | Definitely decoupling/filtering capacitor, only connected to rails
+`tapvpwrvgnd_1` | No idea     |             |     | Not sure what this is - seems to allow connecting to pwr/gnd?
+
+* The pattern seems to be `<type><input port count>_<something>`, not sure what the 'something' is yet.
+* Power seems to be always at the top and gnd at the bottom in the default rotation of the elements.
+* Not much to say about the via nodes, but it's interesting that vias are so complicated. And some are multi-port?
+* There is visual overlap between VPB & VPWR, and VNB & VGND on all of them. Are they the same things?
+* I can't remember how flip flops work. Rising edge or something? Can I just treat it as a register?
+* I need to learn about these ones - `a21bo_2`, `a21boi_2`, `a21o_2`, `a31o_2`, `o21bai_2`. There's some structure
+  to the names (`i` seems to mean that B is negated, the first number is the number of A inputs, maybe the
+  second number is the number of outputs and just always happens to be 1)
 
 ## I think I can make a graph now?
 
