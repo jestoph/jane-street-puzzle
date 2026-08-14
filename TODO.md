@@ -10,12 +10,35 @@
   [x] Start gds viewer in raylib - steal an example
   [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
   [x] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
-[ ] Try to understand individual cells
+  [ ] Work out how to highlight a cell - there's a voxel example that does this.
+  [ ] Try to place some elements for a small cell
+[x] Try to understand individual cells
   [x] Look at circuit elements made by cells.py
   [x] Work out how to show labels (maybe convert to text?) and add them to cells.py - Was done already in svg function
-  [ ] Look at obscured labels under PWR and GND labels
-  [ ] Read the manual - https://sky130-unofficial.readthedocs.io/en/latest/
-[ ] Draw up my understanding of gds in xcalidraw
-[ ] Try to find a single example of a circuit element connected to a wire and write it to a gds
+  [x] Look at obscured labels under PWR and GND labels
+  [x] Read the manual - https://sky130-unofficial.readthedocs.io/en/latest/
+  [x] Can I map labels on io ports to geometry?
+[x] Draw up my understanding of gds in xcalidraw - not necessary, it's all spelled out in the docs
+[ ] Try to map out the graph
+  [ ] Try to find a single example of a circuit element connected to a wire and write it to a gds
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
+[ ] Add all cell elements to my sim
+  [ ] `a21bo_2`
+  [ ] `a21boi_2`
+  [ ] `a21o_2`
+  [ ] `a31o_2`
+  [ ] `o21bai_2`
+  [ ] `and2_2`
+  [ ] `and3_2`
+  [ ] `and4bb_2`
+  [ ] `clkbuf_16`
+  [ ] `mux2_1`
+  [ ] `nand2_2`
+  [ ] `nor2_2`
+  [ ] `or2_2`
+  [ ] `xnor2_2`
+  [ ] `xor2_2`
+  [ ] `dfrtp_2`
+  [ ] `decap_3`
+  [ ] `tapvpwrvgnd_1`
