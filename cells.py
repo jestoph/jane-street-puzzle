@@ -1,5 +1,18 @@
 import gdstk
 
+labels_i_care_about = {
+    "A", "A_N", "A1", "A2", "A2", "A3",
+    "B", "B_N", "B1", "B1_N",
+    "C", "CLK",
+    "D",
+    "RESET_B",
+    "X",
+    "Y",
+    "S",
+    "Q"
+}
+
+
 def increase_view(svgfile):
     """
     My apologies for how stupid this is.
@@ -45,21 +58,24 @@ def increase_view(svgfile):
             print(line, file=fp, end='')
 
 
+def write_files(cell, name):
+    filename = f"{name}.svg"
+    cell.write_svg(filename)
+    # Turns out the svg includes labels by default but
+    # I find the original size quite hard to see, so I'll
+    # fudge it here
+    increase_view(filename)
+    lib = gdstk.Library(name)
+    lib.add(cell)
+    lib.write_gds(f"{name}.gds")
+
 def cells(filename):
 
     library = gdstk.read_gds(filename)
 
     for cell in library.cells:
         name = cell.name
-        filename = f"outputs/{name}.svg"
-        cell.write_svg(filename)
-        # Turns out the svg includes labels by default but
-        # I find the original size quite hard to see, so I'll
-        # fudge it here
-        increase_view(filename)
-        lib = gdstk.Library(name)
-        lib.add(cell)
-        lib.write_gds(f"outputs/{name}.gds")
+        write_files(cell, f"outputs/{name}")
 
 
 def cells_pads(filename):
@@ -70,19 +86,9 @@ def cells_pads(filename):
 
         name = cell.name
         cell.filter([(67, 20)], remove=False, polygons=True, paths=True, labels=False)
-        filename = f"outputs/{name}.li.svg"
-        cell.write_svg(filename)
-        # Turns out the svg includes labels by default but
-        # I find the original size quite hard to see, so I'll
-        # fudge it here
-        increase_view(filename)
-        lib = gdstk.Library(name)
-        lib.add(cell)
-        lib.write_gds(f"outputs/{name}.li.gds")
+        write_files(cell, f"outputs/{name}.li")
 
 def cells_io(filename):
-
-    labels_i_care_about = {"A", "A_N", "A1", "A2", "A2", "A3", "B", "B_N", "B1", "B1_N", "C", "CLK", "D", "RESET_B", "X", "Y", "S", "Q"}
 
     library = gdstk.read_gds(filename)
 
@@ -113,15 +119,7 @@ def cells_io(filename):
         # assert len(cell.paths) == 0, f"Cell {cell.name} has {len(cell.paths)=} on 67:20"
         # TODO: Do paths as well
 
-        filename = f"outputs/{name}.li.io.svg"
-        cell.write_svg(filename)
-        # Turns out the svg includes labels by default but
-        # I find the original size quite hard to see, so I'll
-        # fudge it here
-        increase_view(filename)
-        lib = gdstk.Library(name)
-        lib.add(cell)
-        lib.write_gds(f"outputs/{name}.li.io.gds")
+        write_files(cell, f"outputs/{name}.li.io")
 
 if __name__ == '__main__':
     cells("warmup/04_final.gds")

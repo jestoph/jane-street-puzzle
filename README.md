@@ -413,16 +413,38 @@ This isn't going to be easy. When I flatten out the top element (adder_demo), it
 I thought that filtering on datatype=20 would clean things up but after filtering it barely made a dint.
 
 I can simplify the filtering when searching for 'touching' pairs by doing the following.
-1. Create an Index by layer
-2. For a given element, only check adjacent layers
-3. Filter initially on bounding box overlap - 4 float comparisons
-4. Finaly check for true overlap
+1. Filter out simple elements (see list below)
+2. Create an Index by layer
+3. For a given element, only check adjacent layers
+4. Filter initially on bounding box overlap - 4 float comparisons
+5. Finaly check for true overlap
 
 If I need to I could also chunk up the total area as a step 2a.
 
+I'm not sure the total number of elements now, but in the order of thousands, this might be tough for graph traversal
+
+### Elements I'm pretty sure I don't care about
+
+* Layers below 67 (signal pins/pads)
+* Layers above 70 (It looks like 71/met4 is a power bus not a signal), and also via3 that only connects to met4
+* That gives the following layer/datatypes - li1, mcon, met1, via, met2, via2, met3
+* VIA_via elements? Not 100% sure, but there's 225 of them. There's also many paths that _only_ connect to them
+* 'Filter Cells' - a nice tinytapeout feature toggles these
+  * The decap elements (58 of them)
+  * The tapvpwrvgnd (93 elements)
+* There's many isolated cells/paths on met3 once the filter cells are removed
+* The logo
+
 If I do that, I 'should' be able to create a dot graph of the network.
 
-Luckily there are only 233 circuit elements (with prefix 'sky'), and I think I can exclude the 'decap' elements as
-they seem to be signal decoupling capacitors on the edge of the circuit. That brings it down to 175 circuit elements.
+### Finding all connected components
 
-So the real challenge is following wires I think
+1. Filter out all elements as above
+2. Start with 'li1' layer with valid IO ports
+3. Step by layer, keeping all elements that touch an existing element
+  - sequence is li1, mcon, met1, via (should be called via1 I think?), met2, via2, met3
+4. Extract to a gds file
+5. ...profit?
+
+It will be an O(M x N) calculation where M is the number of elements on layer i and N is the number of elements on layer i+1
+
