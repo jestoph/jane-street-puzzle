@@ -443,8 +443,9 @@ If I do that, I 'should' be able to create a dot graph of the network.
 2. Start with 'li1' layer with valid IO ports
 3. Step by layer, keeping all elements that touch an existing element
   - sequence is li1, mcon, met1, via (should be called via1 I think?), met2, via2, met3
-4. Extract to a gds file
-5. ...profit?
 
-It will be an O(M x N) calculation where M is the number of elements on layer i and N is the number of elements on layer i+1
+It will be an O(M x N) calculation where M is the number of elements on layer i and N is the number of elements on layer i+1.
+
+Ok so that has some obvious directional artifacts but shows that I'm at least able to filter connected components. I need a
+better flood fill or bfs-style algorithm and I should be able to get the whole graph
 

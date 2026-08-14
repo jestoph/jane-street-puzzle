@@ -20,9 +20,11 @@
   [x] Can I map labels on io ports to geometry?
 [x] Draw up my understanding of gds in xcalidraw - not necessary, it's all spelled out in the docs
 [ ] Map out the graph
-  [ ] Try to find a single example of a circuit element connected to a wire and write it to a gds
-  [ ] Build a gds of all connected, useful/interesting components
+  [x] Try to find a single example of a circuit element connected to a wire and write it to a gds
+  [x] Build a gds of all connected, useful/interesting components
+      - Got one working but with 'directional' artifacts. The naive algorithm isn't the best
   [ ] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that)
+  [ ] Use a proper flood fill or graph traversal algorithm
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
 [ ] Add all cell elements to my sim
