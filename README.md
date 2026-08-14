@@ -337,35 +337,75 @@ really get a sense for it in this format
 
 Now lets look at the 'sky130' components.
 
-file            | Best-Guess  | In          | Out | notes
+file            | Best-Guess  | In            | Out | notes
 ----------------------------------------------------------------------------------------------------------------------------------------
-`a21bo_2`       |             | A1,A2       | X   | A1, A2 on right, B1_N on middle, X on left
-`a21boi_2`      |             | A1,A2,B1_N  | Y   | A1, A2 on right, B1_N on left, Y in middle
-`a21o_2`        |             | A1,A2,B1    | X   | A1's, A2 on right, B1 in middle, X top right
-`a31o_2`        |             | A1,A2,A3,B1 | X   | A1, A2, A3 in middle, B1 on right, X's on left
-`o21bai_2`      |             | A1,A2,B1_N  | Y   | B1_N & A1 and A2 on middle (reflected vertically), Y on upper area
-`and2_2`        | AND         | A,B         | X   | A on left, B middle, X's right
-`and3_2`        | 3-port AND  | A,B,C       | X   | A left, B & C middlish, X on right
-`and4bb_2`      | 4-port AND? | A_N,B_N,C,D | X   | A_N left, X's mid-left, C's and a D mid-right, B_N on right
-`clkbuf_16`     | clk buffer  | A           | X   | A on left X's on right - Looks like a basic buffer, I think I can emulate this as a 'Nop' element in my sim
-`mux2_1`        | 2-bit mux   |             | X   | Complicated. A0, A1's, S's (S=Signal?) towards middle, X's on left
-`nand2_2`       | NAND        | A,B         | Y   | A & B on middle, Y's on right
-`nor2_2`        | NOR         | A,B         | Y   | A & B on middle strip, Y on upper right
-`or2_2`         | OR          | A,B         | X   | B & A in middle strip, X on upper right
-`xnor2_2`       | XNOR        |             | Y   | B on top half, A on middle strip, Y on right
-`xor2_2`        | XOR         |             | X   | A top left, B on middle strip, X on right
-`dfrtp_2`       | flip flop?  |             |     | CLK, D, Q, RESET_B. Looks like a flip flop of some sort.
-`decap_3`       | decaps      |             |     | Definitely decoupling/filtering capacitor, only connected to rails
-`tapvpwrvgnd_1` | No idea     |             |     | Not sure what this is - seems to allow connecting to pwr/gnd?
+`a21bo_2`       |             | A1,A2         | X   | A1, A2 on right, B1_N on middle, X on left
+`a21boi_2`      |             | A1,A2,B1_N    | Y   | A1, A2 on right, B1_N on left, Y in middle
+`a21o_2`        |             | A1,A2,B1      | X   | A1's, A2 on right, B1 in middle, X top right
+`a31o_2`        |             | A1,A2,A3,B1   | X   | A1, A2, A3 in middle, B1 on right, X's on left
+`o21bai_2`      |             | A1,A2,B1_N    | Y   | B1_N & A1 and A2 on middle (reflected vertically), Y on upper area
+`and2_2`        | AND         | A,B           | X   | A on left, B middle, X's right
+`and3_2`        | 3-port AND  | A,B,C         | X   | A left, B & C middlish, X on right
+`and4bb_2`      | 4-port AND  | A_N,B_N,C,D   | X   | A_N left, X's mid-left, C's and a D mid-right, B_N on right
+`clkbuf_16`     | clk buffer  | A             | X   | A on left X's on right - Looks like a basic buffer, I think I can emulate this as a 'Nop' element in my sim
+`mux2_1`        | 2-bit mux   |               | S   | Complicated. A0, A1's, S's (S=Signal?) towards middle, X's on left
+`nand2_2`       | NAND        | A,B           | Y   | A & B on middle, Y's on right
+`nor2_2`        | NOR         | A,B           | Y   | A & B on middle strip, Y on upper right
+`or2_2`         | OR          | A,B           | X   | B & A in middle strip, X on upper right
+`xnor2_2`       | XNOR        |               | Y   | B on top half, A on middle strip, Y on right
+`xor2_2`        | XOR         |               | X   | A top left, B on middle strip, X on right
+`dfrtp_2`       | flip flop?  | D,CLK,RESET_B | Q   | CLK, D, Q, RESET_B. Looks like a flip flop of some sort.
+`decap_3`       | decaps      |               |     | Definitely decoupling/filtering capacitor, only connected to rails
+`tapvpwrvgnd_1` | power feed? |               |     | Seems to allow connecting to pwr/gnd throughout. In the main circuit it always cuts through the busses
 
 * The pattern seems to be `<type><input port count>_<something>`, not sure what the 'something' is yet.
 * Power seems to be always at the top and gnd at the bottom in the default rotation of the elements.
 * Not much to say about the via nodes, but it's interesting that vias are so complicated. And some are multi-port?
 * There is visual overlap between VPB & VPWR, and VNB & VGND on all of them. Are they the same things?
-* I can't remember how flip flops work. Rising edge or something? Can I just treat it as a register?
+* I can't remember how flip flops work. Wikipedia says this is probably a D flip-flop as has D, Q and clk, and
+  they form the basis of shift registers, so I guess that's what they are.
 * I need to learn about these ones - `a21bo_2`, `a21boi_2`, `a21o_2`, `a31o_2`, `o21bai_2`. There's some structure
   to the names (`i` seems to mean that B is negated, the first number is the number of A inputs, maybe the
   second number is the number of outputs and just always happens to be 1)
+* It seems the output of the mux is our output signal 'S'. Maybe these labels are partially derived from our
+  verilog names? But I'm not sure what that means for signals like A3.
+
+If I ignore vias for now (TODO: assuming they have 'metal' as the datatype), then there's only 16 circuit elements
+that I need to understand
+
+### Time to actually read
+
+I've gotten as far as I can with guessing. Time to actually read some proper documentation.
+Looks like this is their home, despite the 'unofficial' in the name - `https://sky130-unofficial.readthedocs.io/en/latest/`
+
+
+Ok. The docs had the answers to many of my questions. Why do I always do things the hard way?
+* The sky130 is 130 nanometer tech
+* The layer sizes, datatypes and names are all defined in the document!
+  https://sky130-unofficial.readthedocs.io/en/latest/rules/layers.html#gds-layers-information
+* It _does_ look like 20 is often or always metal
+* All the cells and renderings and ports are listed here https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/README.html
+* I was _roughly_ correct in my table above, but missed some details
+
+The big conclusion here is that I think I can start at the geometries in the 'local interconnect' layer (66:44) as I believe
+that is where the 'pins' or 'pads' or whatever they're called on the devices are, then I only have to map out these geometries to I/O ports.
+
+Luckily, the library I'm using has a 'filter' method, so lets try that
+
+```python
+for cell in library.cells:
+    cell.filter([(67, 20)], remove=False, polygons=True, paths=True, labels=False)
+    cell.write_svg(f"outputs/{cell.name}.li.svg")
+```
+Looking at the output, that works almost perfectly, so now I can theoretically map specific geometry to the I/O of the circuit elements.
+My only slight concern is that the labels might be referenced by a corner rather than by their centerpoint, so I might need to do some
+math on that
+
+
+That worked ... way better than I expected! I guess labels are already referenced on their centerpoint! It even picked up some geometry
+that isn't visually connected so a visual inspection would never have revealed their connections. And looking at the total design's
+IO ports, it's so much less visually noisey [here](outputs/adder_demo.li.io.svg)
+
 
 ## I think I can make a graph now?
 
@@ -386,7 +426,3 @@ Luckily there are only 233 circuit elements (with prefix 'sky'), and I think I c
 they seem to be signal decoupling capacitors on the edge of the circuit. That brings it down to 175 circuit elements.
 
 So the real challenge is following wires I think
-
-
-### What are those sky things anyway?
-Google is my friend - https://sky130-unofficial.readthedocs.io/en/latest/

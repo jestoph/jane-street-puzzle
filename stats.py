@@ -1,5 +1,12 @@
 import gdstk
 
+def read_layers():
+    # Headers are layer_name,purpose,layer,datatype,description
+    import csv
+    with open('gds_layers.csv') as fp:
+        list_of_dicts = list(csv.DictReader(fp))
+    return list_of_dicts
+
 def mdtable(data):
     """
     Added as a convenience - my vim tool will do this for me
@@ -30,9 +37,18 @@ def stats(filename):
     for k in ["num_polygons", "num_paths", "num_references", "num_labels", "unit", "precision"]:
         print(k, data[k])
 
+    layers = read_layers()
+    layer_map = {}
+    for layer in layers:
+        layer_map[( layer['layer'], layer['datatype'] )] = layer
+
     print("layers and datatypes:")
+    md = []
     for (layer, datatype) in sorted(data["layers_and_datatypes"]):
-        print(f"   {layer=} {datatype=}")
+        default = {"layer_name": "unknown", "purpose": "unknown", "layer": str(layer), "datatype": str(datatype), "description": 'unknown'}
+        md.append(layer_map.get((str(layer), str(datatype)), default))
+
+    mdtable(md)
 
     print()
     library = gdstk.read_gds(filename)
@@ -43,9 +59,9 @@ def stats(filename):
 
     library['adder_demo'].flatten()
 
-    data = []
+    md = []
     for cell in sorted(library.cells, key=lambda x: x.name.lower()):
-        data.append({
+        md.append({
             "cell_name": cell.name,
             "cell_labels": len(cell.labels),
             "cell_paths": len(cell.paths),
@@ -56,7 +72,7 @@ def stats(filename):
             "cell_bounding_box": cell.bounding_box(),
         })
 
-    mdtable(data)
+    mdtable(md)
 
 
 
