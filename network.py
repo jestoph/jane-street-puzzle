@@ -1,4 +1,5 @@
 import gdstk
+import os
 
 """
 We build up the network like this:
@@ -109,6 +110,7 @@ def write_files(library, cell, name):
     # I find the original size quite hard to see, so I'll
     # fudge it here
     increase_view(filename)
+    os.unlink(f"{name}.gds")
     library.write_gds(f"{name}.gds")
 
 
@@ -319,6 +321,7 @@ def connected_components(cell):
         layer_elements[layer_name].append(poly)
 
     for poly in cell.polygons:
+        layer_name = reverse_map[poly.layer, poly.datatype]
         # Do vias and mcon first as they have the stricted requirements to be
         # connected top and bottom
         if layer_name not in {"mcon", "via", "via2"}: continue
@@ -345,6 +348,7 @@ def connected_components(cell):
             cell.remove(poly)
 
     for poly in cell.polygons:
+        layer_name = reverse_map[poly.layer, poly.datatype]
         if layer_name in {"mcon", "via", "via2"}: continue
         layer_name = reverse_map[poly.layer, poly.datatype]
 
@@ -384,7 +388,7 @@ def network(filename):
     convert_paths(library)
     filter_layers(library)
     filter_filters(library)
-    filter_pads(library)
+    filter_pads(library) # <- Keep pads that overlap with labels
     custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     connected_components(library['adder_demo'])
     write_files(library, library['adder_demo'], "outputs/adder_demo_network")

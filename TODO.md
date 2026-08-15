@@ -23,8 +23,9 @@
   [x] Try to find a single example of a circuit element connected to a wire and write it to a gds
   [x] Build a gds of all connected, useful/interesting components
       - Got one working but with 'directional' artifacts. The naive algorithm isn't the best
+  [x] Use a proper flood fill or graph traversal algorithm - layer connection worked fine
+  [ ] Fix bounding box issue
   [ ] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that)
-  [ ] Use a proper flood fill or graph traversal algorithm
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
 [ ] Add all cell elements to my sim

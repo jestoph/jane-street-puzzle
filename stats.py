@@ -74,6 +74,34 @@ def stats(filename):
 
     mdtable(md)
 
+    layer_polys(library)
+
+def layer_polys(library):
+
+    library['adder_demo'].flatten()
+
+    layer_poly_count = {}
+    layer_map = {v:k for k,v in {
+        "li1" :(67,20),
+        "mcon":(67,44),
+        "met1":(68,20),
+        "via" :(68,44),
+        "met2":(69,20),
+        "via2":(69,44),
+        "met3":(70,20),
+    }.items()}
+
+    for cell in library.cells:
+        for poly in cell.polygons:
+            l = poly.layer, poly.datatype
+            layer_poly_count[l] = layer_poly_count.get(l, 0) + 1
+
+
+
+    print()
+    for layer, name in layer_map.items():
+        print(f"{name}:{layer}: {layer_poly_count[layer]}")
+
 
 
 if __name__ == '__main__':
