@@ -22,3 +22,6 @@ network:
 #
 test:
 	${PYTHON} test.py
+
+simplify:
+	${PYTHON} simplify.py

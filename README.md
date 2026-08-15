@@ -427,6 +427,7 @@ I'm not sure the total number of elements now, but in the order of thousands, th
 
 * Layers below 67 (signal pins/pads)
 * Layers above 70 (It looks like 71/met4 is a power bus not a signal), and also via3 that only connects to met4
+  - Sadly this is wrong, I'll also neet met4 for two signals. Maybe I can just hard-code their connections?
 * That gives the following layer/datatypes - li1, mcon, met1, via, met2, via2, met3
 * VIA_via elements? Not 100% sure, but there's 225 of them. There's also many paths that _only_ connect to them
 * 'Filter Cells' - a nice tinytapeout feature toggles these
@@ -448,4 +449,21 @@ It will be an O(M x N) calculation where M is the number of elements on layer i 
 
 Ok so that has some obvious directional artifacts but shows that I'm at least able to filter connected components. I need a
 better flood fill or bfs-style algorithm and I should be able to get the whole graph
+
+### Turning random geometry into wires
+
+I realised I can attach arbitrary properties to elements in the circuit, so I was able to use that to give
+every circuit pin a name like 'and:34:pin:5', and every other kind of element a name like 'wire:23'. But
+that means what we'd consider a single wire consists of a sequence of wire segments. So we need to connect them
+all somehow.
+
+I already have a way of knowing if two elements are connected, so I can then use a depth-first-search to
+accumulate all wire segments into a single wire. Running that gives roughly 194 total wires in the circuit.
+This is an undercount as it's not including power and ground, and I noticed missing wires in the 'met4'
+layer that I'll probably manually fix
+
+```
+% make simplify | wc -l
+     194
+ ```
 

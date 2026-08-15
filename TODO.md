@@ -24,7 +24,8 @@
   [x] Build a gds of all connected, useful/interesting components
       - Got one working but with 'directional' artifacts. The naive algorithm isn't the best
   [x] Use a proper flood fill or graph traversal algorithm - layer connection worked fine
-  [ ] Fix bounding box issue
+  [x] Fix bounding box issue
+  [x] Work out how to take multiple distinct wires and convert into a single wire
   [ ] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that)
 [ ] What are boundaries?
 [ ] Why does the text file have more types?

@@ -180,7 +180,7 @@ def filter_pads(library):
                 origin = label.origin
                 if polygon.contain(label.origin):
                     # We're collecting the port name for later
-                    polygon.set_property("port_name", label.text)
+                    polygon.set_property("port_name", f"{cell.name}:{label.text})")
                     keep = True
             if not keep:
                 cell.remove(polygon)
@@ -193,21 +193,13 @@ def custom_flatten(library):
     came from, and which port it is
     """
 
-    counter = {}
-
-    # for cell in library.cells:
-    #     if cell.name == 'adder_demo': continue
-    #     cell.flatten()
-
-    # return
+    count = 1
 
     cell = library['adder_demo']
     for i, ref in enumerate(cell.references):
 
         # Kind of like a rowid on each cell type
-        cell_id = counter.get(cell.name, 1)
-        counter[cell.name] = cell_id + 1
-
+        count += 1
 
         # Paths apparently don't need to be moved?
         # Also TODO: Should actually convert to polys
@@ -220,7 +212,7 @@ def custom_flatten(library):
         for poly in polys:
             port_name = poly.get_property("port_name")
             if port_name:
-                port_id = f"{cell.name}:{cell_id}:{port_name}"
+                port_id = f"{count}:{port_name[0].decode('utf-8')}"
                 # print(f"{port_name=} {port_id=}")
                 # Now every circuit element port identifies itself
                 poly.set_property("port_id", port_id)
@@ -312,6 +304,7 @@ def connected_components(cell):
     layer_elements = {
         key: [] for key in layer_map.keys()
     }
+    wires = 0
 
     # Map from layer, datatype -> layer_name
     reverse_map = {val:key for key,val in layer_map.items()}
@@ -346,6 +339,10 @@ def connected_components(cell):
 
         if not connected:
             cell.remove(poly)
+        else:
+            wires += 1
+            if not poly.get_property("port_id"):
+                poly.set_property("wire_id", f"wire:{wires}")
 
     for poly in cell.polygons:
         layer_name = reverse_map[poly.layer, poly.datatype]
@@ -371,6 +368,10 @@ def connected_components(cell):
 
         if not connected:
             cell.remove(poly)
+        else:
+            wires += 1
+            if not poly.get_property("port_id"):
+                poly.set_property("wire_id", f"wire:{wires}")
 
     # TODO: Improve via filtering? Vias must connect above and below
     # TODO: Would there be any abutted elements? like a poly to a line on the same layer?
@@ -383,6 +384,52 @@ def convert_paths(library):
             cell.add(*path.to_polygons())
             cell.remove(path)
 
+def dotfile(cell_graph):
+    with open('output.dot', 'w') as fp:
+        print("")
+
+def cell_graph(cell):
+
+    layer_elements = {
+        key: [] for key in layer_map.keys()
+    }
+
+    ret = []
+
+    # Map from layer, datatype -> layer_name
+    reverse_map = {val:key for key,val in layer_map.items()}
+
+    for poly in cell.polygons:
+        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_elements[layer_name].append(poly)
+
+    for poly in cell.polygons:
+        layer_name = reverse_map[poly.layer, poly.datatype]
+        if layer_name == 'li1': continue
+
+        layer_offset = layer_ordering.index(layer_name)
+        lower = layer_offset-1
+        upper = layer_offset+1
+
+        if lower < 0:
+            lower_layers = []
+        elif upper >= len(layer_ordering):
+            lower_layers = layer_elements[layer_ordering[lower]]
+        else:
+            lower_layers = layer_elements[layer_ordering[lower]]
+
+        wire_id = poly.get_property("wire_id")[0].decode('utf-8')
+        for el in lower_layers:
+            if overlaps(poly, el):
+                if layer_name == 'mcon':
+                    port_id = el.get_property("port_id")[0].decode('utf-8')
+                    ret.append((str(port_id), str(wire_id)))
+                else:
+                    wire2_id = el.get_property("wire_id")[0].decode('utf-8')
+                    ret.append((str(wire2_id), str(wire_id)))
+
+    return ret
+
 def network(filename):
     library = gdstk.read_gds(filename)
     convert_paths(library)
@@ -391,6 +438,12 @@ def network(filename):
     filter_pads(library) # <- Keep pads that overlap with labels
     custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     connected_components(library['adder_demo'])
+    with open("graph.txt", "w") as fp:
+        els = cell_graph(library['adder_demo'])
+        for x,y in els:
+            print(f"{x} -> {y}", file=fp)
+
+    # dotfile(library['adder_demo'])
     write_files(library, library['adder_demo'], "outputs/adder_demo_network")
 
 
