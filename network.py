@@ -32,17 +32,28 @@ met3,"drawing, text",70,20,Metal 3
 via3,drawing,70,44,Contact from metal 3 to metal 4
 met4,"drawing, text",71,20,Metal 4
 """
-layers_i_care_about = {
-    (67,20),  # li1,
-    (67,44),  # mcon,
-    (68,20),  # met1,
-    (68,44),  # via,d
-    (69,20),  # met2,
-    (69,44),  # via2,
-    (70,20),  # met3,
-    # (70,44),  # via3,
-    # (71,20),  # met4,
+
+layer_map = {
+    "li1" :(67,20),
+    "mcon":(67,44),
+    "met1":(68,20),
+    "via" :(68,44),
+    "met2":(69,20),
+    "via2":(69,44),
+    "met3":(70,20),
 }
+layer_ordering = [
+    "li1",
+    "mcon",
+    "met1",
+    "via",
+    "met2",
+    "via2",
+    "met3",
+]
+
+layers_i_care_about = set(layer_map.values())
+# Dumb, but labels don't have a datatype
 layers_i_care_about_1 = set(x[0] for x in layers_i_care_about)
 
 
@@ -173,7 +184,7 @@ def filter_pads(library):
                 cell.remove(polygon)
 
 
-def custom_flatten(cell):
+def custom_flatten(library):
     """
     This copies the 'flatten' logic from the original library,
     but allows me to preserve the type of cell the polys
@@ -182,6 +193,13 @@ def custom_flatten(cell):
 
     counter = {}
 
+    # for cell in library.cells:
+    #     if cell.name == 'adder_demo': continue
+    #     cell.flatten()
+
+    # return
+
+    cell = library['adder_demo']
     for i, ref in enumerate(cell.references):
 
         # Kind of like a rowid on each cell type
@@ -238,7 +256,7 @@ def custom_flatten(cell):
 
 def overlaps(a, b):
     """
-    Just do bounding box
+    Just do bounding box. It's not idea but it'll have to do
     """
     (a_xmin, a_ymin), (a_xmax, a_ymax) = a.bounding_box()
     (b_xmin, b_ymin), (b_xmax, b_ymax) = b.bounding_box()
@@ -252,93 +270,106 @@ def overlaps(a, b):
     # print(f"{a.bounding_box()} {b.bounding_box()} {ret=}")
     return ret
 
+# # This doesn't work, it is over-agressive and very slow
+# def overlaps(a, b):
+#     if a.contain_all(*b.points): return True
+#     if b.contain_all(*a.points): return True
+#
+#     return False
 
+
+def singly_connected(el, mid, lower, upper):
+    for poly in lower:
+        if overlaps(poly, el): return True
+    for poly in upper:
+        if overlaps(poly, el): return True
+    for poly in mid:
+        if poly == el:
+            continue
+        if overlaps(poly, el): return True
+    return False
+
+def doubly_connected(el, lower, upper):
+    maybe = False
+    for poly in lower:
+        if overlaps(poly, el):
+            maybe = True
+            break
+
+    if not maybe: return False
+
+    for poly in upper:
+        if overlaps(poly, el): return True
+    return False
 
 
 def connected_components(cell):
 
-    # Going to do this the dumb way
-    known_elements = set()
+    print("Connected components")
 
-    l1_els   = []
-    mcon_els = []
-    met1_els = []
-    via1_els = []
-    met2_els = []
-    via2_els = []
+    layer_elements = {
+        key: [] for key in layer_map.keys()
+    }
 
-    layer, datatype = (67,20)  # li1,
+    # Map from layer, datatype -> layer_name
+    reverse_map = {val:key for key,val in layer_map.items()}
+
     for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            # Accept all l1s - we already filtered them
-            l1_els.append(poly)
+        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_elements[layer_name].append(poly)
 
-    layer, datatype = (67,44)  # mcon,
     for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in l1_els:
-                if overlaps(poly, el):
-                    keep = True
-                    mcon_els.append(poly)
-            if not keep:
-                cell.remove(poly)
+        # Do vias and mcon first as they have the stricted requirements to be
+        # connected top and bottom
+        if layer_name not in {"mcon", "via", "via2"}: continue
 
+        layer_name = reverse_map[poly.layer, poly.datatype]
 
-    layer, datatype = (68,20)  # met1,
+        layer_offset = layer_ordering.index(layer_name)
+        lower = layer_offset-1
+        upper = layer_offset+1
+
+        if lower < 0:
+            lower_layers = []
+            upper_layers = layer_elements[layer_ordering[upper]]
+        elif upper >= len(layer_ordering):
+            lower_layers = layer_elements[layer_ordering[lower]]
+            upper_layers = []
+        else:
+            upper_layers = layer_elements[layer_ordering[upper]]
+            lower_layers = layer_elements[layer_ordering[lower]]
+
+        connected = doubly_connected(poly, lower_layers, upper_layers)
+
+        if not connected:
+            cell.remove(poly)
+
     for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in mcon_els:
-                if overlaps(poly, el):
-                    keep = True
-                    met1_els.append(poly)
-            if not keep:
-                cell.remove(poly)
+        if layer_name in {"mcon", "via", "via2"}: continue
+        layer_name = reverse_map[poly.layer, poly.datatype]
 
-    layer, datatype = (68,44)  # via
-    for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in met1_els:
-                if overlaps(poly, el):
-                    keep = True
-                    via1_els.append(poly)
-            if not keep:
-                cell.remove(poly)
+        layer_offset = layer_ordering.index(layer_name)
+        lower = layer_offset-1
+        upper = layer_offset+1
 
-    layer, datatype = (69,20)  # met2,
-    for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in via1_els:
-                if overlaps(poly, el):
-                    keep = True
-                    met2_els.append(poly)
-            if not keep:
-                cell.remove(poly)
+        mid = layer_elements[layer_ordering[layer_offset]]
+        if lower < 0:
+            lower_layers = []
+            upper_layers = layer_elements[layer_ordering[upper]]
+        elif upper >= len(layer_ordering):
+            lower_layers = layer_elements[layer_ordering[lower]]
+            upper_layers = []
+        else:
+            upper_layers = layer_elements[layer_ordering[upper]]
+            lower_layers = layer_elements[layer_ordering[lower]]
 
-    layer, datatype = (69,44)  # via2,
-    for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in met2_els:
-                if overlaps(poly, el):
-                    keep = True
-                    via2_els.append(poly)
-            if not keep:
-                cell.remove(poly)
+        connected = singly_connected(poly, mid, lower_layers, upper_layers)
 
-    layer, datatype = (70,20)  # met3,
-    for poly in cell.polygons:
-        if (poly.layer, poly.datatype) == (layer, datatype):
-            keep = False
-            for el in via2_els:
-                if overlaps(poly, el):
-                    keep = True
-                    # via2_els.append(poly) # nowhere to save it
-            if not keep:
-                cell.remove(poly)
+        if not connected:
+            cell.remove(poly)
+
+    # TODO: Improve via filtering? Vias must connect above and below
+    # TODO: Would there be any abutted elements? like a poly to a line on the same layer?
 
     # WORKING UP TO HERE WITH DIRECTIONAL ARTIFACTS
 
@@ -354,7 +385,7 @@ def network(filename):
     filter_layers(library)
     filter_filters(library)
     filter_pads(library)
-    custom_flatten(library['adder_demo']) # Why doesn't this work? It's like the library doesn't like references being removed?
+    custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     connected_components(library['adder_demo'])
     write_files(library, library['adder_demo'], "outputs/adder_demo_network")
 
