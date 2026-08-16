@@ -1,7 +1,8 @@
 import gdstk
 
 labels_i_care_about = {
-    "A", "A_N", "A1", "A2", "A2", "A3",
+    "A", "A_N",
+    "A0", "A1", "A2", "A2", "A3",
     "B", "B_N", "B1", "B1_N",
     "C", "CLK",
     "D",
