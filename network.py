@@ -265,13 +265,17 @@ def overlaps(a, b):
     (b_xmin, b_ymin), (b_xmax, b_ymax) = b.bounding_box()
 
     ret = True
-    if a_xmax < b_xmin: ret = False
-    if a_xmin > b_xmax: ret = False
-    if a_ymax < b_ymin: ret = False
-    if a_ymin > b_ymax: ret = False
+    if a_xmax < b_xmin: return False
+    if a_xmin > b_xmax: return False
+    if a_ymax < b_ymin: return False
+    if a_ymin > b_ymax: return False
+
+    # We'll see if this fixes the issue of mux A0 and A1 overlapping
+    if a.contain_any(*b.points): return True
+    if b.contain_any(*a.points): return True
 
     # print(f"{a.bounding_box()} {b.bounding_box()} {ret=}")
-    return ret
+    return False
 
 # # This doesn't work, it is over-agressive and very slow
 # def overlaps(a, b):
