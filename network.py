@@ -203,13 +203,10 @@ def custom_flatten(library):
     came from, and which port it is
     """
 
-    count = 1
+    count = {}
 
     cell = library['adder_demo']
     for i, ref in enumerate(cell.references):
-
-        # Kind of like a rowid on each cell type
-        count += 1
 
         # Paths apparently don't need to be moved?
         # Also TODO: Should actually convert to polys
@@ -223,8 +220,12 @@ def custom_flatten(library):
             port_name = poly.get_property("port_name")
             if port_name:
 
+                port_name = port_name[0].decode('utf-8')
+                _type, _port = port_name.split(':')
+                count[_type] = cnt.get(_type,0) + 1
+
                 x, y = ref.origin
-                port_id = f"{count}:x:{x:.3f}:y:{y:.3f}:{port_name[0].decode('utf-8')}"
+                port_id = f"x:{x:.3f}:y:{y:.3f}:{_type}:{count[_type]}:{_port}"
                 # print(f"{port_name=} {port_id=}")
                 # Now every circuit element port identifies itself
                 poly.set_property("port_id", port_id)

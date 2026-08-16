@@ -60,8 +60,8 @@ def find_bounding(port_wire_mapping, box):
 
     (xmin, ymin), (xmax, ymax) = box
     for port, wire in port_wire_mapping.items():
-        """ eg '1054:x:69.920:y:27.200:xnor2_2:Y' """
-        _, _, x, _, y, name, _ = port.split(":")
+        """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
+        _, x, _, y, name, _, _ = port.split(":")
         x, y = float(x), float(y)
 
         # It seems clocks don't always keep within domains
@@ -80,11 +80,15 @@ def print_element(name, port_wire_map):
     print()
     print(f"---------------------{name.upper()}--------------------")
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[0]):
-        print(port, '->', wire)
+        port_pretty = ":".join(port.split(":")[4:])
+        port_pretty = port_pretty.replace("_1","").replace("_2","")
+        print(port_pretty, '->', wire)
 
     print(f"-----------------------------------------")
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[1]):
-        print(wire, '<-', port)
+        port_pretty = ":".join(port.split(":")[4:])
+        port_pretty = port_pretty.replace("_1","").replace("_2","")
+        print(wire, '<-', port_pretty)
 
     print()
 
@@ -96,6 +100,8 @@ if __name__ == '__main__':
             all_wire_segments.append((l, r))
 
     port_wire_mapping = find_wires(all_wire_segments)
+    # for port, wire in port_wire_mapping.items():
+    #     print(port, wire)
 
     comparitor_box = ((50, 40), (100,60)) # Bit of a guess
     adder_box = ((50, 0), (100,40)) # Bit of a guess

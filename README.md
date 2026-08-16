@@ -444,6 +444,7 @@ If I do that, I 'should' be able to create a dot graph of the network.
 2. Start with 'li1' layer with valid IO ports
 3. Step by layer, keeping all elements that touch an existing element
   - sequence is li1, mcon, met1, via (should be called via1 I think?), met2, via2, met3
+4. Some layers (like the 'via' and 'mcon' layers) have a stricter requirement - they need a component above and below
 
 It will be an O(M x N) calculation where M is the number of elements on layer i and N is the number of elements on layer i+1.
 
@@ -458,12 +459,27 @@ that means what we'd consider a single wire consists of a sequence of wire segme
 all somehow.
 
 I already have a way of knowing if two elements are connected, so I can then use a depth-first-search to
-accumulate all wire segments into a single wire. Running that gives roughly 194 total wires in the circuit.
+accumulate all wire segments into a single wire. Running that gives roughly 280 total wires in the circuit.
 This is an undercount as it's not including power and ground, and I noticed missing wires in the 'met4'
 layer that I'll probably manually fix
 
 ```
 % make simplify | wc -l
-     194
- ```
+     280
+```
+
+### Several hours later
+
+Gah why do I keep making mistakes? I missed a simple fact in one area (that two overlapping elements on the same layer
+are connected), EVEN THOUGH I'D GOTTEN THIS EXACT LOGIC CORRECT ELSEWHERE!!
+
+Anyway, I worked out the comparitor fairly quickly, the bit pattern is '0b111110000', which exactly reflects the
+circuit's logic. The shift register was much harder. After banging my head against my own meat-brain's limitations,
+finaly I can see all the 'S' signals on the muxes are wired to the 'en' signal and all the clocks share a wire,
+which makes sense.
+
+I'm working with pen-and-paper trying to parse the logic of the shift register, but now unburdened by my own
+shortcomings I think I have broken the back of this thing. I don't yet have a way of specifying inputs or outputs,
+and there's a few more bugs I know are coming (related to my overly agressive filtering) but I think I can do it.
+
 
