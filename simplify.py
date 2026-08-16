@@ -42,7 +42,7 @@ def find_wires(conns):
     print(f"Total number of wires: {len(all_wires)=}")
     for wire in all_wires:
         canonical_id += 1
-        canonical_name = f"Canonical:{canonical_id}"
+        canonical_name = f"Wire:{canonical_id}"
         for wire_segment in wire:
             segment_mapping[wire_segment] = canonical_name
 

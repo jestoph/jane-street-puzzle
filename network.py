@@ -1,5 +1,7 @@
 import gdstk
 import os
+import time
+from contextlib import contextmanager
 
 """
 We build up the network like this:
@@ -34,7 +36,7 @@ via3,drawing,70,44,Contact from metal 3 to metal 4
 met4,"drawing, text",71,20,Metal 4
 """
 
-layer_map = {
+name_to_layer = {
     "li1" :(67,20),
     "mcon":(67,44),
     "met1":(68,20),
@@ -43,6 +45,9 @@ layer_map = {
     "via2":(69,44),
     "met3":(70,20),
 }
+
+layer_to_name = {val:key for key,val in name_to_layer.items()}
+
 layer_ordering = [
     "li1",
     "mcon",
@@ -53,9 +58,7 @@ layer_ordering = [
     "met3",
 ]
 
-layers_i_care_about = set(layer_map.values())
-# Dumb, but labels don't have a datatype
-layers_i_care_about_1 = set(x[0] for x in layers_i_care_about)
+layers_i_care_about = set(name_to_layer.values())
 
 
 def increase_view(svgfile):
@@ -115,6 +118,9 @@ def write_files(library, cell, name):
 
 
 def filter_layers(library):
+
+    # Dumb, but labels don't have a datatype
+    layers_i_care_about_1 = set(x[0] for x in layers_i_care_about)
 
     for cell in library.cells:
 
@@ -180,7 +186,8 @@ def filter_pads(library):
                 origin = label.origin
                 if polygon.contain(label.origin):
                     # We're collecting the port name for later
-                    polygon.set_property("port_name", f"{cell.name}:{label.text})")
+                    name = cell.name.replace('sky130_fd_sc_hd__','')
+                    polygon.set_property("port_name", f"{name}:{label.text})")
                     keep = True
             if not keep:
                 cell.remove(polygon)
@@ -212,7 +219,9 @@ def custom_flatten(library):
         for poly in polys:
             port_name = poly.get_property("port_name")
             if port_name:
-                port_id = f"{count}:{port_name[0].decode('utf-8')}"
+
+                x, y = ref.origin
+                port_id = f"{count}:x:{x:.3f}:y:{y:.3f}:{port_name[0].decode('utf-8')}"
                 # print(f"{port_name=} {port_id=}")
                 # Now every circuit element port identifies itself
                 poly.set_property("port_id", port_id)
@@ -302,24 +311,22 @@ def connected_components(cell):
     print("Connected components")
 
     layer_elements = {
-        key: [] for key in layer_map.keys()
+        key: [] for key in name_to_layer.keys()
     }
     wires = 0
 
     # Map from layer, datatype -> layer_name
-    reverse_map = {val:key for key,val in layer_map.items()}
-
     for poly in cell.polygons:
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
         layer_elements[layer_name].append(poly)
 
     for poly in cell.polygons:
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
         # Do vias and mcon first as they have the stricted requirements to be
         # connected top and bottom
         if layer_name not in {"mcon", "via", "via2"}: continue
 
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
 
         layer_offset = layer_ordering.index(layer_name)
         lower = layer_offset-1
@@ -342,12 +349,12 @@ def connected_components(cell):
         else:
             wires += 1
             if not poly.get_property("port_id"):
-                poly.set_property("wire_id", f"wire:{wires}")
+                poly.set_property("wire_seg_id", f"wire:{wires}")
 
     for poly in cell.polygons:
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
         if layer_name in {"mcon", "via", "via2"}: continue
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
 
         layer_offset = layer_ordering.index(layer_name)
         lower = layer_offset-1
@@ -371,7 +378,7 @@ def connected_components(cell):
         else:
             wires += 1
             if not poly.get_property("port_id"):
-                poly.set_property("wire_id", f"wire:{wires}")
+                poly.set_property("wire_seg_id", f"wire:{wires}")
 
     # TODO: Improve via filtering? Vias must connect above and below
     # TODO: Would there be any abutted elements? like a poly to a line on the same layer?
@@ -391,20 +398,17 @@ def dotfile(cell_graph):
 def cell_graph(cell):
 
     layer_elements = {
-        key: [] for key in layer_map.keys()
+        key: [] for key in name_to_layer.keys()
     }
 
     ret = []
 
-    # Map from layer, datatype -> layer_name
-    reverse_map = {val:key for key,val in layer_map.items()}
-
     for poly in cell.polygons:
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
         layer_elements[layer_name].append(poly)
 
     for poly in cell.polygons:
-        layer_name = reverse_map[poly.layer, poly.datatype]
+        layer_name = layer_to_name[poly.layer, poly.datatype]
         if layer_name == 'li1': continue
 
         layer_offset = layer_ordering.index(layer_name)
@@ -418,28 +422,44 @@ def cell_graph(cell):
         else:
             lower_layers = layer_elements[layer_ordering[lower]]
 
-        wire_id = poly.get_property("wire_id")[0].decode('utf-8')
+        wire_seg_id = poly.get_property("wire_seg_id")[0].decode('utf-8')
         for el in lower_layers:
             if overlaps(poly, el):
                 if layer_name == 'mcon':
                     port_id = el.get_property("port_id")[0].decode('utf-8')
-                    ret.append((str(port_id), str(wire_id)))
+                    ret.append((str(port_id), str(wire_seg_id)))
                 else:
-                    wire2_id = el.get_property("wire_id")[0].decode('utf-8')
-                    ret.append((str(wire2_id), str(wire_id)))
+                    wire2_id = el.get_property("wire_seg_id")[0].decode('utf-8')
+                    ret.append((str(wire2_id), str(wire_seg_id)))
 
     return ret
 
+@contextmanager
+def measure_time(name):
+    t = time.time()
+    try:
+        yield
+    finally:
+        s = time.time()
+        print(f"> {name} - {s - t}")
+
 def network(filename):
     library = gdstk.read_gds(filename)
-    convert_paths(library)
-    filter_layers(library)
-    filter_filters(library)
-    filter_pads(library) # <- Keep pads that overlap with labels
-    custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
-    connected_components(library['adder_demo'])
-    with open("graph.txt", "w") as fp:
+    with measure_time("converting_paths"):
+        convert_paths(library)
+    with measure_time("filter_layers"):
+        filter_layers(library)
+    with measure_time("filter_filters"):
+        filter_filters(library)
+    with measure_time("filter_pads"):
+        filter_pads(library) # <- Keep pads that overlap with labels
+    with measure_time("custom_flatten"):
+        custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
+    with measure_time("connected_components"):
+        connected_components(library['adder_demo'])
+    with measure_time("call_graph"):
         els = cell_graph(library['adder_demo'])
+    with open("graph.txt", "w") as fp:
         for x,y in els:
             print(f"{x} -> {y}", file=fp)
 
