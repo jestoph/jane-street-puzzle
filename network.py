@@ -114,7 +114,10 @@ def write_files(library, cell, name):
     # I find the original size quite hard to see, so I'll
     # fudge it here
     increase_view(filename)
-    os.unlink(f"{name}.gds")
+    try:
+        os.unlink(f"{name}.gds")
+    except:
+        pass
     library.write_gds(f"{name}.gds")
 
 
@@ -187,7 +190,7 @@ def filter_pads(library):
                 if polygon.contain(label.origin):
                     # We're collecting the port name for later
                     name = cell.name.replace('sky130_fd_sc_hd__','')
-                    polygon.set_property("port_name", f"{name}:{label.text})")
+                    polygon.set_property("port_name", f"{name}:{label.text}")
                     keep = True
             if not keep:
                 cell.remove(polygon)
@@ -273,6 +276,10 @@ def overlaps(a, b):
     # We'll see if this fixes the issue of mux A0 and A1 overlapping
     if a.contain_any(*b.points): return True
     if b.contain_any(*a.points): return True
+
+    # I can't remember if this helps or not
+    if gdstk.boolean(a, b, 'and'): return True
+
 
     # print(f"{a.bounding_box()} {b.bounding_box()} {ret=}")
     return False
@@ -395,9 +402,6 @@ def convert_paths(library):
             cell.add(*path.to_polygons())
             cell.remove(path)
 
-def dotfile(cell_graph):
-    with open('output.dot', 'w') as fp:
-        print("")
 
 def cell_graph(cell):
 
@@ -426,8 +430,22 @@ def cell_graph(cell):
         else:
             lower_layers = layer_elements[layer_ordering[lower]]
 
+        mid = layer_elements[layer_ordering[layer_offset]]
+
         wire_seg_id = poly.get_property("wire_seg_id")[0].decode('utf-8')
+
         for el in lower_layers:
+            if overlaps(poly, el):
+                if layer_name == 'mcon':
+                    port_id = el.get_property("port_id")[0].decode('utf-8')
+                    ret.append((str(port_id), str(wire_seg_id)))
+                else:
+                    wire2_id = el.get_property("wire_seg_id")[0].decode('utf-8')
+                    ret.append((str(wire2_id), str(wire_seg_id)))
+
+        for el in mid:
+            if poly == el:
+                continue
             if overlaps(poly, el):
                 if layer_name == 'mcon':
                     port_id = el.get_property("port_id")[0].decode('utf-8')

@@ -4,9 +4,10 @@ def find_wires(conns):
     wire_mapping = {}
     wire_segment_mapping = {}
     for l, r in conns:
-        if 'wire' not in l:
+        # We're going to treat clkbufs as wierd wires
+        if ('wire' not in l) and ('clkbuf' not in l):
             wire_segment_mapping[l] = r
-        elif 'wire' not in r:
+        elif ('wire' not in r) and ('clkbuf' not in r):
             wire_segment_mapping[r] = l
         else:
 
@@ -60,8 +61,13 @@ def find_bounding(port_wire_mapping, box):
     (xmin, ymin), (xmax, ymax) = box
     for port, wire in port_wire_mapping.items():
         """ eg '1054:x:69.920:y:27.200:xnor2_2:Y' """
-        _, _, x, _, y, _, _ = port.split(":")
+        _, _, x, _, y, name, _ = port.split(":")
         x, y = float(x), float(y)
+
+        # It seems clocks don't always keep within domains
+        # so just add them in
+        if 'clkbuf' in name:
+            ret[port] = wire
 
         if x < xmin or x > xmax or y < ymin or y > ymax:
             continue
@@ -101,4 +107,5 @@ if __name__ == '__main__':
     sr_1 = find_bounding(port_wire_mapping, sr_1_box)
     sr_2 = find_bounding(port_wire_mapping, sr_2_box)
 
-    print_element("Shift Register 2", sr_2)
+    # print_element("Comparitor", comparitor)
+    print_element("Shift Register 1", sr_1)
