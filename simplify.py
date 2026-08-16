@@ -1,4 +1,5 @@
 
+
 def find_wires(conns):
     wire_mapping = {}
     wire_segment_mapping = {}
@@ -40,25 +41,64 @@ def find_wires(conns):
     canonical_id = 0
     segment_mapping = {}
     print(f"Total number of wires: {len(all_wires)=}")
-    for wire in all_wires:
+    for wire in sorted(all_wires): # Sort so wires are predictably named
         canonical_id += 1
         canonical_name = f"Wire:{canonical_id}"
         for wire_segment in wire:
             segment_mapping[wire_segment] = canonical_name
 
+    port_wire_mapping = {}
     for port, wire_segment in wire_segment_mapping.items():
-        print(port, '->', segment_mapping[wire_segment])
+        port_wire_mapping[port] = segment_mapping[wire_segment]
+
+    return port_wire_mapping
 
 
+def find_bounding(port_wire_mapping, box):
+    ret = {}
+
+    (xmin, ymin), (xmax, ymax) = box
+    for port, wire in port_wire_mapping.items():
+        """ eg '1054:x:69.920:y:27.200:xnor2_2:Y' """
+        _, _, x, _, y, _, _ = port.split(":")
+        x, y = float(x), float(y)
+
+        if x < xmin or x > xmax or y < ymin or y > ymax:
+            continue
+
+        ret[port] = wire
+
+    return ret
+
+def print_element(name, port_wire_map):
+    print()
+    print(f"---------------------{name.upper()}--------------------")
+    for port, wire in sorted(port_wire_map.items(), key=lambda x: x[0]):
+        print(port, '->', wire)
+
+    print(f"-----------------------------------------")
+    for port, wire in sorted(port_wire_map.items(), key=lambda x: x[1]):
+        print(wire, '<-', port)
+
+    print()
 
 if __name__ == '__main__':
-    _all = []
+    all_wire_segments = []
     with open('graph.txt') as fp:
         for line in fp:
             l, _, r = line.split()
-            _all.append((l, r))
+            all_wire_segments.append((l, r))
 
-    find_wires(_all)
+    port_wire_mapping = find_wires(all_wire_segments)
 
+    comparitor_box = ((50, 40), (100,60)) # Bit of a guess
+    adder_box = ((50, 0), (100,40)) # Bit of a guess
+    sr_1_box = ((0, 45), (50, 100))
+    sr_2_box = ((0, 0), (50, 45))
 
+    comparitor = find_bounding(port_wire_mapping, comparitor_box)
+    adder = find_bounding(port_wire_mapping, adder_box)
+    sr_1 = find_bounding(port_wire_mapping, sr_1_box)
+    sr_2 = find_bounding(port_wire_mapping, sr_2_box)
 
+    print_element("Shift Register 2", sr_2)

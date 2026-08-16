@@ -121,7 +121,6 @@ def filter_layers(library):
 
     # Dumb, but labels don't have a datatype
     layers_i_care_about_1 = set(x[0] for x in layers_i_care_about)
-
     for cell in library.cells:
 
         for label in cell.labels:
