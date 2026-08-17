@@ -131,5 +131,6 @@ if __name__ == '__main__':
     all_els = find_bounding(port_to_wire, ((0,0),(100,100)))
 
     # print_element("Comparitor", comparitor)
-    print_element("Shift Register 1", sr_1)
+    # print_element("Shift Register 1", sr_1)
+    print_element("Shift Register 2", sr_2)
     # print_element("ALL THE THINGS", all_els)
