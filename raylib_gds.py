@@ -28,6 +28,74 @@ I intend to heavily modify this, so maybe it's not needed.
 
 """
 
+def MyUpdateCamera(camera):
+
+    camera_mouse_move_sensitivity=0.003
+
+    mousePositionDelta = R.get_mouse_delta()
+    mouseWheelMoveDelta = R.get_mouse_wheel_move();
+
+    rotateAroundTarget = True;
+    lockView = True;
+    rotateUp = False;
+
+    KEY_LEFT_SHIFT      = 340 #
+    KEY_RIGHT_SHIFT     = 344 #
+
+    if R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT) and (R.is_key_down(KEY_LEFT_SHIFT) or R.is_key_down(KEY_RIGHT_SHIFT)):
+        # CAMERA PAN
+        R.CameraMoveRight(camera, mousePositionDelta.x); # // TODO: Probably need to modify this to be in screen space rather than world space
+        R.CameraMoveUp(camera, mousePositionDelta.y);    # // TODO: Probably need to modify this to be in screen space rather than world space
+
+    elif R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT):
+        # CAMERA ROTATE
+        CameraYaw(camera, -mousePositionDelta.x*camera_mouse_move_sensitivity, rotateAroundTarget);
+        CameraPitch(camera, -mousePositionDelta.y*camera_mouse_move_sensitivity, lockView, rotateAroundTarget, rotateUp);
+
+    if mouseWheelMoveDelta != 0.0:
+        # CAMERA ZOOM
+        R.CameraMoveToTarget(camera, -mouseWheelMoveDelta);
+
+
+"""
+
+void UpdateCamera(Camera *camera)
+{
+    // Camera mouse movement sensitivity
+    #define CAMERA_MOUSE_MOVE_SENSITIVITY               0.003f
+
+    Vector2 mousePositionDelta = GetMouseDelta();
+    float mouseWheelMoveDelta = GetMouseWheelMove();
+
+    /* Not sure what any of these do */
+    bool rotateAroundTarget = true;
+    bool lockView = true;
+    bool rotateUp = false;
+
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && IsKeyDown(KEY_CTRL?))
+    {
+        /* CAMERA PAN */
+        CameraMoveRight(camera, mousePositionDelta.x); // TODO: Probably need to modify this to be in screen space rather than world space
+        CameraMoveUp(camera, mousePositionDelta.y);    // TODO: Probably need to modify this to be in screen space rather than world space
+
+    } else if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+        /* CAMERA ROTATE */
+        CameraYaw(camera, -mousePositionDelta.x*CAMERA_MOUSE_MOVE_SENSITIVITY, rotateAroundTarget);
+        CameraPitch(camera, -mousePositionDelta.y*CAMERA_MOUSE_MOVE_SENSITIVITY, lockView, rotateAroundTarget, rotateUp);
+
+    }
+
+    if(mouseWheelMoveDelta != 0.0f)
+    {
+        /* CAMERA ZOOM */
+        CameraMoveToTarget(camera, -mouseWheelMoveDelta);
+    }
+}
+"""
+
+
+
 
 # Rotates the camera around its up vector
 # Yaw is "looking left and right"
@@ -98,8 +166,25 @@ def CameraPitch(camera, angle, lockView, rotateAroundTarget, rotateUp):
         # Rotate up direction around right axis
         camera.up = R.Vector3RotateByAxisAngle(camera.up, right, angle);
 
-def main():
+def build_world():
     MAX_COLUMNS=20
+    def get_layer_height(x): return 1
+    def get_layer_colour(x):
+        return R.Color(R1.GetRandomValue(20, 255), R1.GetRandomValue(10, 55), 30, 255 )
+
+    # Generates some random columns
+    heights = []
+    positions = []
+    colours = []
+
+    for i in range(MAX_COLUMNS):
+        heights.append(get_layer_height(i))
+        positions.append(R.Vector3(R1.GetRandomValue(-15, 15), (heights[i]/2.0), R1.GetRandomValue(-15, 15)))
+        colours.append(get_layer_colour(i))
+
+    return positions, heights, colours
+
+def main():
     screenWidth = 800;
     screenHeight = 450;
     # R.set_config_flags(R.FLAG_WINDOW_UNDECORATED) # Windowless
@@ -114,15 +199,8 @@ def main():
 
     cameraMode = R.CAMERA_FIRST_PERSON;
 
-    # Generates some random columns
-    heights = []
-    positions = []
-    colors = []
+    positions, heights, colours =  build_world()
 
-    for i in range(MAX_COLUMNS):
-        heights.append(R1.GetRandomValue(1, 12))
-        positions.append(R.Vector3(R1.GetRandomValue(-15, 15), (heights[i]/2.0), R1.GetRandomValue(-15, 15)))
-        colors.append(R.Color(R1.GetRandomValue(20, 255), R1.GetRandomValue(10, 55), 30, 255 ))
 
     # Don't love this?
     # R.disable_cursor();                    # Limit cursor to relative movement inside the window
@@ -130,12 +208,12 @@ def main():
     R.set_target_fps(60);                   # Set our game to run at 60 frames-per-second
     while not R.window_should_close():
 
-        if move := R.get_mouse_wheel_move(): #  GetMouseWheelMove(void);                          // Get mouse wheel movement for X or Y, whichever is larger
-            print(f"MOVE {move=}")
-        # elif move1 := R.get_mouse_wheel_move_v(): # GetMouseWheelMoveV(void);                       // Get mouse wheel movement for both X and Y
-        #     if move1 != move:
-        #         move = move1
-        #     print(f"MOVE_V {move=}")
+        # if move := R.get_mouse_wheel_move(): #  GetMouseWheelMove(void);                          // Get mouse wheel movement for X or Y, whichever is larger
+        #     print(f"MOVE {move=}")
+        # # elif move1 := R.get_mouse_wheel_move_v(): # GetMouseWheelMoveV(void);                       // Get mouse wheel movement for both X and Y
+        # #     if move1 != move:
+        # #         move = move1
+        # #     print(f"MOVE_V {move=}")
 
 
         # Update
@@ -182,7 +260,8 @@ def main():
         # Update camera computes movement internally depending on the camera mode
         # Some default standard keyboard/mouse inputs are hardcoded to simplify use
         # For advanced camera controls, it's recommended to compute camera movement manually
-        R.update_camera(camera, cameraMode);                  # Update camera
+        # R.update_camera(camera, cameraMode);                  # Update camera
+        MyUpdateCamera(camera)
 
 
         if R.begin_drawing() or True: # Allow us to use indenting
@@ -192,15 +271,19 @@ def main():
 
 
             if R.begin_mode_3d(camera) or True: # Allow us to use indenting
-                R.draw_plane(R.Vector3(0.0, 0.0, 0.0 ), R.Vector2( 32.0, 32.0 ), R.LIGHTGRAY); # Draw ground
+
+                # R.draw_plane(R.Vector3(0.0, 0.0, 0.0 ), R.Vector2( 100.0, 100.0 ), R.LIGHTGRAY); # Draw ground
+
+                R.draw_grid(100, 1) # count, spacing
+
                 R.draw_cube(R.Vector3( -16.0, 2.5, 0.0 ), 1.0, 5.0, 32.0, R.BLUE);     # Draw a blue wall
                 R.draw_cube(R.Vector3( 16.0, 2.5, 0.0 ), 1.0, 5.0, 32.0, R.LIME);      # Draw a green wall
                 R.draw_cube(R.Vector3( 0.0, 2.5, 16.0 ), 32.0, 5.0, 1.0, R.GOLD);      # Draw a yellow wall
 
                 # # Draw some cubes around
-                for i in range(MAX_COLUMNS):
-                    R.draw_cube(positions[i], 2.0, heights[i], 2.0, colors[i]);
-                    R.draw_cube_wires(positions[i], 2.0, heights[i], 2.0, R.MAROON);
+                for position, height, colour in zip(positions, heights, colours):
+                    R.draw_cube(position, 2.0, height, 2.0, colour);
+                    R.draw_cube_wires(position, 2.0, height, 2.0, R.MAROON);
 
                 if (cameraMode == R.CAMERA_THIRD_PERSON):
                     R.draw_cube(camera.target, 0.5, 0.5, 0.5, R.PURPLE);

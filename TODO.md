@@ -13,6 +13,10 @@
   [x] Start gds viewer in raylib - steal an example
   [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
   [x] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
+  [ ] Get standard camera movements working -
+    [ ] Pan
+    [ ] Zoom
+    [ ] Drag/rotate
   [ ] Work out how to highlight a cell - there's a voxel example that does this.
   [ ] Try to place some elements for a small cell
 
