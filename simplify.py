@@ -1,65 +1,80 @@
 
+def get_wire_segments(conns):
+    list_of_wire_segments = []
+    for l, r in conns:
+        if 'wire' in l:
+            list_of_wire_segments.append(l)
+        if 'wire' in r:
+            list_of_wire_segments.append(r)
+        if 'clkbuf' in l:
+            list_of_wire_segments.append(l)
+        if 'clkbuf' in r:
+            list_of_wire_segments.append(r)
+    return list(set(list_of_wire_segments))
+
 
 def find_wires(conns):
-    wire_mapping = {}
-    wire_segment_mapping = {}
+    conn_mapping = {}
+    list_of_wire_segments = get_wire_segments(conns)
     for l, r in conns:
-        # We're going to treat clkbufs as wierd wires
-        if ('wire' not in l) and ('clkbuf' not in l):
-            wire_segment_mapping[l] = r
-        elif ('wire' not in r) and ('clkbuf' not in r):
-            wire_segment_mapping[r] = l
+        if l in conn_mapping:
+            conn_mapping[l].append(r)
         else:
-
-            if l in wire_mapping:
-                wire_mapping[l].append(r)
-            else:
-                wire_mapping[l] = [r]
-            if r in wire_mapping:
-                wire_mapping[r].append(l)
-            else:
-                wire_mapping[r] = [l]
+            conn_mapping[l] = [r]
+        if r in conn_mapping:
+            conn_mapping[r].append(l)
+        else:
+            conn_mapping[r] = [l]
 
 
-    all_wires = set()
-    for wire_id in wire_mapping:
+    all_wire_segments = set()
+    for wire_id in list_of_wire_segments:
         collected = set()
         seen = set()
         wires = [wire_id]
         while wires:
             curr = wires.pop()
             seen.add(curr)
-            for n in wire_mapping[curr]:
+            for n in conn_mapping[curr]:
                 if n not in seen:
                     wires.append(n)
-            collected.add(curr)
-        all_wires.add(tuple(sorted(collected)))
+            if 'wire' in curr or 'clkbuf' in curr:
+                collected.add(curr)
+        all_wire_segments.add(tuple(sorted(collected))) # Sort so wires are predictably named
 
 
-    assert sum([len(wires) for wires in all_wires]) == len(wire_mapping)
+    n_collected = sum([len(wires) for wires in all_wire_segments])
+    assert n_collected == len(list_of_wire_segments), f"{n_collected=} {len(list_of_wire_segments)=}"
 
 
-    canonical_id = 0
-    segment_mapping = {}
-    print(f"Total number of wires: {len(all_wires)=}")
-    for wire in sorted(all_wires): # Sort so wires are predictably named
-        canonical_id += 1
-        canonical_name = f"Wire:{canonical_id}"
-        for wire_segment in wire:
-            segment_mapping[wire_segment] = canonical_name
+    wire_id = 0
+    segment_to_wire = {}
+    print(f"Total number of wires: {len(all_wire_segments)=}")
+    for wire_cluster in sorted(all_wire_segments): # Sort so wires are predictably named
+        wire_id += 1
+        wire_name = f"Wire:{wire_id}"
+        for wire_segment in wire_cluster:
+            segment_to_wire[wire_segment] = wire_name
 
-    port_wire_mapping = {}
-    for port, wire_segment in wire_segment_mapping.items():
-        port_wire_mapping[port] = segment_mapping[wire_segment]
+    port_to_wire = {}
+    for port, wire_segment in conns:
+        if 'wire' in port: continue
+        if 'clkbuf' in port: continue
+        if port in port_to_wire:
+            # This can happen (AND BE DIFFERENT) if a port has two pins on it I guess
+            print(f" duplicate {port} -> {segment_to_wire[wire_segment]}")
+            print(f" and       {port} -> {port_to_wire[port]}")
+            assert segment_to_wire[wire_segment] == port_to_wire[port]
+        port_to_wire[port] = segment_to_wire[wire_segment]
 
-    return port_wire_mapping
+    return port_to_wire
 
 
-def find_bounding(port_wire_mapping, box):
+def find_bounding(port_to_wire, box):
     ret = {}
 
     (xmin, ymin), (xmax, ymax) = box
-    for port, wire in port_wire_mapping.items():
+    for port, wire in port_to_wire.items():
         """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
         _, x, _, y, name, _, _ = port.split(":")
         x, y = float(x), float(y)
@@ -99,8 +114,8 @@ if __name__ == '__main__':
             l, _, r = line.split()
             all_wire_segments.append((l, r))
 
-    port_wire_mapping = find_wires(all_wire_segments)
-    # for port, wire in port_wire_mapping.items():
+    port_to_wire = find_wires(all_wire_segments)
+    # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
     comparitor_box = ((50, 40), (100,60)) # Bit of a guess
@@ -108,10 +123,13 @@ if __name__ == '__main__':
     sr_1_box = ((0, 45), (50, 100))
     sr_2_box = ((0, 0), (50, 45))
 
-    comparitor = find_bounding(port_wire_mapping, comparitor_box)
-    adder = find_bounding(port_wire_mapping, adder_box)
-    sr_1 = find_bounding(port_wire_mapping, sr_1_box)
-    sr_2 = find_bounding(port_wire_mapping, sr_2_box)
+    comparitor = find_bounding(port_to_wire, comparitor_box)
+    adder = find_bounding(port_to_wire, adder_box)
+    sr_1 = find_bounding(port_to_wire, sr_1_box)
+    sr_2 = find_bounding(port_to_wire, sr_2_box)
+
+    all_els = find_bounding(port_to_wire, ((0,0),(100,100)))
 
     # print_element("Comparitor", comparitor)
     print_element("Shift Register 1", sr_1)
+    # print_element("ALL THE THINGS", all_els)

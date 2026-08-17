@@ -208,6 +208,10 @@ def custom_flatten(library):
     cell = library['adder_demo']
     for i, ref in enumerate(cell.references):
 
+        name = ref.cell.name
+        name = name.replace('sky130_fd_sc_hd__','')
+        count[name] = count.get(name, 0) + 1
+
         # Paths apparently don't need to be moved?
         # Also TODO: Should actually convert to polys
         # to allow easy overlay checking
@@ -221,11 +225,10 @@ def custom_flatten(library):
             if port_name:
 
                 port_name = port_name[0].decode('utf-8')
-                _type, _port = port_name.split(':')
-                count[_type] = cnt.get(_type,0) + 1
+                _, _port = port_name.split(':')
 
                 x, y = ref.origin
-                port_id = f"x:{x:.3f}:y:{y:.3f}:{_type}:{count[_type]}:{_port}"
+                port_id = f"x:{x:.3f}:y:{y:.3f}:{name}:{count[name]}:{_port}"
                 # print(f"{port_name=} {port_id=}")
                 # Now every circuit element port identifies itself
                 poly.set_property("port_id", port_id)
