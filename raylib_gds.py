@@ -28,7 +28,87 @@ I intend to heavily modify this, so maybe it's not needed.
 
 """
 
-def MyUpdateCamera(camera):
+
+
+def CameraMoveUp(camera, y):
+    """
+    // Moves the camera in its up direction
+    void CameraMoveUp(Camera *camera, float distance)
+    {
+        Vector3 up = GetCameraUp(camera);
+
+        // Scale by distance
+        up = Vector3Scale(up, distance);
+
+        // Move position and target
+        camera->position = Vector3Add(camera->position, up);
+        camera->target = Vector3Add(camera->target, up);
+    }
+    """
+    pass
+
+
+def CameraMoveRight(camera, x, moveInWorldPlane):
+    """
+    // Moves the camera target in its current right direction
+    void CameraMoveRight(Camera *camera, float distance, bool moveInWorldPlane)
+    {
+        Vector3 right = GetCameraRight(camera);
+
+        if (moveInWorldPlane)
+        {
+            // Project vector onto world plane (the plane defined by the up vector)
+            if (fabsf(camera->up.z) > 0.7071f) right.z = 0;
+            else if (fabsf(camera->up.x) > 0.7071f) right.x = 0;
+            else right.y = 0;
+
+            right = Vector3Normalize(right);
+        }
+
+        // Scale by distance
+        right = Vector3Scale(right, distance);
+
+        // Move position and target
+        camera->position = Vector3Add(camera->position, right);
+        camera->target = Vector3Add(camera->target, right);
+    }
+    """
+    pass
+
+def CameraMoveToTarget(camera, delta):
+    """
+    // Moves the camera position closer/farther to/from the camera target
+    void CameraMoveToTarget(Camera *camera, float delta)
+    {
+        float distance = Vector3Distance(camera->position, camera->target);
+
+        // Apply delta
+        distance += delta;
+
+        // Distance must be greater than 0
+        if (distance <= 0) distance = 0.001f;
+
+        // Set new distance by moving the position along the forward vector
+        Vector3 forward = GetCameraForward(camera);
+        camera->position = Vector3Add(camera->target, Vector3Scale(forward, -distance));
+    }
+
+    """
+    pass
+
+def GetCameraForward(camera):
+    return R.vector3_normalize(R.vector3_subtract(camera.target, camera.position))
+
+def GetCameraUp(camera):
+    return R.vector3_normalize(camera.up);
+
+def GetCameraRight(camera):
+    forward = GetCameraForward(camera);
+    up = GetCameraUp(camera);
+
+    return R.vector3_normalize(R.vector3_cross_product(forward, up))
+
+def UpdateCamera(camera):
 
     camera_mouse_move_sensitivity=0.003
 
@@ -44,8 +124,8 @@ def MyUpdateCamera(camera):
 
     if R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT) and (R.is_key_down(KEY_LEFT_SHIFT) or R.is_key_down(KEY_RIGHT_SHIFT)):
         # CAMERA PAN
-        R.CameraMoveRight(camera, mousePositionDelta.x); # // TODO: Probably need to modify this to be in screen space rather than world space
-        R.CameraMoveUp(camera, mousePositionDelta.y);    # // TODO: Probably need to modify this to be in screen space rather than world space
+        CameraMoveRight(camera, mousePositionDelta.x); # // TODO: Probably need to modify this to be in screen space rather than world space
+        CameraMoveUp(camera, mousePositionDelta.y);    # // TODO: Probably need to modify this to be in screen space rather than world space
 
     elif R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT):
         # CAMERA ROTATE
@@ -104,20 +184,20 @@ void UpdateCamera(Camera *camera)
 def CameraYaw(camera, angle, rotateAroundTarget):
 
     # Rotation axis
-    up = R.GetCameraUp(camera);
+    up = GetCameraUp(camera);
 
     # View vector
-    targetPosition = R.Vector3Subtract(camera.target, camera.position)
+    targetPosition = R.vector3_subtract(camera.target, camera.position)
 
     # Rotate view vector around up axis
-    targetPosition = R.Vector3RotateByAxisAngle(targetPosition, up, angle)
+    targetPosition = R.vector3_rotate_by_axis_angle(targetPosition, up, angle)
 
     if (rotateAroundTarget):
         # Move position relative to target
-        camera.position = R.Vector3Subtract(camera.target, targetPosition)
+        camera.position = R.vector3_subtract(camera.target, targetPosition)
     else: # rotate around camera.position
         # Move target relative to position
-        camera.target = R.Vector3Add(camera.position, targetPosition)
+        camera.target = R.vector3_add(camera.position, targetPosition)
 
 # Rotates the camera around its right vector, pitch is "looking up and down"
 #  - lockView prevents camera overrotation (aka "somersaults")
@@ -127,44 +207,44 @@ def CameraYaw(camera, angle, rotateAroundTarget):
 def CameraPitch(camera, angle, lockView, rotateAroundTarget, rotateUp):
 
     # Rotation axis
-    up = R.GetCameraUp(camera);
+    up = GetCameraUp(camera);
 
     # View vector
-    targetPosition = R.Vector3Subtract(camera.target, camera.position)
+    targetPosition = R.vector3_subtract(camera.target, camera.position)
 
     if(lockView):
         # In these camera modes, clamp the Pitch angle
         # to allow only viewing straight up or down
 
         # Clamp view up
-        maxAngleUp = R.Vector3Angle(up, targetPosition);
+        maxAngleUp = R.vector3_angle(up, targetPosition);
         maxAngleUp -= 0.001; # avoid numerical errors
         if (angle > maxAngleUp):
             angle = maxAngleUp;
 
         # Clamp view down
-        maxAngleDown = R.Vector3Angle(R.Vector3Negate(up), targetPosition);
+        maxAngleDown = R.vector3_angle(R.vector3_negate(up), targetPosition);
         maxAngleDown *= -1.0; # downwards angle is negative
         maxAngleDown += 0.001; # avoid numerical errors
         if (angle < maxAngleDown):
             angle = maxAngleDown;
 
     # Rotation axis
-    right = R.GetCameraRight(camera);
+    right = GetCameraUp(camera);
 
     # Rotate view vector around right axis
-    targetPosition = R.Vector3RotateByAxisAngle(targetPosition, right, angle);
+    targetPosition = R.vector3_rotate_by_axis_angle(targetPosition, right, angle);
 
     if (rotateAroundTarget):
         # Move position relative to target
-        camera.position = R.Vector3Subtract(camera.target, targetPosition);
+        camera.position = R.vector3_subtract(camera.target, targetPosition);
     else: # Rotate around camera.position
         # Move target relative to position
-        camera.target = R.Vector3Add(camera.position, targetPosition);
+        camera.target = R.vector3_add(camera.position, targetPosition);
 
     if (rotateUp):
         # Rotate up direction around right axis
-        camera.up = R.Vector3RotateByAxisAngle(camera.up, right, angle);
+        camera.up = R.vector3_rotate_by_axis_angle(camera.up, right, angle);
 
 def build_world():
     MAX_COLUMNS=20
@@ -261,7 +341,7 @@ def main():
         # Some default standard keyboard/mouse inputs are hardcoded to simplify use
         # For advanced camera controls, it's recommended to compute camera movement manually
         # R.update_camera(camera, cameraMode);                  # Update camera
-        MyUpdateCamera(camera)
+        UpdateCamera(camera)
 
 
         if R.begin_drawing() or True: # Allow us to use indenting
