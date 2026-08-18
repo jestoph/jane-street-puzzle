@@ -30,71 +30,31 @@ I intend to heavily modify this, so maybe it's not needed.
 
 
 
-def CameraMoveUp(camera, y):
-    """
-    // Moves the camera in its up direction
-    void CameraMoveUp(Camera *camera, float distance)
-    {
-        Vector3 up = GetCameraUp(camera);
-
-        // Scale by distance
-        up = Vector3Scale(up, distance);
-
-        // Move position and target
-        camera->position = Vector3Add(camera->position, up);
-        camera->target = Vector3Add(camera->target, up);
-    }
-    """
-    pass
+def CameraMoveUp(camera, distance):
+    up = GetCameraUp(camera)
+    up = R.vector3_scale(up, distance)
+    camera.position = R.vector3_add(camera.position, up);
+    camera.target = R.vector3_add(camera.target, up);
 
 
-def CameraMoveRight(camera, x, moveInWorldPlane):
-    """
-    // Moves the camera target in its current right direction
-    void CameraMoveRight(Camera *camera, float distance, bool moveInWorldPlane)
-    {
-        Vector3 right = GetCameraRight(camera);
+def CameraMoveRight(camera, distance, moveInWorldPlane):
+    right = GetCameraRight(camera)
+    if moveInWorldPlane:
+        if (abs(camera.up.z) > 0.7071): right.z = 0;
+        elif (abs(camera.up.x) > 0.7071): right.x = 0;
+        else: right.y = 0;
+        right = R.vector3_normalize(right);
 
-        if (moveInWorldPlane)
-        {
-            // Project vector onto world plane (the plane defined by the up vector)
-            if (fabsf(camera->up.z) > 0.7071f) right.z = 0;
-            else if (fabsf(camera->up.x) > 0.7071f) right.x = 0;
-            else right.y = 0;
-
-            right = Vector3Normalize(right);
-        }
-
-        // Scale by distance
-        right = Vector3Scale(right, distance);
-
-        // Move position and target
-        camera->position = Vector3Add(camera->position, right);
-        camera->target = Vector3Add(camera->target, right);
-    }
-    """
-    pass
+    right = R.vector3_scale(right, distance)
+    camera.position = R.vector3_add(camera.position, right);
+    camera.target = R.vector3_add(camera.target, right);
 
 def CameraMoveToTarget(camera, delta):
-    """
-    // Moves the camera position closer/farther to/from the camera target
-    void CameraMoveToTarget(Camera *camera, float delta)
-    {
-        float distance = Vector3Distance(camera->position, camera->target);
-
-        // Apply delta
-        distance += delta;
-
-        // Distance must be greater than 0
-        if (distance <= 0) distance = 0.001f;
-
-        // Set new distance by moving the position along the forward vector
-        Vector3 forward = GetCameraForward(camera);
-        camera->position = Vector3Add(camera->target, Vector3Scale(forward, -distance));
-    }
-
-    """
-    pass
+    distance = R.vector3_distance(camera.position, camera.target);
+    distance += delta
+    if (distance <= 0): distance = 0.001;
+    forward = GetCameraForward(camera);
+    camera.position = R.vector3_add(camera.target, R.vector3_scale(forward, -distance));
 
 def GetCameraForward(camera):
     return R.vector3_normalize(R.vector3_subtract(camera.target, camera.position))
@@ -124,7 +84,7 @@ def UpdateCamera(camera):
 
     if R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT) and (R.is_key_down(KEY_LEFT_SHIFT) or R.is_key_down(KEY_RIGHT_SHIFT)):
         # CAMERA PAN
-        CameraMoveRight(camera, mousePositionDelta.x); # // TODO: Probably need to modify this to be in screen space rather than world space
+        CameraMoveRight(camera, mousePositionDelta.x, False); # // TODO: Probably need to modify this to be in screen space rather than world space
         CameraMoveUp(camera, mousePositionDelta.y);    # // TODO: Probably need to modify this to be in screen space rather than world space
 
     elif R.is_mouse_button_down(R.MOUSE_BUTTON_LEFT):
@@ -134,7 +94,7 @@ def UpdateCamera(camera):
 
     if mouseWheelMoveDelta != 0.0:
         # CAMERA ZOOM
-        R.CameraMoveToTarget(camera, -mouseWheelMoveDelta);
+        CameraMoveToTarget(camera, -mouseWheelMoveDelta);
 
 
 """
