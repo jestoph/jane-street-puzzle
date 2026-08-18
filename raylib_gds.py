@@ -1,5 +1,6 @@
 import raylib as R1 # Need this for GetRandomValue and Fade?
 import pyray as R
+import gdstk
 
 """
 Bravely stolen from the 3d raylib examples and roughly ported to python
@@ -98,11 +99,6 @@ def UpdateCamera(camera):
         CameraMoveToTarget(camera, -mouseWheelMoveDelta)
 
 
-
-# Rotates the camera around its up vector
-# Yaw is "looking left and right"
-# If rotateAroundTarget is false, the camera rotates around its position
-# Note: angle must be provided in radians
 def CameraYaw(camera, angle, rotateAroundTarget):
 
     # Rotation axis
@@ -121,11 +117,6 @@ def CameraYaw(camera, angle, rotateAroundTarget):
         # Move target relative to position
         camera.target = R.vector3_add(camera.position, targetPosition)
 
-# Rotates the camera around its right vector, pitch is "looking up and down"
-#  - lockView prevents camera overrotation (aka "somersaults")
-#  - rotateAroundTarget defines if rotation is around target or around its position
-#  - rotateUp rotates the up direction as well (typically only useful in CAMERA_FREE)
-# NOTE: [angle] must be provided in radians
 def CameraPitch(camera, angle, lockView, rotateAroundTarget, rotateUp):
 
     # Rotation axis
@@ -168,23 +159,65 @@ def CameraPitch(camera, angle, lockView, rotateAroundTarget, rotateUp):
         # Rotate up direction around right axis
         camera.up = R.vector3_rotate_by_axis_angle(camera.up, right, angle)
 
+
+def draw_info(camera):
+    # Draw info boxes
+    R.draw_rectangle(5, 5, 330, 100, R1.Fade(R.SKYBLUE, 0.5))
+    R.draw_rectangle_lines(5, 5, 330, 100, R.BLUE)
+
+    R.draw_text(b"Camera controls:", 15, 15, 10, R.BLACK)
+    R.draw_text(b"- Move keys: W, A, S, D, Space, Left-Ctrl", 15, 30, 10, R.BLACK)
+    R.draw_text(b"- Look around: arrow keys or mouse", 15, 45, 10, R.BLACK)
+    R.draw_text(b"- Camera mode keys: 1, 2, 3, 4", 15, 60, 10, R.BLACK)
+    R.draw_text(b"- Zoom keys: num-plus, num-minus or mouse scroll", 15, 75, 10, R.BLACK)
+    R.draw_text(b"- Camera projection key: P", 15, 90, 10, R.BLACK)
+
+    R.draw_rectangle(600, 5, 195, 100, R1.Fade(R.SKYBLUE, 0.5))
+    R.draw_rectangle_lines(600, 5, 195, 100, R.BLUE)
+
+    R.draw_text(b"Camera status:", 610, 15, 10, R.BLACK)
+    proj = {
+        R.CAMERA_PERSPECTIVE: "PERSPECTIVE",
+        R.CAMERA_ORTHOGRAPHIC: "ORTHOGRAPHIC"
+    }.get(camera.projection, "CUSTOM")
+    R.draw_text(f"- Projection: {proj}", 610, 45, 10, R.BLACK)
+    R.draw_text(f"- Position: ({camera.position.x:.03f}, {camera.position.y:.03f}, {camera.position.z:.03f})", 610, 60, 10, R.BLACK)
+    R.draw_text(f"- Target: ({camera.target.x:.03f}, {camera.target.y:.03f}, {camera.target.z:.03f})", 610, 75, 10, R.BLACK)
+    R.draw_text(f"- Up: ({camera.up.x:.03f}, {camera.up.y:.03f}, {camera.up.z:.03f})", 610, 90, 10, R.BLACK)
+
 def build_world():
-    MAX_COLUMNS=20
-    def get_layer_height(x): return 1
-    def get_layer_colour(x):
-        return R.Color(R1.GetRandomValue(20, 255), R1.GetRandomValue(10, 55), 30, 255 )
 
-    # Generates some random columns
-    heights = []
-    positions = []
-    colours = []
 
-    for i in range(MAX_COLUMNS):
-        heights.append(get_layer_height(i))
-        positions.append(R.Vector3(R1.GetRandomValue(-15, 15), (heights[i]/2.0), R1.GetRandomValue(-15, 15)))
-        colours.append(get_layer_colour(i))
+    library = gdstk.read_gds("warmup/04_final.gds")
 
-    return positions, heights, colours
+    c = R.Color(R1.GetRandomValue(20, 255), R1.GetRandomValue(10, 55), 30, 255 )
+
+    ret = []
+    for cell in library.cells:
+        name = cell.name
+        if 'mux' not in name: continue
+
+        for poly in cell.polygons:
+
+            # TODO: Project correctly on to pixels
+            # RLAPI void DrawCube(Vector3 position, float width, float height, float length, Color color);             // Draw cube
+            (minx, miny), (maxx, maxy) = poly.bounding_box()
+            (minz, maxz) = (0, 1)
+
+            px, pz, py = (minx + maxx)/2, -(miny + maxy)/2, (minz+maxz)/2
+            sx, sz, sy = maxx - minx, maxy-miny, maxz-maxz
+
+            position = R.Vector3(px, py, pz)
+            size = R.Vector3(sx, sy, sz)
+            colour = c
+
+            ret.append((position, size, colour))
+
+    return ret
+
+
+
+
 
 def main():
     screenWidth = 800
@@ -199,73 +232,26 @@ def main():
     camera.fovy = 60                                # Camera field-of-view Y
     camera.projection = R.CAMERA_PERSPECTIVE             # Camera projection type
 
-    cameraMode = R.CAMERA_FIRST_PERSON
-
-    positions, heights, colours =  build_world()
+    world =  build_world()
 
 
     # Don't love this?
     # R.disable_cursor()                    # Limit cursor to relative movement inside the window
 
     R.set_target_fps(60)                   # Set our game to run at 60 frames-per-second
+    SHOW_TARGET=False
     while not R.window_should_close():
-
-        # if move := R.get_mouse_wheel_move(): #  GetMouseWheelMove(void)                          // Get mouse wheel movement for X or Y, whichever is larger
-        #     print(f"MOVE {move=}")
-        # # elif move1 := R.get_mouse_wheel_move_v(): # GetMouseWheelMoveV(void)                       // Get mouse wheel movement for both X and Y
-        # #     if move1 != move:
-        # #         move = move1
-        # #     print(f"MOVE_V {move=}")
-
 
         # Update
         #----------------------------------------------------------------------------------
-        # Switch camera mode
         if (R.is_key_pressed(R.KEY_ONE)):
-            cameraMode = R.CAMERA_FREE
-            camera.up = R.Vector3(0,1,0)
+            SHOW_TARGET = not SHOW_TARGET
 
-        if (R.is_key_pressed(R.KEY_TWO)):
-            cameraMode = R.CAMERA_FIRST_PERSON
-            camera.up = R.Vector3(0,1,0)
-
-        if (R.is_key_pressed(R.KEY_THREE)):
-            # Rotates camera about a fixed point - very similar to the other gds viewer
-            cameraMode = R.CAMERA_THIRD_PERSON
-            camera.up = R.Vector3(0,1,0)
-
-        if (R.is_key_pressed(R.KEY_FOUR)):
-            # Slowly rotates?
-            cameraMode = R.CAMERA_ORBITAL
-            camera.up = R.Vector3(0,1,0)
-        if (R.is_key_pressed(R.KEY_P)):
-            if (camera.projection == R.CAMERA_PERSPECTIVE):
-                # Create isometric view
-                cameraMode = R.CAMERA_THIRD_PERSON
-                # Note: The target distance is related to the render distance in the orthographic projection
-                camera.position = R.Vector3(0,2,-100)
-                camera.target = R.Vector3(0,2,0)
-                camera.up = R.Vector3(0,1,0)
-                camera.projection = R.CAMERA_ORTHOGRAPHIC
-                camera.fovy = 20.0 # near plane width in R.CAMERA_ORTHOGRAPHIC
-                CameraYaw(camera, -135*R.DEG2RAD, rotate_around_target=True) # TODO: Maybe we don't want yaw?
-                CameraPitch(camera, -45*R.DEG2RAD, lock_view=True, rotate_around_target=True, rotate_up=False)
-            elif (camera.projection == R.CAMERA_ORTHOGRAPHIC):
-                # Reset to default view
-                cameraMode = R.CAMERA_THIRD_PERSON
-                camera.position = R.Vector3(0,2,10)
-                camera.target = R.Vector3(0,2,0)
-                camera.up = R.Vector3(0,1,0)
-                camera.projection = R.CAMERA_PERSPECTIVE
-                camera.fovy = 60.0
 
         # Update camera computes movement internally depending on the camera mode
         # Some default standard keyboard/mouse inputs are hardcoded to simplify use
         # For advanced camera controls, it's recommended to compute camera movement manually
-        if False:
-            R.update_camera(camera, cameraMode)                  # Update camera
-        else:
-            UpdateCamera(camera)
+        UpdateCamera(camera)
 
 
         if R.begin_drawing() or True: # Allow us to use indenting
@@ -280,16 +266,17 @@ def main():
 
                 R.draw_grid(100, 1) # count, spacing
 
-                R.draw_cube(R.Vector3( -16.0, 2.5, 0.0 ), 1.0, 5.0, 32.0, R.BLUE)     # Draw a blue wall
-                R.draw_cube(R.Vector3( 16.0, 2.5, 0.0 ), 1.0, 5.0, 32.0, R.LIME)      # Draw a green wall
-                R.draw_cube(R.Vector3( 0.0, 2.5, 16.0 ), 32.0, 5.0, 1.0, R.GOLD)      # Draw a yellow wall
+                # DrawCube(Vector3 position, float width, float height, float length, Color color)
+                R.draw_cube(R.Vector3( -16.0, 2.5, 0.0 ), 1.0, 0.1, 32.0, R.BLUE)     # Draw a blue wall
+                R.draw_cube(R.Vector3( 16.0, 2.5, 0.0 ), 1.0, 0.1, 32.0, R.LIME)      # Draw a green wall
+                R.draw_cube(R.Vector3( 0.0, 2.5, 16.0 ), 32.0, 0.1, 1.0, R.GOLD)      # Draw a yellow wall
 
                 # # Draw some cubes around
-                for position, height, colour in zip(positions, heights, colours):
-                    R.draw_cube(position, 2.0, height, 2.0, colour)
-                    R.draw_cube_wires(position, 2.0, height, 2.0, R.MAROON)
+                for position, size, colour in world:
+                    R.draw_cube_v(position, size, colour)
+                    R.draw_cube_wires_v(position, size, R.MAROON)
 
-                if (cameraMode == R.CAMERA_THIRD_PERSON):
+                if SHOW_TARGET:
                     R.draw_cube(camera.target, 0.5, 0.5, 0.5, R.PURPLE)
                     R.draw_cube_wires(camera.target, 0.5, 0.5, 0.5, R.DARKPURPLE)
 
@@ -297,37 +284,7 @@ def main():
 
 
 
-            # Draw info boxes
-            R.draw_rectangle(5, 5, 330, 100, R1.Fade(R.SKYBLUE, 0.5))
-            R.draw_rectangle_lines(5, 5, 330, 100, R.BLUE)
-
-            R.draw_text(b"Camera controls:", 15, 15, 10, R.BLACK)
-            R.draw_text(b"- Move keys: W, A, S, D, Space, Left-Ctrl", 15, 30, 10, R.BLACK)
-            R.draw_text(b"- Look around: arrow keys or mouse", 15, 45, 10, R.BLACK)
-            R.draw_text(b"- Camera mode keys: 1, 2, 3, 4", 15, 60, 10, R.BLACK)
-            R.draw_text(b"- Zoom keys: num-plus, num-minus or mouse scroll", 15, 75, 10, R.BLACK)
-            R.draw_text(b"- Camera projection key: P", 15, 90, 10, R.BLACK)
-
-            R.draw_rectangle(600, 5, 195, 100, R1.Fade(R.SKYBLUE, 0.5))
-            R.draw_rectangle_lines(600, 5, 195, 100, R.BLUE)
-
-            R.draw_text(b"Camera status:", 610, 15, 10, R.BLACK)
-            mode = {
-                R.CAMERA_FREE: "FREE",
-                R.CAMERA_FIRST_PERSON: "FIRST_PERSON",
-                R.CAMERA_THIRD_PERSON: "THIRD_PERSON",
-                R.CAMERA_ORBITAL: "ORBITAL",
-            }.get(cameraMode, "CUSTOM")
-
-            R.draw_text(f"- Mode: {mode}", 610, 30, 10, R.BLACK)
-            proj = {
-                R.CAMERA_PERSPECTIVE: "PERSPECTIVE",
-                R.CAMERA_ORTHOGRAPHIC: "ORTHOGRAPHIC"
-            }.get(camera.projection, "CUSTOM")
-            R.draw_text(f"- Projection: {proj}", 610, 45, 10, R.BLACK)
-            R.draw_text(f"- Position: ({camera.position.x:.03f}, {camera.position.y:.03f}, {camera.position.z:.03f})", 610, 60, 10, R.BLACK)
-            R.draw_text(f"- Target: ({camera.target.x:.03f}, {camera.target.y:.03f}, {camera.target.z:.03f})", 610, 75, 10, R.BLACK)
-            R.draw_text(f"- Up: ({camera.up.x:.03f}, {camera.up.y:.03f}, {camera.up.z:.03f})", 610, 90, 10, R.BLACK)
+            draw_info(camera)
 
         R.end_drawing()
 

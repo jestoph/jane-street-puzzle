@@ -13,12 +13,15 @@
   [x] Start gds viewer in raylib - steal an example
   [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
   [x] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
-  [ ] Get standard camera movements working -
-    [ ] Pan
-    [ ] Zoom
-    [ ] Drag/rotate
-  [ ] Work out how to highlight a cell - there's a voxel example that does this.
+  [x] Get standard camera movements working -
+    [x] Pan
+    [x] Zoom
+    [x] Drag/rotate
   [ ] Try to place some elements for a small cell
+    [x] Bounding Boxes
+    [ ] How to turn a polygon into blocks? - I think this is going to be harder than I thought - might need to make mesh models
+    [ ] Place real polygons
+  [ ] Work out how to highlight a cell - there's a voxel example that does this.
 
 ### Understanding the network
 [x] Try to understand individual cells
