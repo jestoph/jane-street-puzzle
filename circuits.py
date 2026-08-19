@@ -763,7 +763,7 @@ class Circuit(object): # Start Circuit {
                 raise ValueError(f"Unknown action {action}")
 
 
-    def runTo(self, time)
+    def runTo(self, time):
         # TODO: Rather than simulating all time, we could just zoom right to the next pending event
         while self.time < time:
             self.tick()

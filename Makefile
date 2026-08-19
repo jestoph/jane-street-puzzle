@@ -1,8 +1,10 @@
 
 PYTHON:=./venv/bin/python3
 
+.PHONY: check logo cells stats network test simplify
+
 check:
-	${PYTHON} -m mypy circuits.py $(find elements -name '*.py')
+	${PYTHON} -m mypy *.py $(find elements -name '*.py')
 
 # test:
 # 	${PYTHON} -m pytest circuits.py
@@ -24,4 +26,5 @@ test:
 	${PYTHON} test.py
 
 simplify:
-	${PYTHON} simplify.py
+	${PYTHON} simplify.py > output.txt
+

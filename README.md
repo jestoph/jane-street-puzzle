@@ -24,30 +24,9 @@ a bit smaller and group them together
    3 and3_2
    4 and4bb_2
    3 B1_N
-   5 clkbuf_16
-  60 decap_3
-  18 dfrtp_2
-  18 mux2_1
-   6 nand2_2
-  10 nor2_2
-   3 o21bai_2
-   7 or2_2
-   2 RESET_B
-   1 rst_n
-  95 tapvpwrvgnd_1
-  21 VGND
- 269 VIA_L1M1_PR_MR
- 314 VIA_M1M2_PR
-  46 VIA_M2M3_PR
-   6 VIA_M3M4_PR
-  76 VIA_via2_3_2000_480_1_6_320_320
-  76 VIA_via3_4_2000_480_1_5_400_400
-  76 VIA_via4_5_2000_480_1_5_400_400
-  14 VIA_via5_6_2000_2000_1_1_1600_1600
-  21 VPWR
-   5 xnor2_2
-   7 xor2_2
+   ... etc
 ```
+
 Taking them one at a time:
 * `@3333334` No idea - but the main project has a bunch. Maybe some divisor or clock?
 * `and2_2`, `and3_2`, `and4bb_2`
@@ -497,4 +476,33 @@ connected, so there must be another bug.
 
 Given how slow the progress is here, I'm not confident I can finish this.
 
+#### Shift Register 1 and 2
+There were two corner cases here that I needed to discover and solve, both due to the simplifying assumptions I made about pads being overlaid by a label. In fact, you
+can have two wire segments coming off the same pad, and you can have two pads overlapping.
+After spending a huge amount of time scanning visually I found them. As a side benefit
+I can now recognise single pins in many of the circuit elements, which I'm sure will come in handy some time.
 
+I've added many asserts to the scripts to ensure, for example, that only a single output can drive a wire.
+
+#### Adder
+The Adder is the most complicated element in the 'warmup' circuit. As expected the limitation of using only up to met3 means that two input pins are unconnected.
+
+```
+Unconnected segments:
+  x:67.160:y:21.760:or2_2:3:B is unconnected
+  x:63.020:y:21.760:or2_2:4:B is unconnected
+
+  x:69.920:y:32.640:xor2_2:4:X is unconnected
+  x:68.540:y:32.640:xor2_2:2:X is unconnected
+  x:69.920:y:38.080:and2_2:1:X is unconnected
+  x:69.920:y:32.640:o21bai_2:1:Y is unconnected
+  x:62.560:y:27.200:xnor2_2:1:Y is unconnected
+  x:68.540:y:21.760:xor2_2:3:X is unconnected
+  x:69.920:y:27.200:xnor2_2:3:Y is unconnected
+  x:74.980:y:27.200:xor2_2:5:X is unconnected
+  x:75.900:y:21.760:xnor2_2:2:Y is unconnected
+```
+
+Given how long it took me to validate the spaghetti version of the shift registers, this is going to be a long session.
+
+If only there were some way of doing this that didn't involve trading off my sanity for progress.
