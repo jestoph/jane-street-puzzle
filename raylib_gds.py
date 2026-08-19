@@ -205,7 +205,7 @@ def build_world():
             (minz, maxz) = (0, 1)
 
             px, pz, py = (minx + maxx)/2, -(miny + maxy)/2, (minz+maxz)/2
-            sx, sz, sy = maxx - minx, maxy-miny, maxz-maxz
+            sx, sz, sy = maxx - minx, maxy-miny, maxz-minz
 
             position = R.Vector3(px, py, pz)
             size = R.Vector3(sx, sy, sz)
