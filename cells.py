@@ -112,6 +112,9 @@ def cells_io(filename):
                 print(f"ORIGIN {origin=}")
                 # TODO: May need to apply some offset to account for the width of the text relative to wherever the origin is
                 # (I'd like it to be in the dead center)
+                # TODO: THERE IS A SLIGHT BUG HERE! OVERLAPPING POLYS ON THIS LAYER ARE THE SAME PAD
+                # This fails for one of the dfrtp cells on pad D as it is two overlapping polys but
+                # only one has the label over it
                 if polygon.contain(label.origin):
                     keep = True
             if not keep:

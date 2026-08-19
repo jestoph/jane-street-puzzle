@@ -94,12 +94,15 @@ def find_bounding(port_to_wire, box):
 def print_element(name, port_wire_map):
     print()
     print(f"---------------------{name.upper()}--------------------")
+    print()
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[0]):
         port_pretty = ":".join(port.split(":")[4:])
         port_pretty = port_pretty.replace("_1","").replace("_2","")
         print(port_pretty, '->', wire)
 
+    print()
     print(f"-----------------------------------------")
+    print()
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[1]):
         port_pretty = ":".join(port.split(":")[4:])
         port_pretty = port_pretty.replace("_1","").replace("_2","")

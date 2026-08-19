@@ -181,6 +181,7 @@ def filter_pads(library):
             else:
                 cell.remove(label)
 
+        direct_pads = []
         for polygon in cell.polygons:
             if (polygon.layer, polygon.datatype) != (67, 20): continue
 
@@ -191,7 +192,25 @@ def filter_pads(library):
                     # We're collecting the port name for later
                     name = cell.name.replace('sky130_fd_sc_hd__','')
                     polygon.set_property("port_name", f"{name}:{label.text}")
+                    direct_pads.append((polygon, label.text))
+
+        # Here we check for overlapping pads, because only one of them may have
+        # a label over them, but they are connected/the same
+        for polygon in cell.polygons:
+            if (polygon.layer, polygon.datatype) != (67, 20): continue
+
+            keep = False
+            for poly, text in direct_pads:
+                if polygon == poly:
                     keep = True
+                    break
+                elif overlaps(polygon, poly):
+                    print(f"FOUND OVERLAPPPPPP on '{poly.get_property('port_name')}'")
+                    name = cell.name.replace('sky130_fd_sc_hd__','')
+                    polygon.set_property("port_name", f"{name}:{text}")
+                    keep = True
+                    break
+
             if not keep:
                 cell.remove(polygon)
 
@@ -469,6 +488,29 @@ def measure_time(name):
         s = time.time()
         print(f"> {name} - {s - t}")
 
+
+def counts(library):
+
+    cnts = {}
+    for poly in library['adder_demo'].polygons:
+        if port_name := poly.get_property("port_name"):
+            port_name = port_name[0].decode('utf-8')
+            name, port = port_name.split(":")
+            cnts[name] = cnts.get(name, {})
+            cnts[name][port] = cnts[name].get(port, 0) + 1
+
+    return cnts
+
+
+def compare_counts(a,b):
+    print("NAME, PORT, COUNT")
+    assert a.keys() == b.keys(), f"{a.keys()=} {b.keys()=}"
+    for name in a:
+        assert a[name].keys() == b[name].keys(), f"{a[name].keys()=} {b[name].keys()=}"
+        for port in a[name]:
+            assert a[name][port] == b[name][port], f"a[{name}]{port}]={a[name][port]} b[{name}][{port}]={b[name][port]}"
+            print(name, port, a[name][port])
+
 def network(filename):
     library = gdstk.read_gds(filename)
     with measure_time("converting_paths"):
@@ -482,7 +524,10 @@ def network(filename):
     with measure_time("custom_flatten"):
         custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     with measure_time("connected_components"):
+        before = counts(library)
         connected_components(library['adder_demo'])
+        after = counts(library)
+        compare_counts(before, after)
     with measure_time("call_graph"):
         els = cell_graph(library['adder_demo'])
     with open("graph.txt", "w") as fp:

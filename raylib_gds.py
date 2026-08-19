@@ -185,6 +185,33 @@ def draw_info(camera):
     R.draw_text(f"- Target: ({camera.target.x:.03f}, {camera.target.y:.03f}, {camera.target.z:.03f})", 610, 75, 10, R.BLACK)
     R.draw_text(f"- Up: ({camera.up.x:.03f}, {camera.up.y:.03f}, {camera.up.z:.03f})", 610, 90, 10, R.BLACK)
 
+def model_from_byte_array():
+    W = 2
+    H = 2
+    row = [255 for _ in range(W)]
+    row = [255, 255, 255, 0,0,0]
+
+    data = bytearray()
+    for i in range(H):
+        data += bytearray(row)
+    # Need to do this as a bytearray
+    image = R.Image(data, len(row), H, 1, R.PIXELFORMAT_UNCOMPRESSED_GRAYSCALE)
+
+    if False:
+        mesh = R.gen_mesh_heightmap(image, R.Vector3(1,1,1)) # TODO: There's another type somewhere
+    else:
+        mesh = R.gen_mesh_cubicmap(image, R.Vector3(1,1,1)) # TODO: There's another type somewhere
+    model = R.load_model_from_mesh(mesh)
+
+    color = R.gen_image_color(64, 64, R.BLUE);
+
+    # // 2. Convert the CPU image to a GPU texture
+    texture = R.load_texture_from_image(color)
+    model.materials[0].maps[R.MATERIAL_MAP_DIFFUSE].texture = texture
+
+    return model
+
+
 def build_world():
 
 
@@ -198,23 +225,50 @@ def build_world():
         if 'mux' not in name: continue
 
         for poly in cell.polygons:
+            # "li1" :(67,20),
+            # if (poly.layer, poly.datatype) != (67, 20): continue
+
+
+            print("POLY", poly.points)
+            print("bounds", poly.bounding_box())
+            print("REPll", poly.repetition)
 
             # TODO: Project correctly on to pixels
             # RLAPI void DrawCube(Vector3 position, float width, float height, float length, Color color);             // Draw cube
-            (minx, miny), (maxx, maxy) = poly.bounding_box()
-            (minz, maxz) = (0, 1)
+            # x/y in gds is x/z in raylib
+            (minx, minz), (maxx, maxz) = poly.bounding_box()
 
-            px, pz, py = (minx + maxx)/2, -(miny + maxy)/2, (minz+maxz)/2
-            sx, sz, sy = maxx - minx, maxy-miny, maxz-minz
+            # (miny, maxy) = (0, 1)
 
-            position = R.Vector3(px, py, pz)
+            # px = minx
+            # pz = minz
+            # STEP = 0.001
+            # while px < maxx:
+            #     while pz < maxz:
+            #         if poly.contain(px,pz):
+            #             sx, sy, sz = 1, 1 ,1
+            #             py = 0
+            #             position = R.Vector3(px, py, pz)
+            #             size = R.Vector3(sx, sy, sz)
+            #             colour = c
+
+            #             ret.append((position, size, colour))
+
+            #         pz += STEP
+            #     px += STEP
+
+
+            (miny, maxy) = (0, 0.5)
+            px, py, pz = (minx + maxx)/2, (miny + maxy)/2, -(minz+maxz)/2
+            sx, sy, sz = maxx - minx, maxy-miny, maxz-minz
+
+            position = R.Vector3(px, poly.layer/100.0, pz)
             size = R.Vector3(sx, sy, sz)
             colour = c
 
             ret.append((position, size, colour))
 
     return ret
-
 
 
 
@@ -240,6 +294,10 @@ def main():
 
     R.set_target_fps(60)                   # Set our game to run at 60 frames-per-second
     SHOW_TARGET=False
+
+
+    model = model_from_byte_array()
+
     while not R.window_should_close():
 
         # Update
@@ -271,10 +329,15 @@ def main():
                 R.draw_cube(R.Vector3( 16.0, 2.5, 0.0 ), 1.0, 0.1, 32.0, R.LIME)      # Draw a green wall
                 R.draw_cube(R.Vector3( 0.0, 2.5, 16.0 ), 32.0, 0.1, 1.0, R.GOLD)      # Draw a yellow wall
 
-                # # Draw some cubes around
-                for position, size, colour in world:
-                    R.draw_cube_v(position, size, colour)
-                    R.draw_cube_wires_v(position, size, R.MAROON)
+                if False:
+                    # Attempting to draw model does not work sadly
+                    R.draw_model(model, R.Vector3(2,2,2), 1.0, R.BEIGE);
+                    R.draw_model_wires(model, R.Vector3(2,2,2), 1, R.BLACK);#           // Draw a model wires (with texture if set)
+                else:
+                    # Draw some cubes around
+                    for position, size, colour in world:
+                        R.draw_cube_v(position, size, colour)
+                        R.draw_cube_wires_v(position, size, R.MAROON)
 
                 if SHOW_TARGET:
                     R.draw_cube(camera.target, 0.5, 0.5, 0.5, R.PURPLE)

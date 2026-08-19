@@ -22,6 +22,7 @@
     [ ] How to turn a polygon into blocks? - I think this is going to be harder than I thought - might need to make mesh models
     [ ] Place real polygons
   [ ] Work out how to highlight a cell - there's a voxel example that does this.
+[x] I think this is a lost cause - I don't understand raylib enough to get this working
 
 ### Understanding the network
 [x] Try to understand individual cells
