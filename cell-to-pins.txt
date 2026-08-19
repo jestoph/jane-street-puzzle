@@ -1,0 +1,20 @@
+Name                             | Inputs      | Outputs
+---------------------------------------------------------------------------
+`sky130_fd_sc_hd__a21bo_2`       | A1,A2       | X
+`sky130_fd_sc_hd__a21boi_2`      | A1,A2,B1_N  | Y
+`sky130_fd_sc_hd__a21o_2`        | A1,A2,B1    | X
+`sky130_fd_sc_hd__a31o_2`        | A1,A2,A3,B1 | X
+`sky130_fd_sc_hd__o21bai_2`      | A1,A2,B1_N  | Y
+`sky130_fd_sc_hd__and2_2`        | A,B         | X
+`sky130_fd_sc_hd__and3_2`        | A,B,C       | X
+`sky130_fd_sc_hd__and4bb_2`      | A_N,B_N,C,D | X
+`sky130_fd_sc_hd__clkbuf_16`     | A           | X
+`sky130_fd_sc_hd__mux2_1`        | A0,A1,S     | X
+`sky130_fd_sc_hd__nand2_2`       | A,B         | Y
+`sky130_fd_sc_hd__nor2_2`        | A,B         | Y
+`sky130_fd_sc_hd__or2_2`         | A,B         | X
+`sky130_fd_sc_hd__xnor2_2`       |             | Y
+`sky130_fd_sc_hd__xor2_2`        |             | X
+`sky130_fd_sc_hd__dfrtp_2`       | D,CLK,RESET | Q
+`sky130_fd_sc_hd__decap_3`       |             |
+`sky130_fd_sc_hd__tapvpwrvgnd_1` |             |

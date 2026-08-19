@@ -44,7 +44,10 @@
   [ ] Understand via scripts the following elements:
      [x] Comparitor
      [x] Shift Register 1
-     [ ] Shift Register 2 <- There's some bug here, I have two wires connected to only one component
+     [x] Shift Register 2 <- There's some bug here, I have two wires connected to only one component
+     [ ] Add Validations
+        [ ] No unconnected pins
+        [ ] No output pins connected to inputs
      [ ] Adder <- not feeling confident this will work
 [ ] What are boundaries?
 [ ] Why does the text file have more types?

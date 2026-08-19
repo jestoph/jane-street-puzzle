@@ -110,6 +110,25 @@ def print_element(name, port_wire_map):
 
     print()
 
+def get_io():
+    ins, outs = {}
+    with open("cell-to-pins.txt") as fp:
+        pass
+
+def check_only_single_output_on_wire(wire_to_ports)
+    """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
+    _, x, _, y, name, _, _ = port.split(":")
+
+    for wire, ports in wire_to_ports:
+        output_count = 0
+
+        for port in ports:
+            _, _, _, _, cname, _, pname = port.split(":")
+            if name in output_ports:
+                output_count += 1
+                assert output_count <=1, f"More than one output feeding {wire}"
+
+
 if __name__ == '__main__':
     all_wire_segments = []
     with open('graph.txt') as fp:
@@ -118,6 +137,15 @@ if __name__ == '__main__':
             all_wire_segments.append((l, r))
 
     port_to_wire = find_wires(all_wire_segments)
+
+    wire_to_ports = {}
+    for port, wire in port_to_wire.items():
+        if wire in wire_to_ports:
+            wire_to_ports[wire].append(port)
+        else:
+            wire_to_ports[wire] = [port[
+
+    check_only_single_output_on_wire(wire_to_ports)
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
