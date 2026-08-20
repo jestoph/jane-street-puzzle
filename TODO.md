@@ -62,9 +62,9 @@
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
 [ ] Add all cell elements to my sim with tests
-  [ ] Adder Elements
-    [ ] `a31o_2`
-    [ ] `o21bai_2`
+  [x] Adder Elements
+    [x] `a31o_2`
+    [x] `o21bai_2`
     [x] `a21bo_2`
     [x] `a21boi_2`
     [x] `a21o_2`
@@ -82,3 +82,4 @@
     [ ] `and4bb_2`
     [ ] `clkbuf_16`
     [ ] `mux2_1`
+  [ ] Real puzzle elements
