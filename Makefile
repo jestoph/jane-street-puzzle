@@ -26,5 +26,5 @@ test:
 	${PYTHON} test.py
 
 simplify:
-	${PYTHON} simplify.py > output.txt
+	${PYTHON} simplify.py
 

@@ -45,6 +45,8 @@ name_to_layer = {
     "met2":(69,20),
     "via2":(69,44),
     "met3":(70,20),
+    "via3":(70,44),
+    "met4":(71,20),
 }
 
 layer_to_name = {val:key for key,val in name_to_layer.items()}
@@ -57,6 +59,8 @@ layer_ordering = [
     "met2",
     "via2",
     "met3",
+    "via3",
+    "met4",
 ]
 
 layers_i_care_about = set(name_to_layer.values())
@@ -358,7 +362,7 @@ def connected_components(cell):
         layer_name = layer_to_name[poly.layer, poly.datatype]
         # Do vias and mcon first as they have the stricted requirements to be
         # connected top and bottom
-        if layer_name not in {"mcon", "via", "via2"}: continue
+        if layer_name not in {"mcon", "via", "via2", "via3"}: continue
 
         layer_name = layer_to_name[poly.layer, poly.datatype]
 
@@ -387,7 +391,7 @@ def connected_components(cell):
 
     for poly in cell.polygons:
         layer_name = layer_to_name[poly.layer, poly.datatype]
-        if layer_name in {"mcon", "via", "via2"}: continue
+        if layer_name in {"mcon", "via", "via2", "via3"}: continue
         layer_name = layer_to_name[poly.layer, poly.datatype]
 
         layer_offset = layer_ordering.index(layer_name)

@@ -1,4 +1,21 @@
 
+def get_io():
+
+    with open("cell-to-pins.txt") as fp:
+        data = fp.read()
+
+    ret = {}
+    lines = data.splitlines()[2:]
+    for line in lines:
+        port, ins, outs = line.split("|")
+        port = port.strip().replace('sky130_fd_sc_hd__','')
+        ins = ins.strip().split(',')
+        outs = outs.strip().split(',')
+        ret[port] = (set(ins), set(outs))
+
+    return ret
+
+IO_PORTS=get_io()
 def get_wire_segments(conns):
     list_of_wire_segments = []
     for l, r in conns:
@@ -118,21 +135,6 @@ def print_element(name, port_wire_map):
 
     print()
 
-def get_io():
-
-    with open("cell-to-pins.txt") as fp:
-        data = fp.read()
-
-    ret = {}
-    lines = data.splitlines()[2:]
-    for line in lines:
-        port, ins, outs = line.split("|")
-        port = port.strip().replace('sky130_fd_sc_hd__','')
-        ins = ins.strip().split(',')
-        outs = outs.strip().split(',')
-        ret[port] = (set(ins), set(outs))
-
-    return ret
 
 
 
@@ -140,7 +142,7 @@ def check_only_single_output_on_wire(wire_to_ports):
     """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
     # _, x, _, y, name, _, _ = port.split(":")
 
-    data = get_io()
+    data = IO_PORTS
 
     for wire, ports in wire_to_ports.items():
         output_count = 0
@@ -150,6 +152,21 @@ def check_only_single_output_on_wire(wire_to_ports):
             if pname in data[cname][1]:
                 output_count += 1
                 assert output_count <=1, f"More than one output feeding {wire} -> {pname=} -> {data[cname][1]=}"
+
+def check_all_ports_filled(port_to_wire):
+    all_cells = {}
+    for port in port_to_wire:
+        _, _, _, _, cname, cnt, pname = port.split(":")
+
+        cell_name = f"{cname}:{cnt}"
+        all_cells[cell_name] = all_cells.get(cell_name, set())
+        all_cells[cell_name].add(pname)
+
+    data = IO_PORTS
+    for cell, ports in all_cells.items():
+        cellname = cell.split(":")[0]
+        expected = set.union(IO_PORTS[cellname][0], IO_PORTS[cellname][1])
+        assert expected == ports, f"{expected=} {ports=}"
 
 
 def reverse_map(port_to_wire):
@@ -162,11 +179,35 @@ def reverse_map(port_to_wire):
     return wire_to_ports
 
 def print_unconnected_elements(revd):
-    check_only_single_output_on_wire(revd)
     print()
     for wire, ports in revd.items():
         if len(ports) == 1:
             print("print", ports[0], "is unconnected")
+
+def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
+    print()
+    print("---------------")
+    print()
+
+    inputs = set()
+    outputs = set()
+    for cell, wire in subcircuit.items():
+        for port in wire_to_ports[wire]:
+            if port not in subcircuit:
+                _, _, _, _, cname, cnt, pname = cell.split(":")
+                if pname in IO_PORTS[cname][1]:
+                    # port is an output
+                    outputs.add(wire)
+                else:
+                    # port is an input
+                    inputs.add(wire)
+
+    for wire in outputs:
+        print(f"Output: [inside] -> {wire} -> [outside]")
+    for wire in inputs:
+        print(f"Input: [outside] -> {wire} -> [inside]")
+
+
 
 if __name__ == '__main__':
     all_wire_segments = []
@@ -179,7 +220,10 @@ if __name__ == '__main__':
 
 
     wire_to_ports = reverse_map(port_to_wire)
+
     check_only_single_output_on_wire(wire_to_ports)
+    check_all_ports_filled(port_to_wire)
+
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
@@ -188,13 +232,13 @@ if __name__ == '__main__':
     sr_1_box = ((0, 45), (50, 100))
     sr_2_box = ((0, 0), (50, 45))
 
-    comparitor = find_bounding(port_to_wire, comparitor_box)
+    # comparitor = find_bounding(port_to_wire, comparitor_box)
+    # sr_1 = find_bounding(port_to_wire, sr_1_box)
+    # sr_2 = find_bounding(port_to_wire, sr_2_box)
+
+    # all_els = find_bounding(port_to_wire, ((0,0),(100,100)))
+
     adder = find_bounding(port_to_wire, adder_box)
-    sr_1 = find_bounding(port_to_wire, sr_1_box)
-    sr_2 = find_bounding(port_to_wire, sr_2_box)
-
-    all_els = find_bounding(port_to_wire, ((0,0),(100,100)))
-
     revd = reverse_map(adder)
     print_unconnected_elements(revd)
 
@@ -202,4 +246,5 @@ if __name__ == '__main__':
     # print_element("Shift Register 1", sr_1)
     # print_element("Shift Register 2", sr_2)
     print_element("ADDER", adder)
+    print_possible_inputs_and_outputs(adder, port_to_wire, wire_to_ports)
     # print_element("ALL THE THINGS", all_els)

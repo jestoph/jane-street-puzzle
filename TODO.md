@@ -43,12 +43,20 @@
   [ ] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that)
   [ ] Understand via scripts the following elements:
      [x] Comparitor
+      [ ] Auto-detect outputs and inputs
      [x] Shift Register 1
-     [x] Shift Register 2 <- There's some bug here, I have two wires connected to only one component
-     [ ] Add Validations
-        [ ] No unconnected pins
-        [ ] No output pins connected to inputs
+      [ ] Auto-detect outputs and inputs
+     [x] Shift Register 2
+      [x] Fix bug <- I have two wires connected to only one component
+      [ ] Auto-detect outputs and inputs
+     [x] Add Validations
+        [x] Warn on unconnected pins
+        [x] No output pins connected to inputs
+        [x] Check that all port names exist etc
      [ ] Adder <- not feeling confident this will work
+      [x] Fix via4/met4 information
+      [x] Auto-detect outputs and inputs
+      [ ] Lay out circuit
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
 [ ] Add all cell elements to my sim
