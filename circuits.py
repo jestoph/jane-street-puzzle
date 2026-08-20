@@ -1,4 +1,4 @@
-from elements.stateless import Nop, Not, And, Xor, Or, Diode, Probe
+from elements.stateless import Nop, Not, And2, Xor2, Or2, Diode, Probe
 from elements.stateful import Reg
 from elements.common import Common, Vals, PinType, O, I
 import sys
@@ -49,7 +49,7 @@ def mkTables(curr):
     curr.execute("""
         INSERT INTO node_types (type)
         VALUES
-        ('And'),('Or'),('Not'),('Xor'),('Reg'),('Diode'),('Nop');
+        ('And2'),('Or2'),('Not'),('Xor2'),('Reg'),('Diode'),('Nop');
         """)
 
     curr.execute("""
@@ -215,9 +215,9 @@ class Circuit(object): # Start Circuit {
 
     ################## Node Types ##########################################
 
-    def And(self, name=""): return self.node( name, And( 2, 1 ))
-    def Or(self, name=""): return self.node( name, Or( 2, 1 ))
-    def Xor(self, name=""): return self.node( name, Xor( 2, 1 ))
+    def And2(self, name=""): return self.node( name, And2( 2, 1 ))
+    def Or2(self, name=""): return self.node( name, Or2( 2, 1 ))
+    def Xor2(self, name=""): return self.node( name, Xor2( 2, 1 ))
     def Not(self, name=""): return self.node( name, Not( 1, 1 ))
     def Diode(self, name=""): return self.node( name, Diode( 1, 1 ))
 
@@ -233,9 +233,9 @@ class Circuit(object): # Start Circuit {
 
 
     def createNode(self, name, node_type, *args):
-        if node_type == 'And': return self.And(name, *args)
-        if node_type == 'Or': return self.Or(name, *args)
-        if node_type == 'Xor': return self.Xor(name, *args)
+        if node_type == 'And2': return self.And2(name, *args)
+        if node_type == 'Or2': return self.Or2(name, *args)
+        if node_type == 'Xor2': return self.Xor2(name, *args)
         if node_type == 'Not': return self.Not(name, *args)
         if node_type == 'Diode': return self.Diode(name, *args)
         if node_type == 'Reg': return self.Reg(name, *args)
@@ -800,7 +800,7 @@ def test_double_not():# {
 def test_circuit_and(): # {
 
     c = Circuit()
-    c.And("and1")
+    c.And2("and1")
 
     c.writePin("and1", I.i1, Vals.H)
     assert c.readOPin("and1", O.o1) == Vals.Q, 'q and q = q'
@@ -831,8 +831,8 @@ def test_circuit_and(): # {
 def test_circuit_and1(): # {
 
     c = Circuit()
-    a2 = c.And("and1")
-    a2 = c.And("and2")
+    a2 = c.And2("and1")
+    a2 = c.And2("and2")
 
     w = c.wireTo("and1", O.o1, "and2", I.i1)
 
@@ -858,8 +858,8 @@ def test_circuit_and1(): # {
 def test_circuit_or(): # {
 
     c = Circuit()
-    c.Or("or1")
-    c.Or("or2")
+    c.Or2("or1")
+    c.Or2("or2")
 
     w = c.wireTo("or1", O.o1, "or2", I.i1)
 
@@ -888,8 +888,8 @@ def test_circuit_or(): # {
 def test_circuit_xor(): # {
 
     c = Circuit()
-    c.Xor("xor1")
-    c.Xor("xor2")
+    c.Xor2("xor1")
+    c.Xor2("xor2")
 
     w = c.wireTo("xor1", O.o1, "xor2", I.i1)
 

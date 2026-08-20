@@ -56,25 +56,29 @@
      [ ] Adder <- not feeling confident this will work
       [x] Fix via4/met4 information
       [x] Auto-detect outputs and inputs
+      [ ] Get all components in to simulator - they are stateless
+      [ ] Write tests for all of them
       [ ] Lay out circuit
 [ ] What are boundaries?
 [ ] Why does the text file have more types?
 [ ] Add all cell elements to my sim
-  [ ] `a21bo_2`
-  [ ] `a21boi_2`
-  [ ] `a21o_2`
-  [ ] `a31o_2`
-  [ ] `o21bai_2`
-  [ ] `and2_2`
-  [ ] `and3_2`
-  [ ] `and4bb_2`
-  [ ] `clkbuf_16`
-  [ ] `mux2_1`
-  [ ] `nand2_2`
-  [ ] `nor2_2`
-  [ ] `or2_2`
-  [ ] `xnor2_2`
-  [ ] `xor2_2`
-  [ ] `dfrtp_2`
-  [ ] `decap_3`
-  [ ] `tapvpwrvgnd_1`
+  [ ] Adder Elements
+    [ ] `a21bo_2`
+    [ ] `a21boi_2`
+    [ ] `a21o_2`
+    [ ] `a31o_2`
+    [ ] `and2_2`
+    [ ] `nand2_2`
+    [ ] `nor2_2`
+    [ ] `o21bai_2`
+    [ ] `or2_2`
+    [ ] `xnor2_2`
+    [ ] `xor2_2`
+  [ ] Other elements
+    [ ] `dfrtp_2`
+    [ ] `decap_3`
+    [ ] `tapvpwrvgnd_1`
+    [ ] `and3_2`
+    [ ] `and4bb_2`
+    [ ] `clkbuf_16`
+    [ ] `mux2_1`
