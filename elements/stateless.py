@@ -204,6 +204,22 @@ class Nand2(C.Common):
         pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
         return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
 
+class Mux2(C.Common):
+
+    @property
+    def _type(self): return "Mux2"
+
+    @property
+    def map(self): return {"A": 0, "B": 1, "S": 2}, {"X": 0}
+
+    def ticker(self, _, ivals):
+        assert len(ivals) == 3
+        ins = tuple(ivals)
+        if ins[2] == C.Vals.Q:
+            return None, None, [C.Vals.Q]
+        elif ins[2] == C.Vals.H:
+            return None, None, ins[0]
+        return None, None, ins[1]
 
 
 class And2(C.Common):

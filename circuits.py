@@ -707,12 +707,12 @@ class Circuit(object): # Start Circuit {
                 pass
             elif state == 'wires':
                 src, arrow, *dst = line.split()
-                src_name, src_pin = src.split(":")
+                src_name, src_pin = src.split(".")
                 src_pin = O(int(src_pin))
                 dst_pairs = []
                 for x in dst:
                     print(f"{x=}")
-                    l,r = x.split(":")
+                    l,r = x.split(".")
                     dst_pairs.append(l)
                     dst_pairs.append(I(int(r)))
                 print(f"{dst_pairs=}")
@@ -733,15 +733,15 @@ class Circuit(object): # Start Circuit {
 
             if action == "set":
                 action, target = line.split()
-                name, pin = target.split(":")
+                name, pin = target.split(".")
                 self.setPin(name, I(int(pin)))
             elif action == "reset":
                 action, target = line.split()
-                name, pin = target.split(":")
+                name, pin = target.split(".")
                 self.resetPin(name, I(int(pin)))
             elif action == "toggle":
                 action, target = line.split()
-                name, pin = target.split(":")
+                name, pin = target.split(".")
                 self.togglePin(name, I(int(pin)))
             elif action == "tick":
                 self.tick()
@@ -751,7 +751,7 @@ class Circuit(object): # Start Circuit {
                 self.runTo(int(target))
             elif action == "assert":
                 action, target, cmp, val = line.split()
-                name, pin = target.split(":")
+                name, pin = target.split(".")
                 targetval = self.readOPin(name, O(int(pin)))
                 if cmp == '==':
                     assert targetval == Vals(val), f"Failed on {name=} at line {i}"
@@ -1044,22 +1044,22 @@ def test_circuit_reg1(): # {
     c.Probe("p2")
 
     # Wire input signal (will be low the whole time)
-    # in:0 -> r1:1
+    # in.0 -> r1.1
     w1 = c.wireTo("in", O.o1, "r1", I.i2)
 
     # Wire the registers together
-    # r1:0 -> r2:1
+    # r1.0 -> r2.1
     w3 = c.wireTo("r1", O.o1, "r2", I.i2) # Place registers in series
 
     # Wire clock in
-    # clk:0 -> r1:0
-    # clk:0 -> r2:0
+    # clk.0 -> r1.0
+    # clk.0 -> r2.0
     c.wireTo("clk", O.o1, "r1", I.i1, "r2", I.i1)
 
     # Set up probes
-    # r1:0 -> p1:1
+    # r1.0 -> p1.1
     c.wireTo("r1", O.o1, "p1", I.i1)
-    # r2:0 -> p2:1
+    # r2.0 -> p2.1
     c.wireTo("r2", O.o1, "p2", I.i1)
 
     reg_common(c)
@@ -1184,17 +1184,17 @@ def test_circuit_reg_from_parse(): # {
 
     start-wires
         # Wire input signal (will be low the whole time)
-        in:0 -> r1:1       # w1 = c.wireTo("in", O.o1, "r1", I.i2)
+        in.0 -> r1.1       # w1 = c.wireTo("in", O.o1, "r1", I.i2)
 
         # Wire the registers together
-        r1:0 -> r2:1       # w3 = c.wireTo("r1", O.o1, "r2", I.i2) # Place registers in series
+        r1.0 -> r2.1       # w3 = c.wireTo("r1", O.o1, "r2", I.i2) # Place registers in series
 
         # Wire clock in
-        clk:0 -> r1:0 r2:0 # c.wireTo("clk", O.o1, "r1", I.i1, "r2", I.i1)
+        clk.0 -> r1.0 r2.0 # c.wireTo("clk", O.o1, "r1", I.i1, "r2", I.i1)
 
         # Set up probes
-        r1:0 -> p1:0       # c.wireTo("r1", O.o1, "p1", I.i1)
-        r2:0 -> p2:0       # c.wireTo("r2", O.o1, "p2", I.i1)
+        r1.0 -> p1.0       # c.wireTo("r1", O.o1, "p1", I.i1)
+        r2.0 -> p2.0       # c.wireTo("r2", O.o1, "p2", I.i1)
     end-wires
     """
 
@@ -1223,34 +1223,34 @@ def test_circuit_sim_from_parse(): # {
 
     start-wires
         # Wire input signal (will be low the whole time)
-        in:0 -> r1:1       # w1 = c.wireTo("in", O.o1, "r1", I.i2)
+        in.0 -> r1.1       # w1 = c.wireTo("in", O.o1, "r1", I.i2)
 
         # Wire the registers together
-        r1:0 -> r2:1       # w3 = c.wireTo("r1", O.o1, "r2", I.i2) # Place registers in series
+        r1.0 -> r2.1       # w3 = c.wireTo("r1", O.o1, "r2", I.i2) # Place registers in series
 
         # Wire clock in
-        clk:0 -> r1:0 r2:0 # c.wireTo("clk", O.o1, "r1", I.i1, "r2", I.i1)
+        clk.0 -> r1.0 r2.0 # c.wireTo("clk", O.o1, "r1", I.i1, "r2", I.i1)
 
         # Set up probes
-        r1:0 -> p1:0       # c.wireTo("r1", O.o1, "p1", I.i1)
-        r2:0 -> p2:0       # c.wireTo("r2", O.o1, "p2", I.i1)
+        r1.0 -> p1.0       # c.wireTo("r1", O.o1, "p1", I.i1)
+        r2.0 -> p2.0       # c.wireTo("r2", O.o1, "p2", I.i1)
     end-wires
     """
 
     c.parseCircuit(desc)
 
     sim = """
-    reset in:0
-    reset clk:0
+    reset in.0
+    reset clk.0
 
     tick
 
-    assert clk:0 == L
-    assert in:0 == L
-    assert r1:0 == Q
-    assert p1:0 == Q
-    assert r2:0 == Q
-    assert p2:0 == Q
+    assert clk.0 == L
+    assert in.0 == L
+    assert r1.0 == Q
+    assert p1.0 == Q
+    assert r2.0 == Q
+    assert p2.0 == Q
 
     # assert c.time == 0
     # assert c.readOPin("clk", O.o1) == Vals.L
@@ -1261,18 +1261,18 @@ def test_circuit_sim_from_parse(): # {
     # assert c.readProbe("p2") == Vals.Q
 
 
-    set clk:0
+    set clk.0
     tick
 
     # c.setPin("clk", I.i1) # Rising Edge 1
     # c.tick()
 
-    assert clk:0 == H
-    assert in:0 == L
-    assert r1:0 == Q
-    assert p1:0 == Q
-    assert r2:0 == Q
-    assert p2:0 == Q
+    assert clk.0 == H
+    assert in.0 == L
+    assert r1.0 == Q
+    assert p1.0 == Q
+    assert r2.0 == Q
+    assert p2.0 == Q
 
     # assert c.time == 1
     # assert c.readOPin("clk", O.o1) == Vals.H
@@ -1282,18 +1282,18 @@ def test_circuit_sim_from_parse(): # {
     # assert c.readOPin("r2", O.o1) == Vals.Q
     # assert c.readProbe("p2") == Vals.Q
 
-    reset clk:0
+    reset clk.0
     tick
 
     # c.resetPin("clk", I.i1)
     # c.tick()  # Propogate edge
 
-    assert clk:0 == L
-    assert in:0 == L
-    assert r1:0 == L
-    assert p1:0 == L
-    assert r2:0 == Q
-    assert p2:0 == Q
+    assert clk.0 == L
+    assert in.0 == L
+    assert r1.0 == L
+    assert p1.0 == L
+    assert r2.0 == Q
+    assert p2.0 == Q
 
     # assert c.time == 2
     # assert c.readOPin("clk", O.o1) == Vals.L
@@ -1303,18 +1303,18 @@ def test_circuit_sim_from_parse(): # {
     # assert c.readOPin("r2", O.o1) == Vals.Q
     # assert c.readProbe("p2") == Vals.Q
 
-    set clk:0
+    set clk.0
     tick
 
     # c.setPin("clk", I.i1) # Rising Edge 1
     # c.tick()              # Rising Edge 1 Propogated
 
-    assert clk:0 == H
-    assert in:0 == L
-    assert r1:0 == L
-    assert p1:0 == L
-    assert r2:0 == Q
-    assert p2:0 == Q
+    assert clk.0 == H
+    assert in.0 == L
+    assert r1.0 == L
+    assert p1.0 == L
+    assert r2.0 == Q
+    assert p2.0 == Q
 
     # assert c.time == 3
     # assert c.readOPin("clk", O.o1) == Vals.H
@@ -1324,18 +1324,18 @@ def test_circuit_sim_from_parse(): # {
     # assert c.readOPin("r2", O.o1) == Vals.Q
     # assert c.readProbe("p2") == Vals.Q
 
-    reset clk:0
+    reset clk.0
     tick
 
     # c.resetPin("clk", I.i1)
     # c.tick()  # Propogate edge
 
-    assert clk:0 == L
-    assert in:0 == L
-    assert r1:0 == L
-    assert p1:0 == L
-    assert r2:0 == L
-    assert p2:0 == L
+    assert clk.0 == L
+    assert in.0 == L
+    assert r1.0 == L
+    assert p1.0 == L
+    assert r2.0 == L
+    assert p2.0 == L
 
     # assert c.time == 4
     # assert c.readOPin("clk", O.o1) == Vals.L
@@ -1350,15 +1350,15 @@ def test_circuit_sim_from_parse(): # {
     # Should be at steady state now
     for i in range(10):
         sim += """
-            toggle clk:0
+            toggle clk.0
             tick
 
-            assert clk:0 != Q
-            assert in:0 == L
-            assert r1:0 == L
-            assert p1:0 == L
-            assert r2:0 == L
-            assert p2:0 == L
+            assert clk.0 != Q
+            assert in.0 == L
+            assert r1.0 == L
+            assert p1.0 == L
+            assert r2.0 == L
+            assert p2.0 == L
 
         """
 
