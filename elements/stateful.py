@@ -7,7 +7,7 @@ class Reg(C.Common):
     @property
     def _type(self): return "Reg"
 
-    def ticker(self, state, ivals):
+    def tick(self, state, ivals):
 
         print(f"STATE {state=} {ivals=}")
 
@@ -34,7 +34,7 @@ class Clk(C.Common):
     @property
     def _type(self): return "Clk"
 
-    def ticker(self, state, ivals):
+    def tick(self, state, ivals):
 
         print(f"STATE {state=} {ivals=}")
 

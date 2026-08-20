@@ -1,4 +1,5 @@
 from enum import Enum
+from itertools import product
 
 from . import common as C
 
@@ -46,287 +47,374 @@ FOUR_PORT = [
 
 
 
-"""
-o21bai
-a31o
-a21o
-a21boi
-a21bo
-xnor2
-nand2
-nor2
-xor2
-or2
-and2
-"""
-
 class O21bai(C.Common):
 
-    @property
-    def _type(self): return "O21bai"
+    def __init__(self):
+        C.Common.__init__(self, nins=3, nouts=1)
+        self._type = "O21bai"
+        self.map = {"A1": 0, "A2": 1, "B1_N": 2}, {"X": 0}
 
-    @property
-    def map(self): return {"A1": 0, "A2": 1, "B1_N": 2}, {"X": 0}
+    def tick(self, _, ins):
+        assert len(ins) == 3
+        _,_, _or = Or2().tick(None, ins[:2])
+        _,_, _not = Not().tick(None, ins[2:])
+        _,_,_and = And2().tick(None, _or + _not)
+        _,_, _not1 = Not().tick(None, _and)
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = set(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+        return None, None, _not1
 
-        pattern = [
-            C.Vals.H, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H
-        ]
-        return None, None, { x:[y] for x,y in zip(THREE, pattern) }[ins]
+def test_o21bai():
+    for x,y,z in product(C.Vals, C.Vals, C.Vals):
+        _, _, ret = O21bai().tick(None, [x,y,z])
+
+        if C.Vals.Q in [x,y,z]:
+            assert ret == [C.Vals.Q]
+        elif z == C.Vals.H:
+            assert ret == [C.Vals.H]
+        else:
+            _,_, _or = Or2().tick(None, [x,y])
+            _,_, _not = Not().tick(None,_or)
+            assert ret == _not
+
+"""
+No tests above this line ;(
+class O21bai(C.Common):
+
+"""
+
 
 class A31o(C.Common):
 
-    @property
-    def _type(self): return "A31o"
+    def __init__(self):
+        C.Common.__init__(self, nins=3, nouts=1)
+        self._type = "A31o"
+        self.map = {"A1": 0, "A2": 1, "A3": 2, "B1": 3}, {"X": 0}
 
-    @property
-    def map(self): return {"A1": 0, "A2": 1, "A3": 2, "B1": 3}, {"X": 0}
+    def tick(self, _, ins):
+        assert len(ins) == 4
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = set(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+        _,_,_and1 = And2().tick(None, [ins[0], ins[2]])
+        _,_,_and2 = And2().tick(None, [ins[1]] + _and1)
+        _,_,_or   = Or2().tick(None, [ins[3]] + _and2)
 
-        pattern = [
-            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H,
-            C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H,
+        return None, None, _or
+
+def test_a32o():
+
+    for x,y,z,a in product(C.Vals, C.Vals, C.Vals, C.Vals):
+        _, _, ret = A31o().tick(None, [x,y,z,a])
+
+        if C.Vals.Q in [x,y,z,a]:
+            assert ret == [C.Vals.Q]
+        elif a == C.Vals.H:
+            assert ret == [C.Vals.H]
+        else:
+            _,_, _and = And3().tick(None, [x,y,z])
+            assert _and == ret
+
+class And3(C.Common):
+
+    def __init__(self):
+        C.Common.__init__(self, nins=3, nouts=1)
+        self._type = "And3"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.pattern = [
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L,
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H,
         ]
-        return None, None, { x:[y] for x,y in zip(FOUR_PORT, pattern) }[ins]
+        self.table = THREE_PORT
+
 
 class A21o(C.Common):
 
-    @property
-    def _type(self): return "A21o"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "A21o"
+        self.map = {"A1": 0, "A2": 1, "B": 2}, {"X": 0}
+        self.pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H]
+        self.table = THREE_PORT
 
-    @property
-    def map(self): return {"A1": 0, "A2": 1, "B": 2}, {"X": 0}
+    def tick(self, _, ins):
+        assert len(ins) == 3
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = set(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+        _, _, _as = And2().tick(None, ins[:2])
+        _, _, _or = Or2().tick(None, _as + ins[2:])
 
-        pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(THREE_PORT, pattern) }[ins]
+        return None, None, _or
+
+def test_a210():
+    for x,y,z in product(C.Vals, C.Vals, C.Vals):
+        _, _, ret = A21o().tick(None, [x,y,z])
+
+        if C.Vals.Q in [x,y,z]:
+            assert ret == [C.Vals.Q]
+        elif z == C.Vals.H:
+            assert ret == [C.Vals.H]
+        else:
+            _,_, _and = And2().tick(None, [x,y])
+            assert _and == ret
 
 class A21boi(C.Common):
 
-    @property
-    def _type(self): return "A21boi"
+    def __init__(self):
+        C.Common.__init__(self, nins=3, nouts=1)
+        self._type = "A21boi"
+        self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
 
-    @property
-    def map(self): return {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+    def tick(self, _, ins):
+        assert len(ins) == 3
+        _, _, _as     = And2().tick(None, ins[:2])
+        _, _, _not_b  = Not().tick(None, ins[2:])
+        _, _, _or     = Or2().tick(None, _as + _not_b)
+        _, _, ret     = Not().tick(None, _or)
+        return None, None, ret
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = set(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+def test_a21boi():
+    for x,y,z in product(C.Vals, C.Vals, C.Vals):
+        _, _, ret = A21boi().tick(None, [x,y,z])
 
-        pattern = [C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(THREE_PORT, pattern) }[ins]
+        if C.Vals.Q in [x,y,z]:
+            assert ret == [C.Vals.Q]
+        elif z == C.Vals.L:
+            assert ret == [C.Vals.L]
+        else:
+            _,_, ret1 = And2().tick(None, [x,y])
+            _,_, ret2 = Not().tick(None, ret1)
+            assert ret == ret2, f"{x=} {y=}, {ret1=}, {ret2=}"
 
 class A21bo(C.Common):
 
-    @property
-    def _type(self): return "A21bo"
+    def __init__(self):
+        C.Common.__init__(self, nins=3, nouts=1)
+        self._type = "A21bo"
+        self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
 
-    @property
-    def map(self): return {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+    def tick(self, _, ins):
+        assert len(ins) == 3
+        _, _, _as     = And2().tick(None, ins[:2])
+        _, _, _not_as = Not().tick(None, _as)
+        _, _, _b_and  = And2().tick(None, _not_as + ins[2:])
+        _, _, ret     = Not().tick(None, _b_and)
+        return None, None, ret
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = set(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+def test_a21bo():
+    for x,y,z in product(C.Vals, C.Vals, C.Vals):
+        _, _, ret = A21bo().tick(None, [x,y,z])
 
-        pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L]
-        return None, None, { x:[y] for x,y in zip(THREE_PORT, pattern) }[ins]
-
+        if C.Vals.Q in [x,y,z]:
+            assert ret == [C.Vals.Q]
+        elif z == C.Vals.L:
+            assert ret == [C.Vals.H]
+        else:
+            _,_, ret1 = And2().tick(None, [x,y])
+            assert ret == ret1, f"{x=} {y=}"
 
 class Xnor2(C.Common):
 
-    @property
-    def _type(self): return "Xnor2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Xnor2"
+        self.map = {"A": 0, "B": 1, "B_N": 2}, {"X": 0}
 
-    @property
-    def map(self): return {"A": 0, "B": 1, "B_N": 2}, {"X": 0}
+    def tick(self, _, ins):
+        _, _, _xor = Xor2().tick(None, ins)
+        _,_, _not = Not().tick(None, _xor)
+        return None, None, _not
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 3
-        ins = tuple(ivals)
+def test_xnor():
+    for ins in product(C.Vals, C.Vals):
+        _,_, ret = Xnor2().tick(None, ins)
         if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
-
-        # pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L]
-        return None, None, { x:[y] for x,y in zip(THREE_PORT, pattern) }[ins]
-
+            assert ret == [C.Vals.Q], f"{ins=}"
+        elif len(set(ins)) == 2:
+            assert ret == [C.Vals.L], f"{ins=}"
+        else:
+            assert ret == [C.Vals.H], f"{ins=}"
 
 
 class Nor2(C.Common):
 
-    @property
-    def _type(self): return "Nor2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Nor2"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
 
-    @property
-    def map(self): return {"A": 0, "B": 1}, {"X": 0}
+    def tick(self, _, ins):
+        _,_, _or = Or2().tick(None, ins)
+        _,_, _not = Not().tick(None, _or)
+        return None, None, _not
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = tuple(ivals)
+def test_nor():
+    for ins in product(C.Vals, C.Vals):
+        _,_, ret = Nor2().tick(None, ins)
         if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+            assert ret == [C.Vals.Q]
+        elif C.Vals.H in ins:
+            assert ret == [C.Vals.L]
+        else:
+            assert ret == [C.Vals.H]
 
-        pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
 
 class Nand2(C.Common):
 
-    @property
-    def _type(self): return "Nand2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Nand2"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
 
-    @property
-    def map(self): return {"A": 0, "B": 1}, {"X": 0}
+    def tick(self, _, ins):
+        _,_, _and = And2().tick(None, ins)
+        _,_, _not = Not().tick(None, _and)
+        return None, None, _not
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = tuple(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
-
-        pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
+def test_nand():
+    for x,y in product(C.Vals, C.Vals):
+        _,_, ret = Nand2().tick(None, [x,y])
+        if x == y:
+            if x == C.Vals.H:
+                assert ret == [C.Vals.L]
+            elif x == C.Vals.Q:
+                assert ret == [C.Vals.Q]
+            else:
+                assert ret == [C.Vals.H]
 
 class Mux2(C.Common):
 
-    @property
-    def _type(self): return "Mux2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Mux2"
+        self.map = {"A": 0, "B": 1, "S": 2}, {"X": 0}
 
-    @property
-    def map(self): return {"A": 0, "B": 1, "S": 2}, {"X": 0}
-
-    def ticker(self, _, ivals):
-        assert len(ivals) == 3
-        ins = tuple(ivals)
+    def tick(self, _, ins):
+        assert len(ins) == 3
+        ins = tuple(ins)
         if ins[2] == C.Vals.Q:
             return None, None, [C.Vals.Q]
         elif ins[2] == C.Vals.H:
-            return None, None, ins[0]
-        return None, None, ins[1]
+            return None, None, [ins[0]]
+        return None, None, [ins[1]]
+
+def test_mux():
+    for x,y,z in product(C.Vals, C.Vals, C.Vals):
+        _, _, ret = Mux2().tick(None, [x,y,z])
+        if z == C.Vals.Q:
+            assert ret == [C.Vals.Q]
+        elif z == C.Vals.H:
+            assert ret == [x]
+        elif z == C.Vals.L:
+            assert ret == [y]
+        else:
+            assert False
 
 
 class And2(C.Common):
 
-    @property
-    def _type(self): return "And2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "And2"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
+        self.table = TWO_PORT
 
-    @property
-    def map(self): return {"A": 0, "B": 1}, {"X": 0}
+def test_and():
+    for x,y in product(C.Vals, C.Vals):
+        _, _, ret = And2().tick(None, [x,y])
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = tuple(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
+        if C.Vals.Q in [x, y]:
+            assert ret == [C.Vals.Q]
+        elif C.Vals.L in [x,y]:
+            assert ret == [C.Vals.L]
+        else:
+            assert ret == [C.Vals.H]
 
-        pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
 
 class Probe(C.Common):
 
-    @property
-    def _type(self): return "Probe"
+    def __init__(self):
+        C.Common.__init__(self, nins=1, nouts=1)
+        self._type = "Probe"
+        self.map = {"A": 0}, {"X": 0}
 
-    def ticker(self, _, ivals):
-        return None, None, ivals
+    def tick(self, _, ins):
+        return None, None, ins
 
 
 
 class Or2(C.Common):
 
-    @property
-    def _type(self): return "Or2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Or2"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H]
+        self.table = TWO_PORT
 
-    @property
-    def map(self): return {"A": 0, "B": 1}, {"X": 0}
+def test_or():
+    for x,y in product(C.Vals, C.Vals):
+        _, _, ret = Or2().tick(None, [x,y])
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = tuple(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
-
-        pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H]
-        return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
-
-
+        if C.Vals.Q in [x, y]:
+            assert ret == [C.Vals.Q]
+        elif C.Vals.H in [x,y]:
+            assert ret == [C.Vals.H]
+        else:
+            assert ret == [C.Vals.L]
 
 
 class Xor2(C.Common):
 
-    @property
-    def _type(self): return "Xor2"
+    def __init__(self):
+        C.Common.__init__(self, nins=2, nouts=1)
+        self._type = "Xor2"
+        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.L]
+        self.table = TWO_PORT
 
-    @property
-    def map(self): return {"A": 0, "B": 1}, {"X": 0}
+def test_xor():
+    for x,y in product(C.Vals, C.Vals):
+        _, _, ret = Xor2().tick(None, [x,y])
 
-    def ticker(self, _, ivals):
-        assert len(ivals) == 2
-        ins = tuple(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
-
-        pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.L]
-        return None, None, { x:[y] for x,y in zip(TWO_PORT, pattern) }[ins]
+        if C.Vals.Q in [x, y]:
+            assert ret == [C.Vals.Q]
+        elif x == y:
+            assert ret == [C.Vals.L]
+        else:
+            assert ret == [C.Vals.H]
 
 
 class Nop(C.Common):
 
-    @property
-    def _type(self): return "Nop"
+    def __init__(self, nins, nouts):
+        C.Common.__init__(self, nins=nins, nouts=nouts)
+        self._type = "Nop"
+        self.map = {"A": 0}, {"X": 0}
 
-    @property
-    def map(self): return {"A": 0}, {"X": 0}
-
-    def ticker(self, _, ivals):
-        return None, None, ivals
+    def tick(self, _, ins):
+        return None, None, ins
 
 class Not(C.Common):
 
-    @property
-    def _type(self): return "Not"
-
-    @property
-    def map(self): return {"A": 0}, {"X": 0}
-
-    def ticker(self, _, ivals):
-        assert len(ivals) == 1
-        ins = tuple(ivals)
-        if C.Vals.Q in ins:
-            return None, None, [C.Vals.Q]
-        pattern = [C.Vals.H, C.Vals.L]
-        return None, None, { x:[y] for x,y in zip(ONE_PORT, pattern) }[ins]
-
+    def __init__(self):
+        C.Common.__init__(self, nins=1, nouts=1)
+        self._type = "Nop"
+        self.map = {"A": 0}, {"X": 0}
+        self.pattern = [C.Vals.H, C.Vals.L]
+        self.table = ONE_PORT
 
 class Diode(C.Common):
 
-    @property
-    def _type(self): return "Diode"
+    def __init__(self):
+        C.Common.__init__(self, nins=1, nouts=1)
+        self._type = "Diode"
+        self.map = {"A": 0}, {"X": 0}
+        self.pattern = [C.Vals.Q, C.Vals.H]
+        self.table = ONE_PORT
 
-    @property
-    def map(self): return {"A": 0}, {"X": 0}
+def test_diode():
+    for x in C.Vals:
+        _, _, ret = Diode().tick(None, [x])
 
-    def ticker(self, _, ivals: [C.Vals]) -> [C.Vals]:
-        assert len(ivals) == 1
-        ins = set(ivals)
-        if ins == {C.Vals.H}:
-            return None, None, [C.Vals.H]
-        return None, None, [C.Vals.Q]
-
+        if x in [C.Vals.Q, C.Vals.L]:
+            assert ret == [C.Vals.Q]
+        else:
+            assert ret == [C.Vals.H]

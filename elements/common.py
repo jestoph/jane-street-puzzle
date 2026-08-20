@@ -21,6 +21,15 @@ class Common(object):
         self.nouts = nouts
         self.id = None
 
+    def tick(self, _, ivals):
+        """ Stateless Ticker """
+        assert len(ivals) == self.nins, f"{len(ivals)=} {self.nins=}"
+        ins = tuple(ivals)
+        if Vals.Q in ins:
+            return None, None, [Vals.Q]
+
+        return None, None, { x:[y] for x,y in zip(self.table, self.pattern) }[ins]
+
 
 class PinType(Enum):
     O = "out"

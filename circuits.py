@@ -215,11 +215,11 @@ class Circuit(object): # Start Circuit {
 
     ################## Node Types ##########################################
 
-    def And2(self, name=""): return self.node( name, And2( 2, 1 ))
-    def Or2(self, name=""): return self.node( name, Or2( 2, 1 ))
-    def Xor2(self, name=""): return self.node( name, Xor2( 2, 1 ))
-    def Not(self, name=""): return self.node( name, Not( 1, 1 ))
-    def Diode(self, name=""): return self.node( name, Diode( 1, 1 ))
+    def And2(self, name=""): return self.node( name, And2())
+    def Or2(self, name=""): return self.node( name, Or2())
+    def Xor2(self, name=""): return self.node( name, Xor2())
+    def Not(self, name=""): return self.node( name, Not())
+    def Diode(self, name=""): return self.node( name, Diode())
 
     # Probe and Signal are just syntactic sugar for passive elements
     # Where you can inject arbitrary information and read the output
@@ -406,7 +406,7 @@ class Circuit(object): # Start Circuit {
         # If newstate is non-nil, store the state
         # If neweventoffset is non-nil, schedule a callback in neweventoffset ticks
         obj = self.nodes[node_id]
-        newstate, newevents, new_outputs = obj.ticker(node_state, [Vals(val) for val in new_inputs])
+        newstate, newevents, new_outputs = obj.tick(node_state, [Vals(val) for val in new_inputs])
 
         old_inputs = [x[0] for x in pending_inputs]
         self.print("TICKNODE", newstate, newevents, new_outputs, old_inputs)
