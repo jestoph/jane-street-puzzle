@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 
 def get_io():
 
@@ -110,14 +111,18 @@ def find_bounding(port_to_wire, box):
 
     return ret
 
+def prettify(port):
+    port_pretty = ":".join(port.split(":")[4:])
+    port_pretty = port_pretty.replace("_1","").replace("_2","")
+    return port_pretty
+
 def print_element(name, port_wire_map):
     print()
     print(f"---------------------{name.upper()}--------------------")
     print()
     old = ""
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[0]):
-        port_pretty = ":".join(port.split(":")[4:])
-        port_pretty = port_pretty.replace("_1","").replace("_2","")
+        port_pretty = prettify(port)
         if old != port_pretty:
             old = port_pretty
             print(port_pretty, '->')
@@ -128,8 +133,7 @@ def print_element(name, port_wire_map):
     print()
     old = ""
     for port, wire in sorted(port_wire_map.items(), key=lambda x: x[1]):
-        port_pretty = ":".join(port.split(":")[4:])
-        port_pretty = port_pretty.replace("_1","").replace("_2","")
+        port_pretty = prettify(port)
         if old != wire:
             old = wire
             print(wire, '->')
@@ -137,26 +141,36 @@ def print_element(name, port_wire_map):
 
     print()
 
+def element(port):
+    return ":".join(port.split(":")[4:6]).replace("_1","").replace("_2","")
+
 def print_element_as_json(name, port_wire_map, wire_port_map):
-
-    def prettify(port):
-        port_pretty = ":".join(port.split(":")[4:])
-        port_pretty = port_pretty.replace("_1","").replace("_2","")
-        return port_pretty
-
-    def element(port):
-        return ":".join(port.split(":")[4:6]).replace("_1","").replace("_2","")
 
     ret = {}
 
     ret["wires"] = list(wire_port_map.keys())
     ret["elements"] = list(set([element(port) for port in port_wire_map.keys()]))
 
+    element_position = {}
+    for port in port_wire_map:
+        # Take the minimal position as the canonical position
+        pretty = element(port)
+        _, x, _, y, _, _, _ = port.split(":")
+        x, y = float(x), float(y)
+        print(x,y)
+        element_position[pretty] = element_position.get(pretty, (10_000, 10_000))
+        if element_position[pretty] > (x, y):
+            element_position[pretty] = (x, y)
+
+    ret["element_position"] = element_position
+
     ret["port_to_wire"] = {prettify(port): wire for port, wire in port_wire_map.items()}
     ret["wire_to_ports"] = {wire: [prettify(port) for port in ports] for wire, ports, in wire_port_map.items()}
 
-    with open(f"outputs/{name}.json", "w") as fp:
-        json.dump(ret, fp)
+
+    name = f"outputs/{name}.json"
+    with open(name, "w") as fp:
+        json.dump(ret, fp, indent=2)
 
 
 def check_only_single_output_on_wire(wire_to_ports):

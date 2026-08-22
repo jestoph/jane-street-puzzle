@@ -22,15 +22,16 @@ def get_io():
 IO_PORTS=get_io()
 
 
-def el_to_elm(elname):
+def el_to_elm(elname, position):
     cellname = elname.split(":")[0]
-    el = elm.Ic(pinspacing=1)
+    print(position)
+    el = elm.Ic(pinspacing=1).at(tuple(position))
     for in_port in IO_PORTS[cellname][0]:
         el.pin(name=in_port, side='left')
     for out_port in IO_PORTS[cellname][1]:
         el.pin(name=out_port, side='right')
 
-    el.label(elname)
+    el.label(elname, font="bold")
     return el
 
 
@@ -44,14 +45,16 @@ def name_to_pin(pinname, el_map):
 
 def draw_circuit(circuit, filename, show=False):
     with schemdraw.Drawing(show=show) as d:
-        el_map = {el: el_to_elm(el) for el in circuit['elements']}
+        el_map = {}
+        for el in circuit['elements']:
+            tmp = el_to_elm(el, circuit['element_position'][el])
+            el_map[el] = tmp
 
         for wire, els in circuit['wire_to_ports'].items():
             pins = [name_to_pin(el, el_map) for el in els]
-            elm.Line().endpoints(*pins).dot()
-        elm.Resistor()
-        elm.Capacitor()
-        elm.Diode()
+            if len(els) > 1:
+                for i in range(len(els)-2):
+                    elm.Line().endpoints(pins[i], pins[i+1]).dot()
 
         # d.draw()
         if filename:
