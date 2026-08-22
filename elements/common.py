@@ -30,6 +30,16 @@ class Common(object):
 
         return None, None, { x:[y] for x,y in zip(self.table, self.pattern) }[ins]
 
+    def ins(self, key):
+        if key in self.map[0]:
+            return self.map[0][key]
+        raise ValueError(f"Type '{self._type}' does not have input '{key}'")
+
+    def outs(self, key):
+        if key in self.map[1]:
+            return self.map[1][key]
+        raise ValueError(f"Type '{self._type}' does not have output '{key}'")
+
 
 class PinType(Enum):
     O = "out"

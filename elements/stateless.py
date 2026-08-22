@@ -45,6 +45,33 @@ FOUR_PORT = [
     (C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H), # 0b1111
 ]
 
+def get_io():
+
+    with open("cell-to-pins.txt") as fp:
+        data = fp.read()
+
+    ret = {}
+    lines = data.splitlines()[2:]
+    for line in lines:
+        port, ins, outs = line.split("|")
+        port = port.strip().replace('sky130_fd_sc_hd__','').replace("_1","").replace("_2","")
+        ins = ins.strip().split(',')
+        outs = outs.strip().split(',')
+        ret[port] = (set(ins), set(outs))
+
+    return ret
+IO_PORTS=get_io()
+
+def compare_io(obj):
+
+    ins = set(obj.map[0].keys())
+    cmp_ins = set(IO_PORTS[obj._type.lower()][0])
+    assert ins == cmp_ins, f"Inputs {ins=} != {cmp_ins=}"
+
+    outs = set(obj.map[1].keys())
+    cmp_outs = set(IO_PORTS[obj._type.lower()][1])
+    assert outs == cmp_outs, f"Outputs {outs=} != {cmp_outs=}"
+
 
 
 class O21bai(C.Common):
@@ -52,7 +79,7 @@ class O21bai(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "O21bai"
-        self.map = {"A1": 0, "A2": 1, "B1_N": 2}, {"X": 0}
+        self.map = {"A1": 0, "A2": 1, "B1_N": 2}, {"Y": 0}
 
     def tick(self, _, ins):
         assert len(ins) == 3
@@ -63,7 +90,11 @@ class O21bai(C.Common):
 
         return None, None, _not1
 
+
 def test_o21bai():
+
+    compare_io(O21bai())
+
     for x,y,z in product(C.Vals, C.Vals, C.Vals):
         _, _, ret = O21bai().tick(None, [x,y,z])
 
@@ -86,7 +117,7 @@ class O21bai(C.Common):
 class A31o(C.Common):
 
     def __init__(self):
-        C.Common.__init__(self, nins=3, nouts=1)
+        C.Common.__init__(self, nins=4, nouts=1)
         self._type = "A31o"
         self.map = {"A1": 0, "A2": 1, "A3": 2, "B1": 3}, {"X": 0}
         assert self.nins == len(self.map[0])
@@ -103,6 +134,7 @@ class A31o(C.Common):
 
 def test_a32o():
 
+    compare_io(A31o())
     for x,y,z,a in product(C.Vals, C.Vals, C.Vals, C.Vals):
         _, _, ret = A31o().tick(None, [x,y,z,a])
 
@@ -147,9 +179,9 @@ class And3(C.Common):
 class A21o(C.Common):
 
     def __init__(self):
-        C.Common.__init__(self, nins=2, nouts=1)
+        C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A21o"
-        self.map = {"A1": 0, "A2": 1, "B": 2}, {"X": 0}
+        self.map = {"A1": 0, "A2": 1, "B1": 2}, {"X": 0}
         self.pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H]
         self.table = THREE_PORT
         assert self.nins == len(self.map[0])
@@ -164,6 +196,7 @@ class A21o(C.Common):
         return None, None, _or
 
 def test_a210():
+    compare_io(A21o())
     for x,y,z in product(C.Vals, C.Vals, C.Vals):
         _, _, ret = A21o().tick(None, [x,y,z])
 
@@ -180,7 +213,7 @@ class A21boi(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A21boi"
-        self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+        self.map = {"A1": 0, "A2": 1, "B1_N": 2}, {"Y": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -193,6 +226,7 @@ class A21boi(C.Common):
         return None, None, ret
 
 def test_a21boi():
+    compare_io(A21boi())
     for x,y,z in product(C.Vals, C.Vals, C.Vals):
         _, _, ret = A21boi().tick(None, [x,y,z])
 
@@ -210,7 +244,7 @@ class A21bo(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A21bo"
-        self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+        self.map = {"A1": 0, "A2": 1, "B1_N": 2}, {"X": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -223,6 +257,7 @@ class A21bo(C.Common):
         return None, None, ret
 
 def test_a21bo():
+    compare_io(A21bo())
     for x,y,z in product(C.Vals, C.Vals, C.Vals):
         _, _, ret = A21bo().tick(None, [x,y,z])
 
@@ -239,7 +274,7 @@ class Xnor2(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Xnor2"
-        self.map = {"A": 0, "B": 1, "B_N": 2}, {"X": 0}
+        self.map = {"A": 0, "B": 1}, {"Y": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -249,6 +284,7 @@ class Xnor2(C.Common):
         return None, None, _not
 
 def test_xnor():
+    compare_io(Xnor2())
     for ins in product(C.Vals, C.Vals):
         _,_, ret = Xnor2().tick(None, ins)
         if C.Vals.Q in ins:
@@ -264,7 +300,7 @@ class Nor2(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Nor2"
-        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.map = {"A": 0, "B": 1}, {"Y": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -274,6 +310,7 @@ class Nor2(C.Common):
         return None, None, _not
 
 def test_nor():
+    compare_io(Nor2())
     for ins in product(C.Vals, C.Vals):
         _,_, ret = Nor2().tick(None, ins)
         if C.Vals.Q in ins:
@@ -289,7 +326,7 @@ class Nand2(C.Common):
     def __init__(self):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Nand2"
-        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.map = {"A": 0, "B": 1}, {"Y": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -299,6 +336,7 @@ class Nand2(C.Common):
         return None, None, _not
 
 def test_nand():
+    compare_io(Nand2())
     for x,y in product(C.Vals, C.Vals):
         _,_, ret = Nand2().tick(None, [x,y])
         if x == y:
@@ -312,9 +350,9 @@ def test_nand():
 class Mux2(C.Common):
 
     def __init__(self):
-        C.Common.__init__(self, nins=2, nouts=1)
+        C.Common.__init__(self, nins=3, nouts=1)
         self._type = "Mux2"
-        self.map = {"A": 0, "B": 1, "S": 2}, {"X": 0}
+        self.map = {"A0": 0, "A1": 1, "S": 2}, {"X": 0}
         assert self.nins == len(self.map[0])
         assert self.nouts == len(self.map[1])
 
@@ -328,6 +366,7 @@ class Mux2(C.Common):
         return None, None, [ins[1]]
 
 def test_mux():
+    compare_io(Mux2())
     for x,y,z in product(C.Vals, C.Vals, C.Vals):
         _, _, ret = Mux2().tick(None, [x,y,z])
         if z == C.Vals.Q:
@@ -350,6 +389,7 @@ class And2(C.Common):
         self.table = TWO_PORT
 
 def test_and():
+    compare_io(And2())
     for x,y in product(C.Vals, C.Vals):
         _, _, ret = And2().tick(None, [x,y])
 
@@ -387,6 +427,7 @@ class Or2(C.Common):
         assert self.nouts == len(self.map[1])
 
 def test_or():
+    compare_io(Or2())
     for x,y in product(C.Vals, C.Vals):
         _, _, ret = Or2().tick(None, [x,y])
 
@@ -410,6 +451,7 @@ class Xor2(C.Common):
         assert self.nouts == len(self.map[1])
 
 def test_xor():
+    compare_io(Xor2())
     for x,y in product(C.Vals, C.Vals):
         _, _, ret = Xor2().tick(None, [x,y])
 
@@ -461,7 +503,5 @@ def test_diode():
             assert ret == [C.Vals.Q]
         else:
             assert ret == [C.Vals.H]
-            p
-
 
 

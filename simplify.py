@@ -301,24 +301,22 @@ if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
-    if sys.argv[1] == 'comparitor':
-        box = ((50, 40), (100,60)) # Bit of a guess
-    elif sys.argv[1] == 'adder':
-        box = ((50, 0), (100,40)) # Bit of a guess
-    elif sys.argv[1] == 'sr1':
-        box = ((0, 45), (50, 100))
-    elif sys.argv[1] == 'sr2':
-        box = ((0, 0), (50, 45))
-    elif sys.argv[1] == 'all':
-        box = ((0, 0), (100, 100))
+    if sys.argv[1] == 'warmup':
+        for name, box in [
+                    ('comparitor', ((50, 40), (100,60))), # Bit of a guess
+                    ('adder', ((50, 0), (100,40))), # Bit of a guess
+                    ('sr1', ((0, 45), (50, 100))),
+                    ('sr2', ((0, 0), (50, 45))),
+                    ('all', ((0, 0), (100, 100))),
+                    ]:
+            sub_circuit = find_bounding(port_to_wire, box)
+            revd = reverse_map(sub_circuit)
+            print_unconnected_elements(revd)
+            print_element(name.upper(), sub_circuit)
+            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_element_as_json(name, sub_circuit, revd)
+            print_element_as_circuit(name, sub_circuit, revd)
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)
 
-    sub_circuit = find_bounding(port_to_wire, box)
-    revd = reverse_map(sub_circuit)
-    print_unconnected_elements(revd)
-    print_element(sys.argv[1].upper(), sub_circuit)
-    print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-    print_element_as_json(sys.argv[1], sub_circuit, revd)
-    print_element_as_circuit(sys.argv[1], sub_circuit, revd)

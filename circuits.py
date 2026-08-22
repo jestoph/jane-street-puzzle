@@ -1,12 +1,20 @@
 from elements.stateless import (
+    A21bo,
+    A21boi,
+    A21o,
+    A31o,
     And2,
     And3,
     And4bb,
     Diode,
+    Nand2,
     Nop,
+    Nor2,
     Not,
     Or2,
+    O21bai,
     Probe,
+    Xnor2,
     Xor2,
 )
 from elements.stateful import Reg
@@ -65,14 +73,22 @@ def mkTables(curr):
     curr.execute("""
         INSERT INTO node_types (type)
         VALUES
+        ('A21bo'),
+        ('A21boi'),
+        ('A21o'),
+        ('A31o'),
         ('And2'),
         ('And3'),
         ('And4bb'),
         ('Diode'),
+        ('Nand2'),
         ('Nop'),
+        ('Nor2'),
         ('Not'),
         ('Or2'),
+        ('O21bai'),
         ('Reg'),
+        ('Xnor2'),
         ('Xor2');
         """)
 
@@ -239,13 +255,21 @@ class Circuit(object): # Start Circuit {
 
     ################## Node Types ##########################################
 
+    def A21bo(self, name=""): return self.node( name, A21bo())
+    def A21boi(self, name=""): return self.node( name, A21boi())
+    def A31o(self, name=""): return self.node( name, A31o())
+    def A21o(self, name=""): return self.node( name, A21o())
     def And2(self, name=""): return self.node( name, And2())
     def And3(self, name=""): return self.node( name, And3())
     def And4bb(self, name=""): return self.node( name, And4bb())
     def Or2(self, name=""): return self.node( name, Or2())
+    def O21bai(self, name=""): return self.node( name, O21bai())
+    def Xnor2(self, name=""): return self.node( name, Xnor2())
     def Xor2(self, name=""): return self.node( name, Xor2())
+    def Nand2(self, name=""): return self.node( name, Nand2())
     def Not(self, name=""): return self.node( name, Not())
     def Diode(self, name=""): return self.node( name, Diode())
+    def Nor2(self, name="", cnt=1): return self.node( name, Nor2())
 
     # Probe and Signal are just syntactic sugar for passive elements
     # Where you can inject arbitrary information and read the output
@@ -259,31 +283,29 @@ class Circuit(object): # Start Circuit {
 
 
     def createNode(self, name, node_type, *args):
-        # A21bo
-        # A21boi
-        # A21o
-        # A31o
-        # And3
         # Diode
         # Mux2
-        # Nand2
-        # Nor2
-        # O21bai
-        # O21bai
-        # Xnor2
         # Probe and Signal are just syntactic sugar for passive elements
+        if node_type.upper() == 'A21bo'.upper(): return self.A21bo(name, *args)
+        if node_type.upper() == 'A21boi'.upper(): return self.A21boi(name, *args)
+        if node_type.upper() == 'A21o'.upper(): return self.A21o(name, *args)
+        if node_type.upper() == 'A31o'.upper(): return self.A31o(name, *args)
         if node_type.upper() == 'And2'.upper(): return self.And2(name, *args)
         if node_type.upper() == 'And3'.upper(): return self.And3(name, *args)
         if node_type.upper() == 'And4bb'.upper(): return self.And4bb(name, *args)
         if node_type.upper() == 'Clk'.upper(): return self.Reg(name, *args)
         if node_type.upper() == 'Diode'.upper(): return self.Diode(name, *args)
+        if node_type.upper() == 'Nand2'.upper(): return self.Nand2(name, *args)
         if node_type.upper() == 'Nop'.upper(): return self.Nop(name, *args)
+        if node_type.upper() == 'Nor2'.upper(): return self.Nor2(name, *args)
         if node_type.upper() == 'Not'.upper(): return self.Not(name, *args)
         if node_type.upper() == 'Or2'.upper(): return self.Or2(name, *args)
+        if node_type.upper() == 'O21bai'.upper(): return self.O21bai(name, *args)
         if node_type.upper() == 'Probe'.upper(): return self.Nop(name, *args)
         if node_type.upper() == 'Reg'.upper(): return self.Reg(name, *args)
         if node_type.upper() == 'Signal'.upper(): return self.Nop(name, *args)
         if node_type.upper() == 'Xor2'.upper(): return self.Xor2(name, *args)
+        if node_type.upper() == 'Xnor2'.upper(): return self.Xnor2(name, *args)
         raise ValueError(f"No node type of {node_type=}")
 
 
@@ -752,7 +774,7 @@ class Circuit(object): # Start Circuit {
                     src_pin = O(int(src_pin))
                 else:
                     obj = self.nodes[self.getNode(src_name)]
-                    src_pin = O(obj.map[1][src_pin])
+                    src_pin = O(obj.outs(src_pin))
                 dst_pairs = []
                 for x in dst:
                     print(f"{x=}")
@@ -762,7 +784,7 @@ class Circuit(object): # Start Circuit {
                         dst_pairs.append(I(int(r)))
                     else:
                         obj = self.nodes[self.getNode(l)]
-                        dst_pairs.append(I(obj.map[0][r]))
+                        dst_pairs.append(I(obj.ins(r)))
                 print(f"{dst_pairs=}")
                 assert arrow == '->', f"Expect '->' as second arg in wires section - {nocomment=}"
                 self.wireTo(src_name, src_pin, *dst_pairs)
