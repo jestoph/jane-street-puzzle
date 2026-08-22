@@ -89,6 +89,8 @@ class A31o(C.Common):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A31o"
         self.map = {"A1": 0, "A2": 1, "A3": 2, "B1": 3}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         assert len(ins) == 4
@@ -112,18 +114,35 @@ def test_a32o():
             _,_, _and = And3().tick(None, [x,y,z])
             assert _and == ret
 
+class And4bb(C.Common):
+
+    def __init__(self):
+        C.Common.__init__(self, nins=4, nouts=1)
+        self._type = "And3"
+        self.map = {"A_N": 0, "B_N": 1, "C": 2, "D": 3}, {"X": 0}
+        self.pattern = [
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H,
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L,
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L,
+            C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L,
+        ]
+        self.table = THREE_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
+
 class And3(C.Common):
 
     def __init__(self):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "And3"
-        self.map = {"A": 0, "B": 1}, {"X": 0}
+        self.map = {"A": 0, "B": 1, "C": 2}, {"X": 0}
         self.pattern = [
             C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.L,
             C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H,
         ]
         self.table = THREE_PORT
-
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
 class A21o(C.Common):
 
@@ -133,6 +152,8 @@ class A21o(C.Common):
         self.map = {"A1": 0, "A2": 1, "B": 2}, {"X": 0}
         self.pattern = [C.Vals.L, C.Vals.L, C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H, C.Vals.H]
         self.table = THREE_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         assert len(ins) == 3
@@ -160,6 +181,8 @@ class A21boi(C.Common):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A21boi"
         self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         assert len(ins) == 3
@@ -188,6 +211,8 @@ class A21bo(C.Common):
         C.Common.__init__(self, nins=3, nouts=1)
         self._type = "A21bo"
         self.map = {"A1": 0, "A2": 1, "B_N": 2}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         assert len(ins) == 3
@@ -215,6 +240,8 @@ class Xnor2(C.Common):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Xnor2"
         self.map = {"A": 0, "B": 1, "B_N": 2}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         _, _, _xor = Xor2().tick(None, ins)
@@ -238,6 +265,8 @@ class Nor2(C.Common):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Nor2"
         self.map = {"A": 0, "B": 1}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         _,_, _or = Or2().tick(None, ins)
@@ -261,6 +290,8 @@ class Nand2(C.Common):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Nand2"
         self.map = {"A": 0, "B": 1}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         _,_, _and = And2().tick(None, ins)
@@ -284,6 +315,8 @@ class Mux2(C.Common):
         C.Common.__init__(self, nins=2, nouts=1)
         self._type = "Mux2"
         self.map = {"A": 0, "B": 1, "S": 2}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         assert len(ins) == 3
@@ -334,6 +367,8 @@ class Probe(C.Common):
         C.Common.__init__(self, nins=1, nouts=1)
         self._type = "Probe"
         self.map = {"A": 0}, {"X": 0}
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
     def tick(self, _, ins):
         return None, None, ins
@@ -348,6 +383,8 @@ class Or2(C.Common):
         self.map = {"A": 0, "B": 1}, {"X": 0}
         self.pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.H]
         self.table = TWO_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
 def test_or():
     for x,y in product(C.Vals, C.Vals):
@@ -369,6 +406,8 @@ class Xor2(C.Common):
         self.map = {"A": 0, "B": 1}, {"X": 0}
         self.pattern = [C.Vals.L, C.Vals.H, C.Vals.H, C.Vals.L]
         self.table = TWO_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
 def test_xor():
     for x,y in product(C.Vals, C.Vals):
@@ -396,10 +435,12 @@ class Not(C.Common):
 
     def __init__(self):
         C.Common.__init__(self, nins=1, nouts=1)
-        self._type = "Nop"
+        self._type = "Not"
         self.map = {"A": 0}, {"X": 0}
         self.pattern = [C.Vals.H, C.Vals.L]
         self.table = ONE_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
 class Diode(C.Common):
 
@@ -409,6 +450,8 @@ class Diode(C.Common):
         self.map = {"A": 0}, {"X": 0}
         self.pattern = [C.Vals.Q, C.Vals.H]
         self.table = ONE_PORT
+        assert self.nins == len(self.map[0])
+        assert self.nouts == len(self.map[1])
 
 def test_diode():
     for x in C.Vals:
@@ -418,3 +461,7 @@ def test_diode():
             assert ret == [C.Vals.Q]
         else:
             assert ret == [C.Vals.H]
+            p
+
+
+

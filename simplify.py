@@ -173,6 +173,46 @@ def print_element_as_json(name, port_wire_map, wire_port_map):
         json.dump(ret, fp, indent=2)
 
 
+def get_output_port_from_list(ports):
+    data = IO_PORTS
+    for port in ports:
+        _, _, _, _, cname, _, pname = port.split(":")
+        if pname in data[cname][1]:
+            return port
+
+def prettify1(port):
+    _type, _id, _pin = port.split(":")[4:]
+    _type = _type.replace("_1","").replace("_2","")
+    return f"{_type}:{_id}.{_pin}"
+
+def print_element_as_circuit(name, port_wire_map, wire_port_map):
+
+    lines = [f"# {name.upper()}"]
+
+    """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
+    # node and3:1:X and3:1
+    lines.append("start-nodes")
+    all_nodes = set([element(port) for port in port_wire_map])
+    for node in all_nodes:
+        lines.append(f"  node {node} {node.split(":")[0]}")
+    lines.append("end-nodes")
+
+    lines.append("start-wires")
+    for ports in wire_port_map.values():
+
+        if output_port := get_output_port_from_list(ports):
+            rest = set(ports)
+            rest.remove(output_port)
+            rest = " ".join(prettify1(iport) for iport in rest)
+            lines.append(f"  {prettify1(output_port)} -> {rest}")
+    lines.append("end-wires")
+
+    with open(f"outputs/{name}.circuit", "w") as fp:
+        fp.write("\n".join(lines))
+
+
+
+
 def check_only_single_output_on_wire(wire_to_ports):
     """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
     # _, x, _, y, name, _, _ = port.split(":")
@@ -281,3 +321,4 @@ if __name__ == '__main__':
     print_element(sys.argv[1].upper(), sub_circuit)
     print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
     print_element_as_json(sys.argv[1], sub_circuit, revd)
+    print_element_as_circuit(sys.argv[1], sub_circuit, revd)

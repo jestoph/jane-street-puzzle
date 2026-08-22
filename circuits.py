@@ -1,4 +1,14 @@
-from elements.stateless import Nop, Not, And2, Xor2, Or2, Diode, Probe
+from elements.stateless import (
+    And2,
+    And3,
+    And4bb,
+    Diode,
+    Nop,
+    Not,
+    Or2,
+    Probe,
+    Xor2,
+)
 from elements.stateful import Reg
 from elements.common import Common, Vals, PinType, O, I
 import sys
@@ -11,6 +21,12 @@ TODO:
     * Add Bus type - Maybe just a name on a collection of wires?
 """
 
+def isInt(x):
+    try:
+        int(x)
+        return True
+    except:
+        return False
 
 
 def dumpTable(curr, table):
@@ -49,7 +65,15 @@ def mkTables(curr):
     curr.execute("""
         INSERT INTO node_types (type)
         VALUES
-        ('And2'),('Or2'),('Not'),('Xor2'),('Reg'),('Diode'),('Nop');
+        ('And2'),
+        ('And3'),
+        ('And4bb'),
+        ('Diode'),
+        ('Nop'),
+        ('Not'),
+        ('Or2'),
+        ('Reg'),
+        ('Xor2');
         """)
 
     curr.execute("""
@@ -216,6 +240,8 @@ class Circuit(object): # Start Circuit {
     ################## Node Types ##########################################
 
     def And2(self, name=""): return self.node( name, And2())
+    def And3(self, name=""): return self.node( name, And3())
+    def And4bb(self, name=""): return self.node( name, And4bb())
     def Or2(self, name=""): return self.node( name, Or2())
     def Xor2(self, name=""): return self.node( name, Xor2())
     def Not(self, name=""): return self.node( name, Not())
@@ -233,17 +259,31 @@ class Circuit(object): # Start Circuit {
 
 
     def createNode(self, name, node_type, *args):
-        if node_type == 'And2': return self.And2(name, *args)
-        if node_type == 'Or2': return self.Or2(name, *args)
-        if node_type == 'Xor2': return self.Xor2(name, *args)
-        if node_type == 'Not': return self.Not(name, *args)
-        if node_type == 'Diode': return self.Diode(name, *args)
-        if node_type == 'Reg': return self.Reg(name, *args)
-        if node_type == 'Clk': return self.Reg(name, *args)
+        # A21bo
+        # A21boi
+        # A21o
+        # A31o
+        # And3
+        # Diode
+        # Mux2
+        # Nand2
+        # Nor2
+        # O21bai
+        # O21bai
+        # Xnor2
         # Probe and Signal are just syntactic sugar for passive elements
-        if node_type == 'Nop': return self.Nop(name, *args)
-        if node_type == 'Probe': return self.Nop(name, *args)
-        if node_type == 'Signal': return self.Nop(name, *args)
+        if node_type.upper() == 'And2'.upper(): return self.And2(name, *args)
+        if node_type.upper() == 'And3'.upper(): return self.And3(name, *args)
+        if node_type.upper() == 'And4bb'.upper(): return self.And4bb(name, *args)
+        if node_type.upper() == 'Clk'.upper(): return self.Reg(name, *args)
+        if node_type.upper() == 'Diode'.upper(): return self.Diode(name, *args)
+        if node_type.upper() == 'Nop'.upper(): return self.Nop(name, *args)
+        if node_type.upper() == 'Not'.upper(): return self.Not(name, *args)
+        if node_type.upper() == 'Or2'.upper(): return self.Or2(name, *args)
+        if node_type.upper() == 'Probe'.upper(): return self.Nop(name, *args)
+        if node_type.upper() == 'Reg'.upper(): return self.Reg(name, *args)
+        if node_type.upper() == 'Signal'.upper(): return self.Nop(name, *args)
+        if node_type.upper() == 'Xor2'.upper(): return self.Xor2(name, *args)
         raise ValueError(f"No node type of {node_type=}")
 
 
@@ -672,7 +712,7 @@ class Circuit(object): # Start Circuit {
         """, (pins_id, wireId))
 
     def wireTo(self, node1, pin1, *args):
-        assert len(args)%2 == 0, 'Must have an even number of args'
+        assert len(args)%2 == 0, f"Must have an even number of args {args=}"
         w = self.wire()
         self.attachOut(w, node1, pin1)
         for i in range(len(args)//2):
@@ -708,13 +748,21 @@ class Circuit(object): # Start Circuit {
             elif state == 'wires':
                 src, arrow, *dst = line.split()
                 src_name, src_pin = src.split(".")
-                src_pin = O(int(src_pin))
+                if isInt(src_pin):
+                    src_pin = O(int(src_pin))
+                else:
+                    obj = self.nodes[self.getNode(src_name)]
+                    src_pin = O(obj.map[1][src_pin])
                 dst_pairs = []
                 for x in dst:
                     print(f"{x=}")
                     l,r = x.split(".")
                     dst_pairs.append(l)
-                    dst_pairs.append(I(int(r)))
+                    if isInt(r):
+                        dst_pairs.append(I(int(r)))
+                    else:
+                        obj = self.nodes[self.getNode(l)]
+                        dst_pairs.append(I(obj.map[0][r]))
                 print(f"{dst_pairs=}")
                 assert arrow == '->', f"Expect '->' as second arg in wires section - {nocomment=}"
                 self.wireTo(src_name, src_pin, *dst_pairs)
@@ -1367,3 +1415,12 @@ def test_circuit_sim_from_parse(): # {
     # }
 
 # } End Stateful Tests
+
+if __name__ == '__main__':
+    with open(sys.argv[1]) as fp:
+        desc = fp.read()
+
+    c = Circuit()
+    c.parseCircuit(desc)
+
+
