@@ -1,66 +1,22 @@
 
+## Viewing the circuit
+[ ] WORK OUT HOW TO NAME IO WIRES
+[ ] Find some way of laying out the circuit. Maybe use 'schemdraw' which does it in python.
+[ ] Try with
+  [ ] Comparitor
+  [ ] Shift Register 1
+  [ ] Shift Register 2
+  [ ] Adder
+  [ ] Total Circuit
 
-### Starting ideas
-[x] Start trying to extract the network
-[x] Extract all unique cells to individual gds and svg using a makefile
-[x] Work out coordinate system of the file
-[x] Work out how to filter on global coords rather than local - maybe flatten all top cells, and do it by bounding box?
-[x] Turn this into a proper repo on my github
-[x] Create a realtime-updating svg viewer? - No, not needed. Chrome does a good-enough job
-
-### GDS Tooling
-[ ] Find a local GDS viewer - could I use Raylib + voxels? Probably not a good idea but ....
-  [x] Start gds viewer in raylib - steal an example
-  [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
-  [x] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
-  [x] Get standard camera movements working -
-    [x] Pan
-    [x] Zoom
-    [x] Drag/rotate
-  [ ] Try to place some elements for a small cell
-    [x] Bounding Boxes
-    [ ] How to turn a polygon into blocks? - I think this is going to be harder than I thought - might need to make mesh models
-    [ ] Place real polygons
-  [ ] Work out how to highlight a cell - there's a voxel example that does this.
-[x] I think this is a lost cause - I don't understand raylib enough to get this working
-
-### Understanding the network
-[x] Try to understand individual cells
-  [x] Look at circuit elements made by cells.py
-  [x] Work out how to show labels (maybe convert to text?) and add them to cells.py - Was done already in svg function
-  [x] Look at obscured labels under PWR and GND labels
-  [x] Read the manual - https://sky130-unofficial.readthedocs.io/en/latest/
-  [x] Can I map labels on io ports to geometry?
-[x] Draw up my understanding of gds in xcalidraw - not necessary, it's all spelled out in the docs
-[ ] Map out the graph
-  [x] Try to find a single example of a circuit element connected to a wire and write it to a gds
-  [x] Build a gds of all connected, useful/interesting components
-      - Got one working but with 'directional' artifacts. The naive algorithm isn't the best
-  [x] Use a proper flood fill or graph traversal algorithm - layer connection worked fine
-  [x] Fix bounding box issue
-  [x] Work out how to take multiple distinct wires and convert into a single wire
-  [ ] Add inputs and outputs to the circuit descriptions - maybe `x<1` or `x>99` would do the job? Honestly some xy coords on the rendering would be so nice
-  [ ] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that)
-  [ ] Understand via scripts the following elements:
-     [x] Comparitor
-      [ ] Auto-detect outputs and inputs
-     [x] Shift Register 1
-      [ ] Auto-detect outputs and inputs
-     [x] Shift Register 2
-      [x] Fix bug <- I have two wires connected to only one component
-      [ ] Auto-detect outputs and inputs
-     [x] Add Validations
-        [x] Warn on unconnected pins
-        [x] No output pins connected to inputs
-        [x] Check that all port names exist etc
-     [ ] Adder <- not feeling confident this will work
-      [x] Fix via4/met4 information
-      [x] Auto-detect outputs and inputs
-      [x] Get all components in to simulator - they are stateless
-      [x] Write tests for all of them
-      [ ] Lay out circuit
-[ ] What are boundaries?
-[ ] Why does the text file have more types?
+## Simulating the circuit
+[ ] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
+[ ] Run sims of
+  [ ] Comparitor
+  [ ] Shift Register 1
+  [ ] Shift Register 2
+  [ ] Adder
+  [ ] Total Circuit
 [ ] Add all cell elements to my sim with tests
   [x] Adder Elements
     [x] `a31o_2`
@@ -83,3 +39,64 @@
     [ ] `clkbuf_16`
     [ ] `mux2_1`
   [ ] Real puzzle elements
+
+### GDS Tooling - Abandon this!
+[x] Find a local GDS viewer - could I use Raylib + voxels? Probably not a good idea but ....
+  [x] Start gds viewer in raylib - steal an example
+  [x] Fix orthographic view in examples - relies on rcamera and possibly rmath, can probably copy-paste
+  [x] Draw up my understanding of raylib camera perspectives (first/third person, orthographic) in xcalidraw
+  [x] Get standard camera movements working -
+    [x] Pan
+    [x] Zoom
+    [x] Drag/rotate
+  [x] Try to place some elements for a small cell
+    [x] Bounding Boxes
+    [x] How to turn a polygon into blocks? - I think this is going to be harder than I thought - might need to make mesh models
+[x] I think this is a lost cause - I don't understand raylib enough to get this working
+
+
+### Starting ideas
+[x] Start trying to extract the network
+[x] Extract all unique cells to individual gds and svg using a makefile
+[x] Work out coordinate system of the file
+[x] Work out how to filter on global coords rather than local - maybe flatten all top cells, and do it by bounding box?
+[x] Turn this into a proper repo on my github
+[x] Create a realtime-updating svg viewer? - No, not needed. Chrome does a good-enough job
+
+### Understanding the network
+[x] Try to understand individual cells
+  [x] Look at circuit elements made by cells.py
+  [x] Work out how to show labels (maybe convert to text?) and add them to cells.py - Was done already in svg function
+  [x] Look at obscured labels under PWR and GND labels
+  [x] Read the manual - https://sky130-unofficial.readthedocs.io/en/latest/
+  [x] Can I map labels on io ports to geometry?
+[x] Draw up my understanding of gds in xcalidraw - not necessary, it's all spelled out in the docs
+[x] Map out the graph
+  [x] Try to find a single example of a circuit element connected to a wire and write it to a gds
+  [x] Build a gds of all connected, useful/interesting components
+      - Got one working but with 'directional' artifacts. The naive algorithm isn't the best
+  [x] Use a proper flood fill or graph traversal algorithm - layer connection worked fine
+  [x] Fix bounding box issue
+  [x] Work out how to take multiple distinct wires and convert into a single wire
+  [x] Try to build a dot file (might need to give each pad a unique name like `AND:123:A -> MUX:7:Q` or something like that) - instead going with schemdraw
+  [x] Add Validations
+     [x] Warn on unconnected pins
+     [x] No output pins connected to inputs
+     [x] Check that all port names exist etc
+  [x] Understand via scripts the following elements:
+     [x] Comparitor
+      [x] Auto-detect outputs and inputs
+     [x] Shift Register 1
+      [x] Auto-detect outputs and inputs
+     [x] Shift Register 2
+      [x] Fix bug <- I have two wires connected to only one component
+      [x] Auto-detect outputs and inputs
+     [x] Adder <- not feeling confident this will work
+      [x] Fix via4/met4 information
+      [x] Auto-detect outputs and inputs
+      [x] Get all components in to simulator - they are stateless
+      [x] Write tests for all of them
+
+## Questions
+[ ] What are boundaries in the gds2text output?
+[ ] Why does the text file have more types?

@@ -1,4 +1,5 @@
 import sys
+import json
 
 def get_io():
 
@@ -136,7 +137,26 @@ def print_element(name, port_wire_map):
 
     print()
 
+def print_element_as_json(name, port_wire_map, wire_port_map):
 
+    def prettify(port):
+        port_pretty = ":".join(port.split(":")[4:])
+        port_pretty = port_pretty.replace("_1","").replace("_2","")
+        return port_pretty
+
+    def element(port):
+        return ":".join(port.split(":")[4:6]).replace("_1","").replace("_2","")
+
+    ret = {}
+
+    ret["wires"] = list(wire_port_map.keys())
+    ret["elements"] = list(set([element(port) for port in port_wire_map.keys()]))
+
+    ret["port_to_wire"] = {prettify(port): wire for port, wire in port_wire_map.items()}
+    ret["wire_to_ports"] = {wire: [prettify(port) for port in ports] for wire, ports, in wire_port_map.items()}
+
+    with open(f"outputs/{name}.json", "w") as fp:
+        json.dump(ret, fp)
 
 
 def check_only_single_output_on_wire(wire_to_ports):
@@ -246,3 +266,4 @@ if __name__ == '__main__':
     print_unconnected_elements(revd)
     print_element(sys.argv[1].upper(), sub_circuit)
     print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+    print_element_as_json(sys.argv[1], sub_circuit, revd)
