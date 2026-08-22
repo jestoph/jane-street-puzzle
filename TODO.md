@@ -1,15 +1,18 @@
+## Questions
+[ ] What are boundaries in the gds2text output?
+[ ] Why does the text file have more types?
 
 ## Viewing the circuit
-[ ] WORK OUT HOW TO NAME IO WIRES
-[ ] Find some way of laying out the circuit. Maybe use 'schemdraw' which does it in python.
-[ ] Try with
-  [ ] Comparitor
-  [ ] Shift Register 1
-  [ ] Shift Register 2
-  [ ] Adder
-  [ ] Total Circuit
+[x] Find some way of laying out the circuit. Maybe use 'schemdraw' which does it in python. - This is a dead end I think?
+[x] Try with
+  [x] Comparitor
+  [-] Shift Register 1
+  [-] Shift Register 2
+  [-] Adder
+  [-] Total Circuit
 
 ## Simulating the circuit
+[ ] WORK OUT HOW TO NAME IO WIRES
 [ ] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
 [ ] Run sims of
   [ ] Comparitor
@@ -97,6 +100,3 @@
       [x] Get all components in to simulator - they are stateless
       [x] Write tests for all of them
 
-## Questions
-[ ] What are boundaries in the gds2text output?
-[ ] Why does the text file have more types?
