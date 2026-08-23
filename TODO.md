@@ -12,6 +12,23 @@
   [-] Total Circuit
 
 ## Simulating the circuit
+[ ] Kill my circuit simulator
+[ ] Add all warmup cells to iverilog
+  [x] `a31o_2`
+  [x] `o21bai_2`
+  [x] `a21bo_2`
+  [x] `a21boi_2`
+  [x] `a21o_2`
+  [x] `and2_2`
+  [x] `nand2_2`
+  [x] `nor2_2`
+  [x] `or2_2`
+  [x] `xnor2_2`
+  [x] `xor2_2`
+  [ ] `dfrtp_2`
+  [ ] `and3_2`
+  [ ] `and4bb_2`
+  [x] `mux2_1`
 [ ] WORK OUT HOW TO NAME IO WIRES
 [ ] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
 [ ] Run sims of

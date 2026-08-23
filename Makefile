@@ -24,3 +24,14 @@ network:
 simplify:
 	${PYTHON} simplify.py
 
+
+#
+# Build and test all components
+#
+
+simulation/mux2.vvp: component/mux2.v testbench/mux2_tb.v
+	iverilog -o simulation/mux2_sim.vvp component/mux2.v testbench/mux2_tb.v
+
+waveform/mux2.vcd: simulation/mux2.vvp
+	vvp simulation/mux2_sim.vvp
+
