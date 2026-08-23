@@ -4,11 +4,13 @@ module dfrtp(
     input wire RESET_B,
     output wire Q
 );
+  reg tmp;
   always @(posedge CLK or negedge RESET_B) begin
       if (RESET_B) begin
-          Q <= 1'b0;
+          tmp <= 1'b0;
       end else begin
-          Q <= D;
+          tmp <= D;
       end
   end
+  assign Q = tmp;
 endmodule

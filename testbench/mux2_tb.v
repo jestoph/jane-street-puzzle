@@ -4,26 +4,26 @@
 
 `define assert(signal, value, msg) \
         if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
+            $display("A0SSERTION FA0ILED in %m: signal != value %s", msg); \
             $finish; \
         end
 
 module mux2_tb;
 
     // Inputs
-    reg A;
-    reg B;
+    reg A0;
+    reg A1;
     reg S;
 
     // Outputs
-    wire Y;
+    wire X;
 
     // Instantiate the MUX design
     mux2 mux2_1 (
-        .A(A),
-        .B(B),
+        .A0(A0),
+        .A1(A1),
         .S(S),
-        .Y(Y)
+        .X(X)
     );
 
     initial begin
@@ -32,19 +32,19 @@ module mux2_tb;
         $dumpvars(0, mux2_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | A=%b B=%b S=%b | Y=%b", $time, A, B, S, Y);
+        $monitor("Time=%0t | A0=%b A1=%b S=%b | X=%b", $time, A0, A1, S, X);
 
         // Test Case 1: S=0 -> 0
-        A = 0; B = 1; S = 0; #10;
+        A0 = 0; A1 = 1; S = 0; #10;
 
         // Test Case 2: S=0 -> 1
-        A = 1; B = 0; S = 0; #10;
+        A0 = 1; A1 = 0; S = 0; #10;
 
         // Test Case 3: S=1 -> 0
-        A = 1; B = 0; S = 1; #10;
+        A0 = 1; A1 = 0; S = 1; #10;
 
         // Test Case 4: S=1 -> 1
-        A = 0; B = 1; S = 1; #10;
+        A0 = 0; A1 = 1; S = 1; #10;
 
         $finish; // End the simulation
     end

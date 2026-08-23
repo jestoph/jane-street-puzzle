@@ -1,8 +1,8 @@
 module mux2(
-    input wire A,
-    input wire B,
+    input wire A0,
+    input wire A1,
     input wire S,
-    output wire Y
+    output wire X
 );
-    assign Y = S ? B : A;
+    assign X = S ? A1 : A0;
 endmodule

@@ -376,6 +376,30 @@ if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
+    warmup_io_map = {
+        "comparitor": (
+            set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"]),
+            set(["Wire:36"])
+            ),
+        "adder": (
+            set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
+            set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"])
+            ),
+        "sr1": (
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:9"]), # RESET:B, CLK, EN, input
+            set(["Wire:19","Wire:76","Wire:16","Wire:78","Wire:75","Wire:17","Wire:6","Wire:18"])
+            ),
+        "sr2": (
+            set(["Wire:11", "Wire:34", "Wire:8", "Wire:21"]), # RESET:B, CLK, EN, input
+            set(["Wire:23","Wire:80","Wire:74","Wire:73","Wire:81","Wire:79","Wire:22","Wire:77"])
+            ),
+        "all": (
+            # TODO:
+            set(["Wire:36"]),
+            set()
+            )
+    }
+
     if sys.argv[1] == 'warmup':
         for name, box in [
                     ('comparitor', ((50, 40), (100,60))), # Bit of a guess
@@ -392,7 +416,7 @@ if __name__ == '__main__':
             print_element_as_json(name, sub_circuit, revd)
             print_element_as_circuit(name, sub_circuit, revd)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            print_element_as_verilog(name, sub_circuit, revd, inputs, outputs)
+            print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)
