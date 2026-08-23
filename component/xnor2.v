@@ -1,4 +1,4 @@
-module xor2(
+module xnor2(
     input wire A,
     input wire B,
     output wire Y

@@ -12,23 +12,10 @@
   [-] Total Circuit
 
 ## Simulating the circuit
-[ ] Kill my circuit simulator
-[ ] Add all warmup cells to iverilog
-  [x] `a31o_2`
-  [x] `o21bai_2`
-  [x] `a21bo_2`
-  [x] `a21boi_2`
-  [x] `a21o_2`
-  [x] `and2_2`
-  [x] `nand2_2`
-  [x] `nor2_2`
-  [x] `or2_2`
-  [x] `xnor2_2`
-  [x] `xor2_2`
-  [ ] `dfrtp_2`
-  [ ] `and3_2`
-  [ ] `and4bb_2`
-  [x] `mux2_1`
+[x] Kill my circuit simulator
+[x] Add all warmup cells to iverilog and testbenches
+[ ] Add real assertions to component behaviours
+
 [ ] WORK OUT HOW TO NAME IO WIRES
 [ ] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
 [ ] Run sims of
@@ -37,28 +24,6 @@
   [ ] Shift Register 2
   [ ] Adder
   [ ] Total Circuit
-[ ] Add all cell elements to my sim with tests
-  [x] Adder Elements
-    [x] `a31o_2`
-    [x] `o21bai_2`
-    [x] `a21bo_2`
-    [x] `a21boi_2`
-    [x] `a21o_2`
-    [x] `and2_2`
-    [x] `nand2_2`
-    [x] `nor2_2`
-    [x] `or2_2`
-    [x] `xnor2_2`
-    [x] `xor2_2`
-  [ ] Other elements
-    [ ] `dfrtp_2`
-    [ ] `decap_3`
-    [ ] `tapvpwrvgnd_1`
-    [ ] `and3_2`
-    [ ] `and4bb_2`
-    [ ] `clkbuf_16`
-    [ ] `mux2_1`
-  [ ] Real puzzle elements
 
 ### GDS Tooling - Abandon this!
 [x] Find a local GDS viewer - could I use Raylib + voxels? Probably not a good idea but ....
