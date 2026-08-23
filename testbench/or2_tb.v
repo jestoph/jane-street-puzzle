@@ -15,13 +15,13 @@ module or2_tb;
     reg B;
 
     // Outputs
-    wire Y;
+    wire X;
 
     // Instantiate the MUX design
     or2 or2_1 (
         .A(A),
         .B(B),
-        .Y(Y)
+        .X(X)
     );
 
     initial begin
@@ -30,7 +30,7 @@ module or2_tb;
         $dumpvars(0, or2_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | A=%b B=%b | Y=%b", $time, A, B, Y);
+        $monitor("Time=%0t | A=%b B=%b | X=%b", $time, A, B, X);
 
         A = 0; B = 1; #10;
 

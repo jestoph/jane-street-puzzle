@@ -211,6 +211,76 @@ def print_element_as_circuit(name, port_wire_map, wire_port_map):
         fp.write("\n".join(lines))
 
 
+def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs):
+    """
+    module and2(
+        input wire A,
+        input wire B,
+        output wire Y
+    );
+        assign Y = A & B;
+    endmodule
+
+    // Instantiate the MUX design
+    and3 and3_1 (
+        .A(A),
+        .B(B),
+        .C(C),
+        .Y(Y)
+    );
+
+    """
+
+    element_to_ports = {}
+    for port in port_wire_map:
+        el = element(port)
+        element_to_ports[el] = element_to_ports.get(el, list())
+        element_to_ports[el].append(port)
+
+
+    # Start writing the file 
+    lines = [f"// {name.upper()}"]
+    lines.append(f"module {name}(")
+    for _in in inputs:
+        lines.append(f"  input wire {_in.replace(":","_")},")
+    for i, _out in enumerate(outputs):
+        line = f"  output wire {_out.replace(":","_")}"
+        if i < len(outputs) - 1:
+            line += ","
+        lines.append(line)
+    lines.append(f");")
+
+    lines.append("")
+
+    for wire in wire_port_map:
+        if wire in inputs: continue
+        if wire in outputs: continue
+        lines.append(f"  wire {wire.replace(":","_")};")
+
+    lines.append("")
+
+    for nodename, ports in element_to_ports.items():
+        node_type = nodename.split(":")[0]
+        node_name = "_".join(nodename.split(":"))
+        lines.append(f"  {node_type} {node_name} (")
+        for i, port in enumerate(ports):
+            pinname = port.split(":")[-1]
+            wirename = port_to_wire[port].replace(":","_")
+            line = f"    .{pinname}({wirename})"
+            if i < len(ports) - 1:
+                line += ","
+            lines.append(line)
+        lines.append("  );")
+
+
+
+    lines.append("endmodule")
+
+    with open(f"outputs/{name}.v", "w") as fp:
+        fp.write("\n".join(lines))
+
+
+
 
 
 def check_only_single_output_on_wire(wire_to_ports):
@@ -259,11 +329,7 @@ def print_unconnected_elements(revd):
         if len(ports) == 1:
             print("print", ports[0], "is unconnected")
 
-def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
-    print()
-    print("---------------")
-    print()
-
+def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
     inputs = set()
     outputs = set()
     for cell, wire in subcircuit.items():
@@ -276,6 +342,15 @@ def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
                 else:
                     # port is an input
                     inputs.add(wire)
+
+    return inputs, outputs
+
+def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
+    print()
+    print("---------------")
+    print()
+
+    inputs, outputs = get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports)
 
     for wire in outputs:
         print(f"Output: [inside] -> {wire} -> [outside]")
@@ -316,6 +391,8 @@ if __name__ == '__main__':
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_json(name, sub_circuit, revd)
             print_element_as_circuit(name, sub_circuit, revd)
+            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_element_as_verilog(name, sub_circuit, revd, inputs, outputs)
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)

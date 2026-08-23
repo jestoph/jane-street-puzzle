@@ -3,7 +3,7 @@ module and3(
     input wire A,
     input wire B,
     input wire C,
-    output wire Y
+    output wire X
 );
-    assign Y = A & B & C;
+    assign X = A & B & C;
 endmodule

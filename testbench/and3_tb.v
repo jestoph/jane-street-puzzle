@@ -15,14 +15,14 @@ module and3_tb;
     reg C;
 
     // Outputs
-    wire Y;
+    wire X;
 
     // Instantiate the MUX design
     and3 and3_1 (
         .A(A),
         .B(B),
         .C(C),
-        .Y(Y)
+        .X(X)
     );
 
     initial begin
@@ -31,7 +31,7 @@ module and3_tb;
         $dumpvars(0, and3_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | A=%b B=%b C=%b | Y=%b", $time, A, B, C, Y);
+        $monitor("Time=%0t | A=%b B=%b C=%b | X=%b", $time, A, B, C, X);
 
         A = 0; B = 0; C = 0; #10;
         A = 1; B = 0; C = 0; #10;

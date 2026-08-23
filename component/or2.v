@@ -1,7 +1,7 @@
 module or2(
     input wire A,
     input wire B,
-    output wire Y
+    output wire X
 );
-    assign Y = A | B;
+    assign X = A | B;
 endmodule
