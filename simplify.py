@@ -361,7 +361,7 @@ def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
 
 if __name__ == '__main__':
     all_wire_segments = []
-    with open('graph.txt') as fp:
+    with open('outputs/graph.txt') as fp:
         for line in fp:
             l, _, r = line.split()
             all_wire_segments.append((l, r))
@@ -397,7 +397,7 @@ if __name__ == '__main__':
             ),
         "all": (
             # TODO:
-            set(["Wire:11", "Wire:34", "Wire:8", "Wire:9", "Wire:21") # RESET_B, CLK, EN, A, B
+            set(["Wire:11", "Wire:34", "Wire:8", "Wire:9", "Wire:21"]), # RESET_B, CLK, EN, A, B
             set(["Wire:36"]), # Output is a bool
             )
     }

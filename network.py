@@ -534,7 +534,7 @@ def network(filename):
         compare_counts(before, after)
     with measure_time("call_graph"):
         els = cell_graph(library['adder_demo'])
-    with open("graph.txt", "w") as fp:
+    with open("outputs/graph.txt", "w") as fp:
         for x,y in els:
             print(f"{x} -> {y}", file=fp)
 
