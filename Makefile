@@ -26,3 +26,15 @@ simplify:
 #
 test-components:
 	python3 test-components.py
+
+test-compiles:
+	iverilog -g2012 -y ./component -o test.vpp outputs/adder.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/comparitor.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/sr1.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/sr2.v
+
+test-testbench:
+	iverilog -g2012 -y ./component -o test.vpp outputs/comparitor.v testbench/comparitor_tb.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/adder.v testbench/adder_tb.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/sr1.v testbench/sr1_tb.v
+	iverilog -g2012 -y ./component -o test.vpp outputs/sr2.v testbench/sr2_tb.v

@@ -20,7 +20,7 @@ xnor2
 
 for component in components:
     sim, comp, tb = f"simulation/{component}_sim.vvp", f"component/{component}.v", f"testbench/{component}_tb.v"
-    cmd = ["iverilog", "-o", sim, comp, tb]
+    cmd = ["iverilog", "-g2012", "-o", sim, comp, tb]
     ret = sp.run(cmd, capture_output=True, text=True)
     if ret.returncode:
         print(cmd)

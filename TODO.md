@@ -14,10 +14,16 @@
 ## Simulating the circuit
 [x] Kill my circuit simulator
 [x] Add all warmup cells to iverilog and testbenches
+[x] Work out how to name io wires - Hard-coded for now
+[x] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
 [ ] Add real assertions to component behaviours
-
-[ ] WORK OUT HOW TO NAME IO WIRES
-[ ] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
+[ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
+[ ] Build test-benches of
+  [x] Comparitor
+  [ ] Shift Register 1
+  [ ] Shift Register 2
+  [ ] Adder
+  [ ] Total Circuit
 [ ] Run sims of
   [ ] Comparitor
   [ ] Shift Register 1

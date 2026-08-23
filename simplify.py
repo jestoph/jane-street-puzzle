@@ -382,21 +382,23 @@ if __name__ == '__main__':
             set(["Wire:36"])
             ),
         "adder": (
+            # Possibly wrong here
             set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
             set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"])
             ),
+        # TODO: These seem a bit odd - sr1 and sr2 should have the same clock!
         "sr1": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:9"]), # RESET:B, CLK, EN, input
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:9"]), # RESET_B, CLK, EN, A
             set(["Wire:19","Wire:76","Wire:16","Wire:78","Wire:75","Wire:17","Wire:6","Wire:18"])
             ),
         "sr2": (
-            set(["Wire:11", "Wire:34", "Wire:8", "Wire:21"]), # RESET:B, CLK, EN, input
+            set(["Wire:11", "Wire:34", "Wire:8", "Wire:21"]), # RESET_B, CLK, EN, B
             set(["Wire:23","Wire:80","Wire:74","Wire:73","Wire:81","Wire:79","Wire:22","Wire:77"])
             ),
         "all": (
             # TODO:
-            set(["Wire:36"]),
-            set()
+            set(["Wire:11", "Wire:34", "Wire:8", "Wire:9", "Wire:21") # RESET_B, CLK, EN, A, B
+            set(["Wire:36"]), # Output is a bool
             )
     }
 
