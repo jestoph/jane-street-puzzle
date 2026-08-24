@@ -159,8 +159,8 @@ def print_element_as_json(name, port_wire_map, wire_port_map):
 
     ret = {}
 
-    ret["wires"] = list(wire_port_map.keys())
-    ret["elements"] = list(set([element(port) for port in port_wire_map.keys()]))
+    ret["wires"] = list(sorted(wire_port_map.keys()))
+    ret["elements"] = list(sorted(set([element(port) for port in port_wire_map.keys()])))
 
     element_position = {}
     for port in port_wire_map:
