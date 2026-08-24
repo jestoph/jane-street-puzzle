@@ -1,23 +1,30 @@
 import subprocess as sp
 import sys
+import glob
+
+comp1 = glob.glob("component/*.v")
 
 components = """\
-dfrtp
-a21bo
-a21boi
-a21o
-a31o
-and2
-and3
-and4bb
-mux2
-nand2
-nor2
-o21bai
-or2
-xor2
-xnor2
+component/and4bb.v
+component/a31o.v
+component/a21o.v
+component/a21bo.v
+component/xor2.v
+component/xnor2.v
+component/nand2.v
+component/and2.v
+component/mux2.v
+component/o21bai.v
+component/dfrtp.v
+component/and3.v
+component/nor2.v
+component/or2.v
+component/a21boi.v
 """.split()
+
+assert len(comp1) == len(components), "We have components without tests! {set(comp1)^set(components)}"
+
+components = [x.replace("component/","").replace(".v","") for x in components]
 
 def compile(component):
     print(f"Compiling {component}...", end="")

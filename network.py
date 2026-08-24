@@ -2,6 +2,7 @@ import gdstk
 import os
 import time
 from contextlib import contextmanager
+import sys
 
 """
 We build up the network like this:
@@ -515,7 +516,7 @@ def compare_counts(a,b):
             assert a[name][port] == b[name][port], f"a[{name}]{port}]={a[name][port]} b[{name}][{port}]={b[name][port]}"
             print(name, port, a[name][port])
 
-def network(filename):
+def network(filename, output):
     library = gdstk.read_gds(filename)
     with measure_time("converting_paths"):
         convert_paths(library)
@@ -534,7 +535,7 @@ def network(filename):
         compare_counts(before, after)
     with measure_time("call_graph"):
         els = cell_graph(library['adder_demo'])
-    with open("outputs/graph.txt", "w") as fp:
+    with open(f"outputs/{output}.txt", "w") as fp:
         for x,y in els:
             print(f"{x} -> {y}", file=fp)
 
@@ -543,4 +544,9 @@ def network(filename):
 
 
 if __name__ == '__main__':
-    network("warmup/04_final.gds")
+    if sys.argv[1] == 'warmup':
+        network("warmup/04_final.gds", sys.argv[1])
+    elif sys.argv[1] == 'puzzle':
+        network("puzzle.gds", sys.argv[1])
+    else:
+        raise ValueError(f"{sys.argv[1]=} not valid target")

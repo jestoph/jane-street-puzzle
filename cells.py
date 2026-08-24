@@ -1,4 +1,5 @@
 import gdstk
+import sys
 
 labels_i_care_about = {
     "A", "A_N",
@@ -126,6 +127,11 @@ def cells_io(filename):
         write_files(cell, f"outputs/{name}.li.io")
 
 if __name__ == '__main__':
-    cells("warmup/04_final.gds")
-    cells_pads("warmup/04_final.gds")
-    cells_io("warmup/04_final.gds")
+    if sys.argv[1] == 'warmup':
+        cells("warmup/04_final.gds")
+        cells_pads("warmup/04_final.gds")
+        cells_io("warmup/04_final.gds")
+    elif sys.argv[1] == 'puzzle':
+        cells("puzzle.gds")
+        cells_pads("puzzle.gds")
+        cells_io("puzzle.gds")

@@ -1,4 +1,5 @@
 import gdstk
+import sys
 
 def read_layers():
     # Headers are layer_name,purpose,layer,datatype,description
@@ -33,7 +34,7 @@ def mdtable(data):
 
 def stats(filename):
 
-    data = gdstk.gds_info("warmup/04_final.gds")
+    data = gdstk.gds_info(filename)
     for k in ["num_polygons", "num_paths", "num_references", "num_labels", "unit", "precision"]:
         print(k, data[k])
 
@@ -103,7 +104,11 @@ def layer_polys(library):
         print(f"{name}:{layer}: {layer_poly_count[layer]}")
 
 
-
 if __name__ == '__main__':
-    stats("warmup/04_final.gds")
+    if sys.argv[1] == 'warmup':
+        stats("warmup/04_final.gds")
+    elif sys.argv[1] == 'puzzle':
+        stats("puzzle.gds")
+    else:
+        raise ValueError(f"{sys.argv[1]=} not valid target")
 

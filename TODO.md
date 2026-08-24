@@ -2,7 +2,9 @@
 [ ] What are boundaries in the gds2text output?
 [ ] Why does the text file have more types?
 
-## Viewing the circuit
+## Warmup Circuit
+
+### Viewing the circuit
 [x] Find some way of laying out the circuit. Maybe use 'schemdraw' which does it in python. - This is a dead end I think?
 [x] Try with
   [x] Comparitor
@@ -11,7 +13,7 @@
   [-] Adder
   [-] Total Circuit
 
-## Simulating the circuit
+### Simulating the circuit
 [x] Kill my circuit simulator
 [x] Add all warmup cells to iverilog and testbenches
 [x] Work out how to name io wires - Hard-coded for now
@@ -29,10 +31,9 @@
   [x] Shift Register 2
   [x] Adder
 [x] What is the deal with a21bo? https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html
-[ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
-[ ] Test bench of Total Circuit
-[ ] Sim of Total Circuit
-
+[x] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
+[x] Test bench of Total Circuit
+[x] Sim of Total Circuit
 
 
 ### GDS Tooling - Abandon this!
@@ -48,7 +49,6 @@
     [x] Bounding Boxes
     [x] How to turn a polygon into blocks? - I think this is going to be harder than I thought - might need to make mesh models
 [x] I think this is a lost cause - I don't understand raylib enough to get this working
-
 
 ### Starting ideas
 [x] Start trying to extract the network
@@ -91,4 +91,8 @@
       [x] Auto-detect outputs and inputs
       [x] Get all components in to simulator - they are stateless
       [x] Write tests for all of them
+
+## Real Circuit
+
+
 

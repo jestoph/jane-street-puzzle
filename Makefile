@@ -6,20 +6,17 @@ PYTHON:=./venv/bin/python3
 check:
 	${PYTHON} -m mypy *.py
 
-logo:
-	${PYTHON} logo.py
-
 cells:
-	${PYTHON} cells.py
+	${PYTHON} cells.py warmup
 
 stats:
-	${PYTHON} stats.py
+	${PYTHON} stats.py warmup
 
 network:
-	${PYTHON} network.py
+	${PYTHON} network.py warmup
 
 simplify:
-	${PYTHON} simplify.py
+	${PYTHON} simplify.py warmup
 
 #
 # Build and test all components
@@ -30,3 +27,5 @@ test-components:
 test-subcircuits:
 	python3 test-subcircuits.py
 
+clean:
+	rm -f outputs/*

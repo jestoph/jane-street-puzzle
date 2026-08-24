@@ -346,19 +346,6 @@ def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
 
 
 if __name__ == '__main__':
-    all_wire_segments = []
-    with open('outputs/graph.txt') as fp:
-        for line in fp:
-            l, _, r = line.split()
-            all_wire_segments.append((l, r))
-
-    port_to_wire = find_wires(all_wire_segments)
-
-    wire_to_ports = reverse_map(port_to_wire)
-
-    check_only_single_output_on_wire(wire_to_ports)
-    check_all_ports_filled(port_to_wire)
-
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
@@ -393,6 +380,20 @@ if __name__ == '__main__':
     }
 
     if sys.argv[1] == 'warmup':
+
+        all_wire_segments = []
+        with open('outputs/warmup.txt') as fp:
+            for line in fp:
+                l, _, r = line.split()
+                all_wire_segments.append((l, r))
+
+        port_to_wire = find_wires(all_wire_segments)
+
+        wire_to_ports = reverse_map(port_to_wire)
+
+        check_only_single_output_on_wire(wire_to_ports)
+        check_all_ports_filled(port_to_wire)
+
         for name, box in [
                     ('comparitor', ((50, 40), (100,60))), # Bit of a guess
                     ('adder', ((50, 0), (100,40))), # Bit of a guess
@@ -408,6 +409,8 @@ if __name__ == '__main__':
             print_element_as_json(name, sub_circuit, revd)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
+    elif sys.argv[1] == 'puzzle':
+        pass
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)
