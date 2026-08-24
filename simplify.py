@@ -185,32 +185,6 @@ def prettify1(port):
     _type = _type.replace("_1","").replace("_2","")
     return f"{_type}:{_id}.{_pin}"
 
-def print_element_as_circuit(name, port_wire_map, wire_port_map):
-
-    lines = [f"# {name.upper()}"]
-
-    """ eg 'x:26.220:y:70.720:mux2_1:12:A0 """
-    # node and3:1:X and3:1
-    lines.append("start-nodes")
-    all_nodes = set([element(port) for port in port_wire_map])
-    for node in all_nodes:
-        lines.append(f"  node {node} {node.split(":")[0]}")
-    lines.append("end-nodes")
-
-    lines.append("start-wires")
-    for ports in wire_port_map.values():
-
-        if output_port := get_output_port_from_list(ports):
-            rest = set(ports)
-            rest.remove(output_port)
-            rest = " ".join(prettify1(iport) for iport in rest)
-            lines.append(f"  {prettify1(output_port)} -> {rest}")
-    lines.append("end-wires")
-
-    with open(f"outputs/{name}.circuit", "w") as fp:
-        fp.write("\n".join(lines))
-
-
 def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs):
     """
     module and2(
@@ -419,7 +393,6 @@ if __name__ == '__main__':
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_json(name, sub_circuit, revd)
-            print_element_as_circuit(name, sub_circuit, revd)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
     else:

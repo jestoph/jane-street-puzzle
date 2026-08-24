@@ -25,8 +25,8 @@
   [x] Shift Register 2
 [ ] Run real test sims of
   [x] Comparitor
-  [ ] Shift Register 1
-  [ ] Shift Register 2
+  [x] Shift Register 1
+  [x] Shift Register 2
   [ ] Adder
 [ ] What is the deal with a21bo? https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html
 [ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
