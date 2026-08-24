@@ -8,3 +8,15 @@ module a21bo(
     // https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html
     assign X = ~(~(A1 & A2) & B1_N);
 endmodule
+
+
+// | A0 | A1 | B1_N | X
+// ---------------------
+// | 0  | 0  | 0    | 1
+// | 1  | 0  | 0    | 1
+// | 0  | 1  | 0    | 1
+// | 1  | 1  | 0    | 1
+// | 0  | 0  | 1    | 0
+// | 1  | 0  | 1    | 0
+// | 0  | 1  | 1    | 0
+// | 1  | 1  | 1    | 1
