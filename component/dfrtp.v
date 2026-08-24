@@ -6,7 +6,7 @@ module dfrtp(
 );
   reg tmp;
   always @(posedge CLK or negedge RESET_B) begin
-      if (RESET_B) begin
+      if (!RESET_B) begin
           tmp <= 1'b0;
       end else begin
           tmp <= D;

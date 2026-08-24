@@ -388,12 +388,14 @@ if __name__ == '__main__':
             ),
         # TODO: These seem a bit odd - sr1 and sr2 should have the same clock!
         "sr1": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:9"]), # RESET_B, CLK, EN, A
-            set(["Wire:19","Wire:76","Wire:16","Wire:78","Wire:75","Wire:17","Wire:6","Wire:18"])
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:35"]), # RESET_B, CLK, EN, A
+            set(["Wire:1","Wire:32","Wire:12","Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"])#  All the Q outputs
             ),
         "sr2": (
-            set(["Wire:11", "Wire:34", "Wire:8", "Wire:21"]), # RESET_B, CLK, EN, B
-            set(["Wire:23","Wire:80","Wire:74","Wire:73","Wire:81","Wire:79","Wire:22","Wire:77"])
+            set(["Wire:11", "Wire:34", "Wire:8", "Wire:31"]), # RESET_B, CLK, EN, B
+            set(["Wire:1","Wire:32","Wire:12Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"]) # All the Q outputs
+
+
             ),
         "all": (
             # TODO:
