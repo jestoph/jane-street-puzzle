@@ -156,8 +156,8 @@ def get_io():
     for line in lines:
         port, ins, outs = line.split("|")
         port = port.strip().replace('sky130_fd_sc_hd__','')
-        ins = ins.strip().split(',')
-        outs = outs.strip().split(',')
+        ins = [x for x in ins.strip().split(',') if x]
+        outs = [x for x in outs.strip().split(',') if x]
         ret[port] = (set(ins), set(outs))
 
     return ret

@@ -30,6 +30,10 @@ def stats(filename, top):
     print(f"{len(library.top_level()[0].references)=}")
     print()
 
+    ref_counts_by_name = {}
+    for ref in library.top_level()[0].references:
+        ref_counts_by_name[ref.cell.name] = ref_counts_by_name.get(ref.cell.name, 0) + 1
+
     cell = library[top]
     cell.flatten()
 
@@ -37,6 +41,7 @@ def stats(filename, top):
     for cell in sorted(library.cells, key=lambda x: x.name.lower()):
         md.append({
             "cell_name": cell.name,
+            "cell_count(refs)": ref_counts_by_name.get(cell.name),
             "cell_labels": len(cell.labels),
             "cell_paths": len(cell.paths),
             "cell_polygons": len(cell.polygons),
