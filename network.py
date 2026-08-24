@@ -69,6 +69,16 @@ def filter_filters(library):
             # print(f" kill")
             ref.cell.remove(*ref.cell.polygons)
 
+        # Adding these guys takes us from 2 mins to 42 seconds
+        if '1600_1600' in ref.cell.name:
+            # print(f" kill")
+            ref.cell.remove(*ref.cell.polygons)
+        if 'INTERNAL' in ref.cell.name:
+            # print(f" kill")
+            ref.cell.remove(*ref.cell.polygons)
+        if 'PR' in ref.cell.name:
+            # print(f" kill")
+            ref.cell.remove(*ref.cell.polygons)
 
 def filter_pads(library):
     """

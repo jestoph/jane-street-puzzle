@@ -537,3 +537,12 @@ I seem to always do things in the dumbest way possible, so I find myself greppin
 % cat outputs/puzzle.json | jq . | grep ':RESET' | grep -o "Wire.*" | sort | uniq -c
   84 Wire:29",
 ```
+
+### Initial work
+I was able to get a little win by rearranging my wire segment gathering step so it is now 100x faster (3.4 second
+down to .03 seconds). It has byte-for-byte compatible behaviour so I'm pretty confident it hasn't introduced any
+bugs. However the major slow steps still swamp this improvement - finding all connected components takes 51 seconds
+and extracting the cell graph takes 64 seconds.
+
+Ok now I've added some extra component filtering and it's down to 42 seconds. I could probably improve this as its
+spending a large amount of time checking if shapes overlap
