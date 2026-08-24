@@ -6,6 +6,7 @@
             $finish; \
         end
 
+/* ref outputs/comparitor.v */
 module comparitor_tb;
 
     // Inputs
@@ -13,20 +14,6 @@ module comparitor_tb;
 
     // Outputs
     wire X;
-
-    // Instantiate the MUX design
-    // module comparitor(
-    //   input wire Wire_114,
-    //   input wire Wire_103,
-    //   input wire Wire_72,
-    //   input wire Wire_2,
-    //   input wire Wire_99,
-    //   input wire Wire_112,
-    //   input wire Wire_71,
-    //   input wire Wire_104,
-    //   input wire Wire_105,
-    //   output wire Wire_36
-    // );
 
     comparitor comparitor_1 (
       .Wire_114(I[0]),

@@ -34,17 +34,23 @@ module mux2_tb;
         // Track changes directly in the terminal window
         $monitor("Time=%0t | A0=%b A1=%b S=%b | X=%b", $time, A0, A1, S, X);
 
-        // Test Case 1: S=0 -> 0
-        A0 = 0; A1 = 1; S = 0; #10;
+        // S=0 -> A0 = 0
+        A0 = 0; A1 = 1;
+        S = 0; #10;
+        `assert(X, 0, "");
 
-        // Test Case 2: S=0 -> 1
-        A0 = 1; A1 = 0; S = 0; #10;
+        // S=1 -> A1 = 1
+        S = 1; #10;
+        `assert(X, 1, "");
 
-        // Test Case 3: S=1 -> 0
-        A0 = 1; A1 = 0; S = 1; #10;
+        // S=1 -> A1 = 0
+        A0 = 1; A1 = 0;
+        S = 1; #10;
+        `assert(X, 0, "");
 
-        // Test Case 4: S=1 -> 1
-        A0 = 0; A1 = 1; S = 1; #10;
+        // S=0 -> A0 = 1
+        S = 0; #10;
+        `assert(X, 1, "");
 
         $finish; // End the simulation
     end

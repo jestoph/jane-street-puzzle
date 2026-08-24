@@ -18,18 +18,22 @@
 [x] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
 [ ] Add real assertions to component behaviours
 [ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
+[x] Have real tests of all components
+  [ ] Including testbench/dfrtp_tb.v
 [x] Build test-benches of
   [x] Comparitor
   [x] Adder
   [x] Shift Register 1
   [x] Shift Register 2
-[ ] Run sims of
+[ ] Run real test sims of
   [ ] Comparitor
   [ ] Shift Register 1
   [ ] Shift Register 2
   [ ] Adder
 [ ] Test bench of Total Circuit
 [ ] Sim of Total Circuit
+
+
 
 ### GDS Tooling - Abandon this!
 [x] Find a local GDS viewer - could I use Raylib + voxels? Probably not a good idea but ....

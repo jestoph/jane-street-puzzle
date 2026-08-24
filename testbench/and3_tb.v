@@ -34,13 +34,21 @@ module and3_tb;
         $monitor("Time=%0t | A=%b B=%b C=%b | X=%b", $time, A, B, C, X);
 
         A = 0; B = 0; C = 0; #10;
+        `assert(X, 0, "");
         A = 1; B = 0; C = 0; #10;
+        `assert(X, 0, "");
         A = 0; B = 1; C = 0; #10;
+        `assert(X, 0, "");
         A = 1; B = 1; C = 0; #10;
+        `assert(X, 0, "");
         A = 0; B = 0; C = 1; #10;
+        `assert(X, 0, "");
         A = 1; B = 0; C = 1; #10;
+        `assert(X, 0, "");
         A = 0; B = 1; C = 1; #10;
+        `assert(X, 0, "");
         A = 1; B = 1; C = 1; #10;
+        `assert(X, 1, "");
 
 
         $finish; // End the simulation

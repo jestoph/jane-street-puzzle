@@ -6,6 +6,7 @@
             $finish; \
         end
 
+/* ref outputs/sr1.v */
 module sr1_tb;
 
     // Inputs

@@ -6,6 +6,7 @@
             $finish; \
         end
 
+/* ref outputs/adder.v */
 module adder_tb;
 
     // Inputs

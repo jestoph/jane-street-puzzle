@@ -36,21 +36,37 @@ module a31o_tb;
         $monitor("Time=%0t | A1=%b A2=%b A3=%b B1=%b | X=%b", $time, A1, A2, A3, B1, X);
 
         A1 = 0; A2 = 0; A3 = 0; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 0; A3 = 0; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 1; A3 = 0; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 1; A3 = 0; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 0; A3 = 1; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 0; A3 = 1; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 1; A3 = 1; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 1; A3 = 1; B1 = 0; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 0; A3 = 0; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 0; A3 = 0; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 1; A3 = 0; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 1; A3 = 0; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 0; A3 = 1; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 0; A3 = 1; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 0; A2 = 1; A3 = 1; B1 = 1; #10;
+        `assert(X, 0, "");
         A1 = 1; A2 = 1; A3 = 1; B1 = 1; #10;
+        `assert(X, 0, "");
 
 
         $finish; // End the simulation

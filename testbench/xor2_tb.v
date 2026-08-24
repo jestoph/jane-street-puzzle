@@ -32,13 +32,17 @@ module xor2_tb;
         // Track changes directly in the terminal window
         $monitor("Time=%0t | A=%b B=%b | X=%b", $time, A, B, X);
 
-        A = 0; B = 1; #10;
+        A = 0; B = 0; #10;
+        `assert(X, 0, "");
 
         A = 1; B = 0; #10;
-
-        A = 1; B = 0; #10;
+        `assert(X, 0, "");
 
         A = 0; B = 1; #10;
+        `assert(X, 0, "");
+
+        A = 1; B = 1; #10;
+        `assert(X, 0, "");
 
         $finish; // End the simulation
     end

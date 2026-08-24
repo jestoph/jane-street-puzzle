@@ -27,16 +27,6 @@ simplify:
 test-components:
 	python3 test-components.py
 
-test-compiles:
-	iverilog -g2012 -y ./component -o outputs/adder.vpp outputs/adder.v
-	iverilog -g2012 -y ./component -o outputs/comparitor.vpp outputs/comparitor.v
-	iverilog -g2012 -y ./component -o outputs/sr1.vpp outputs/sr1.v
-	iverilog -g2012 -y ./component -o outputs/sr2.vpp outputs/sr2.v
-	iverilog -g2012 -y ./component -o outputs/all.vpp outputs/all.v
+test-subcircuits:
+	python3 test-subcircuits.py
 
-test-testbench-compiles:
-	iverilog -g2012 -y ./component -o simulation/comparitor_sim.vpp outputs/comparitor.v testbench/comparitor_tb.v
-	iverilog -g2012 -y ./component -o simulation/adder_sim.vpp outputs/adder.v testbench/adder_tb.v
-	iverilog -g2012 -y ./component -o simulation/sr1_sim.vpp outputs/sr1.v testbench/sr1_tb.v
-	iverilog -g2012 -y ./component -o simulation/sr2_sim.vpp outputs/sr2.v testbench/sr2_tb.v
-	iverilog -g2012 -y ./component -o simulation/all_sim.vpp outputs/all.v testbench/all_tb.v

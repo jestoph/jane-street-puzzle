@@ -22,6 +22,8 @@ module and4bb_tb;
     and4bb and4bb_1 (
         .A_N(A_N),
         .B_N(B_N),
+        .C(C),
+        .D(D),
         .X(X)
     );
 
@@ -34,21 +36,37 @@ module and4bb_tb;
         $monitor("Time=%0t | A_N=%b B_N=%b C=%b D=%b| X=%b", $time, A_N, B_N, C, D, X);
 
         A_N = 0; B_N = 0; C = 0; D = 0; #10;
+        //`assert(X, 0, "");
         A_N = 1; B_N = 0; C = 0; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 1; C = 0; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 1; C = 0; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 0; C = 1; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 0; C = 1; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 1; C = 1; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 1; C = 1; D = 0; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 0; C = 0; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 0; C = 0; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 1; C = 0; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 1; C = 0; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 0; C = 1; D = 1; #10;
+        `assert(X, 1, "");
         A_N = 1; B_N = 0; C = 1; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 0; B_N = 1; C = 1; D = 1; #10;
+        `assert(X, 0, "");
         A_N = 1; B_N = 1; C = 1; D = 1; #10;
+        `assert(X, 0, "");
 
 
         $finish; // End the simulation

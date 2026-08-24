@@ -32,13 +32,17 @@ module nand2_tb;
         // Track changes directly in the terminal window
         $monitor("Time=%0t | A=%b B=%b | Y=%b", $time, A, B, Y);
 
-        A = 0; B = 1; #10;
+        A = 0; B = 0; #10;
+        `assert(Y, 1, "");
 
         A = 1; B = 0; #10;
-
-        A = 1; B = 0; #10;
+        `assert(Y, 1, "");
 
         A = 0; B = 1; #10;
+        `assert(Y, 1, "");
+
+        A = 1; B = 1; #10;
+        `assert(Y, 0, "");
 
         $finish; // End the simulation
     end
