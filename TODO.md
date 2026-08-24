@@ -102,4 +102,7 @@
 [x] Simplify the following:
   [x] All clkbufs just wires
   [x] All bufs are just wires
+[ ] What is the pattern in the example input? Does it give a hint?
 [ ] Fix errors in simplify step
+[ ] What are the diodes doing? Why does my filter still include with end bits? Why are they in the circuit?
+  [ ] Should I include them? I can see they have some things attached....

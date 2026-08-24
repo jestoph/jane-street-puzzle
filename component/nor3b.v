@@ -4,5 +4,5 @@ module nor3b(
   input wire C_N,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~(A | B | (~C_N));
 endmodule

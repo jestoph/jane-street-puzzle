@@ -5,5 +5,5 @@ module nand4(
   input wire D,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~(A & B & C & D);
 endmodule

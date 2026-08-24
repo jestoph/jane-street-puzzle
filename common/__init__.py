@@ -27,6 +27,7 @@ labels_i_care_about = {
     "C2",
     "CLK",
     "C_N",
+    "DIODE",
     "D",
     "D1",
     "D2",

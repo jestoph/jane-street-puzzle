@@ -5,5 +5,5 @@ module nor4b(
   input wire D_N,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~(A | B | C | (~D_N));
 endmodule

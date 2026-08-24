@@ -4,5 +4,5 @@ module or3b(
   input wire C_N,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = A | B | (~C_N);
 endmodule

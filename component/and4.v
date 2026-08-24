@@ -5,5 +5,5 @@ module and4(
   input wire D,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = A & B & C & D;
 endmodule

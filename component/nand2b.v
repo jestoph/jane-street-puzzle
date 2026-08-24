@@ -3,5 +3,5 @@ module nand2b(
   input wire B,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~((~A_N) & B); // Syntax?
 endmodule

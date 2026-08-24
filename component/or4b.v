@@ -5,5 +5,5 @@ module or4b(
   input wire D_N,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = A | B | C | (~D_N);
 endmodule

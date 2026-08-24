@@ -76,9 +76,6 @@ def filter_filters(library):
         if 'INTERNAL' in ref.cell.name:
             # print(f" kill")
             ref.cell.remove(*ref.cell.polygons)
-        if 'PR' in ref.cell.name:
-            # print(f" kill")
-            ref.cell.remove(*ref.cell.polygons)
 
 def filter_pads(library):
     """

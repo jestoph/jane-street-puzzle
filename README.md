@@ -546,3 +546,7 @@ and extracting the cell graph takes 64 seconds.
 
 Ok now I've added some extra component filtering and it's down to 42 seconds. I could probably improve this as its
 spending a large amount of time checking if shapes overlap
+
+### Looking at the waveform
+I realise now that the input might be a clue. It seems to be a 121 bit input, and there's two of them. Maybe it's
+11 x 11 bit chars or something?

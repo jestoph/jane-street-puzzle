@@ -2,5 +2,6 @@ module conb(
   output wire HI,
   output wire LO
 );
-    /* TODO: provide implementation */
+    assign HI = 1;
+    assign LO = 0;
 endmodule
