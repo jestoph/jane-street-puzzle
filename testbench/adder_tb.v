@@ -23,38 +23,40 @@ module adder_tb;
     adder adder_1 (
 
       /* input A from sr1 */
-
+      /* ref testbench/sr1_tb.v */
       .Wire_9 (A[7]),
-      .Wire_24(A[6]),
+      .Wire_23(A[6]),
       .Wire_1 (A[5]),
-      .Wire_32(A[4]),
+      .Wire_31(A[4]),
       .Wire_12(A[3]),
       .Wire_14(A[2]),
       .Wire_10(A[1]),
       .Wire_13(A[0]),
 
-      /*input B from sr2 */
-      .Wire_21(B[7]),
-      .Wire_28(B[6]),
-      .Wire_29(B[5]),
-      .Wire_27(B[4]),
-      .Wire_20(B[3]),
-      .Wire_30(B[2]),
-      .Wire_25(B[1]),
-      .Wire_26(B[0]),
+      /* input B from sr2 */
+      /* ref testbench/sr2_tb.v */
+      .Wire_20(B[7]),
+      .Wire_27(B[6]),
+      .Wire_28(B[5]),
+      .Wire_26(B[4]),
+      .Wire_19(B[3]),
+      .Wire_29(B[2]),
+      .Wire_24(B[1]),
+      .Wire_25(B[0]),
 
-      /*outputs*/
+      /* outputs */
       .Wire_2  (X[8]), // Why is this guy 1? How/Why did I guess that this was the 9th bit?
 
       /* This set works for B=0 */
-      .Wire_72 (X[7]),
-      .Wire_71 (X[6]),
-      .Wire_105(X[5]),
-      .Wire_114(X[4]),
-      .Wire_104(X[3]),
-      .Wire_103(X[2]),
-      .Wire_112(X[1]),
-      .Wire_99 (X[0])
+      /* ref testbench/comparitor_tb.v */
+      .Wire_69 (X[7]),
+      .Wire_68 (X[6]),
+      .Wire_102(X[5]),
+      .Wire_111(X[4]),
+      .Wire_101(X[3]),
+      .Wire_100(X[2]),
+      .Wire_109(X[1]),
+      .Wire_96 (X[0])
 
     );
 

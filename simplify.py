@@ -54,12 +54,24 @@ def find_wires(conns):
         wires = [wire_id]
         while wires:
             curr = wires.pop()
-            seen.add(curr)
-            for n in conn_mapping[curr]:
-                if n not in seen:
-                    wires.append(n)
-            if 'wire' in curr or 'clkbuf' in curr:
-                collected.add(curr)
+            if 'clkbuf' in curr:
+                seen.add(curr.replace("X","A"))
+                seen.add(curr.replace("A","X"))
+                for n in conn_mapping[curr.replace("X", "A")]:
+                    if n not in seen:
+                        wires.append(n)
+                for n in conn_mapping[curr.replace("A", "X")]:
+                    if n not in seen:
+                        wires.append(n)
+                collected.add(curr.replace("X", "A"))
+                collected.add(curr.replace("A", "X"))
+            else:
+                seen.add(curr)
+                for n in conn_mapping[curr]:
+                    if n not in seen:
+                        wires.append(n)
+                if 'wire' in curr:
+                    collected.add(curr)
         all_wire_segments.add(tuple(sorted(collected))) # Sort so wires are predictably named
 
 
@@ -350,32 +362,33 @@ if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
-    sr1_out = set(["Wire:1","Wire:32","Wire:12","Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"])#  All the Q outputs
-    sr2_out = set(["Wire:28", "Wire:20", "Wire:21", "Wire:30", "Wire:25", "Wire:29", "Wire:26", "Wire:27"]) # All the Q outputs
+    sr1_out = set(["Wire:1","Wire:31","Wire:12","Wire:14","Wire:13","Wire:23","Wire:10","Wire:9"])#  All the Q outputs
+    sr2_out = set(["Wire:19", "Wire:20", "Wire:24", "Wire:25", "Wire:26", "Wire:27", "Wire:28", "Wire:29"])
+
     warmup_io_map = {
         "comparitor": (
-            set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"]),
-            set(["Wire:36"])
+            set(["Wire:101","Wire:111","Wire:96","Wire:2","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"]),
+            set(["Wire:33"])
             ),
         "adder": (
             # Possibly wrong here
             # set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
             sr1_out | sr2_out,
-            set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"])
+            set(["Wire:101","Wire:111","Wire:96","Wire:2","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"])
             ),
         # TODO: These seem a bit odd - sr1 and sr2 should have the same clock!
         "sr1": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:35"]), # RESET_B, CLK, EN, A
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:32"]), # RESET_B, CLK, EN, A
             sr1_out
             ),
         "sr2": (
-            set(["Wire:11", "Wire:34", "Wire:8", "Wire:31"]), # RESET_B, CLK, EN, B
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:30"]), # RESET_B, CLK, EN, B
             sr2_out
             ),
         "all": (
             # TODO:
-            set(["Wire:11", "Wire:34", "Wire:8", "Wire:9", "Wire:21"]), # RESET_B, CLK, EN, A, B
-            set(["Wire:36"]), # Output is a bool
+            set(["Wire:10", "Wire:3", "Wire:7", "Wire:32", "Wire:29"]), # RESET_B, CLK, EN, A, B
+            set(["Wire:33"]), # Output is a bool
             )
     }
 

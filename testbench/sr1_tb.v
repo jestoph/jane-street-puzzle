@@ -20,19 +20,18 @@ module sr1_tb;
 
     integer i;
 
-
     sr1 sr1_1 (
       /* inputs */
       .Wire_8(EN),
-      .Wire_35(IN),
+      .Wire_32(IN),
       .Wire_3(CLK),
       .Wire_11(RESET_B),
 
       /* output - Manually specified */
       .Wire_9 (X[7]),
-      .Wire_24(X[6]),
+      .Wire_23(X[6]),
       .Wire_1 (X[5]),
-      .Wire_32(X[4]),
+      .Wire_31(X[4]),
       .Wire_12(X[3]),
       .Wire_14(X[2]),
       .Wire_10(X[1]),

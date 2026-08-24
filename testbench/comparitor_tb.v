@@ -22,18 +22,18 @@ module comparitor_tb;
     comparitor comparitor_1 (
       // Manually worked out this ordering, is only a guess
       // as the final output must be 5 1's and 4 0's
-      .Wire_2  (I[8]),
-      .Wire_72 (I[7]),
-      .Wire_71 (I[6]),
-      .Wire_105(I[5]),
-      .Wire_114(I[4]),
-      .Wire_104(I[3]),
-      .Wire_103(I[2]),
-      .Wire_112(I[1]),
-      .Wire_99 (I[0]),
+      .Wire_2  (I[6]),
+      .Wire_69 (I[8]),
+      .Wire_68 (I[5]),
+      .Wire_102(I[7]),
+      .Wire_111(I[4]),
+      .Wire_101(I[0]),
+      .Wire_100(I[1]),
+      .Wire_109(I[2]),
+      .Wire_96 (I[3]),
 
 
-      .Wire_36(X)
+      .Wire_33(X)
     );
 
     initial begin

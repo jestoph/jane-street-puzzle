@@ -23,19 +23,19 @@ module sr2_tb;
     sr2 sr2_1 (
       /* inputs */
       .Wire_8(EN),
-      .Wire_31(IN),
-      .Wire_34(CLK),
+      .Wire_30(IN),
+      .Wire_3(CLK),
       .Wire_11(RESET_B),
 
       /* output */
-      .Wire_21(X[7]),
-      .Wire_28(X[6]),
-      .Wire_29(X[5]),
-      .Wire_27(X[4]),
-      .Wire_20(X[3]),
-      .Wire_30(X[2]),
-      .Wire_25(X[1]),
-      .Wire_26(X[0])
+      .Wire_20(X[7]),
+      .Wire_27(X[6]),
+      .Wire_28(X[5]),
+      .Wire_26(X[4]),
+      .Wire_19(X[3]),
+      .Wire_29(X[2]),
+      .Wire_24(X[1]),
+      .Wire_25(X[0])
     );
 
     initial begin
