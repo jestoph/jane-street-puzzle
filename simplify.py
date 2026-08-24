@@ -34,39 +34,42 @@ def find_wires(conns):
 
 
     all_wire_segments = set()
-    for wire_id in list_of_wire_segments:
+    set_of_wire_segments = set(list_of_wire_segments)
+    seen = set()
+    while set_of_wire_segments:
+        wire_id = set_of_wire_segments.pop()
         collected = set()
-        seen = set()
         wires = [wire_id]
         while wires:
             curr = wires.pop()
             if 'buf' in curr:
                 seen.add(curr.replace("X","A"))
                 seen.add(curr.replace("A","X"))
-                if STRICT:
-                    for n in conn_mapping[curr.replace("X", "A")]:
-                        if n not in seen:
-                            wires.append(n)
-                    for n in conn_mapping[curr.replace("A", "X")]:
-                        if n not in seen:
-                            wires.append(n)
-                else:
-                    for n in conn_mapping.get(curr.replace("X", "A"),[]):
-                        if n not in seen:
-                            wires.append(n)
-                    for n in conn_mapping.get(curr.replace("A", "X"),[]):
-                        if n not in seen:
-                            wires.append(n)
+                set_of_wire_segments.discard(curr.replace("X", "A"))
+                set_of_wire_segments.discard(curr.replace("A", "X"))
+                for n in conn_mapping.get(curr.replace("X", "A"),[]):
+                    if n not in seen:
+                        wires.append(n)
+                for n in conn_mapping.get(curr.replace("A", "X"),[]):
+                    if n not in seen:
+                        wires.append(n)
                 collected.add(curr.replace("X", "A"))
                 collected.add(curr.replace("A", "X"))
             else:
                 seen.add(curr)
+                set_of_wire_segments.discard(curr)
                 for n in conn_mapping[curr]:
                     if n not in seen:
                         wires.append(n)
                 if 'wire' in curr:
                     collected.add(curr)
         all_wire_segments.add(tuple(sorted(collected))) # Sort so wires are predictably named
+
+    if STRICT:
+        assert len(seen) == len(list_of_wire_segments), f"{len(seen)=} {len(list_of_wire_segments)=}"
+    else:
+        if len(seen) != len(list_of_wire_segments):
+            print(f"WARNING: {len(seen)=} {len(list_of_wire_segments)=}")
 
 
     n_collected = sum([len(wires) for wires in all_wire_segments])
