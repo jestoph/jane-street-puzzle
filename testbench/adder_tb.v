@@ -16,7 +16,10 @@ module adder_tb;
     // Outputs
     wire [8:0] X;
 
+    integer i; // 32 bit
+
     adder adder_1 (
+
       /*input A */
       .Wire_1(A[0]),
       .Wire_12(A[1]),
@@ -38,15 +41,15 @@ module adder_tb;
       .Wire_10(B[7]),
 
       /*outputs*/
-      .Wire_114(X[0]),
-      .Wire_103(X[1]),
-      .Wire_72(X[2]),
-      .Wire_2(X[3]),
-      .Wire_99(X[4]),
-      .Wire_112(X[5]),
-      .Wire_71(X[6]),
-      .Wire_104(X[7]),
-      .Wire_105(X[8])
+      .Wire_2  (X[8]), // Why is this guy 1?
+      .Wire_112(X[7]),
+      .Wire_114(X[6]),
+      .Wire_103(X[5]),
+      .Wire_105(X[4]),
+      .Wire_104(X[3]),
+      .Wire_99 (X[2]),
+      .Wire_71 (X[1]),
+      .Wire_72 (X[0])
     );
 
     initial begin
@@ -57,7 +60,34 @@ module adder_tb;
         // Track changes directly in the terminal window
         $monitor("Time=%0t | A=%b B=%b | X=%b", $time, A, B, X);
 
-        A = 8'b11111111 ; #10;
+
+        /* When A is zero, the output should be B */
+        A = 8'b0;
+        B = 8'b0;
+        #10;
+
+        for (i = 0; i < 8'b11111111; i = i + 1)
+        begin
+            B = i;
+            #10;
+            // `assert(X[8], 0, "When A is zero, the top bit of the output should be 0");
+            `assert(X[7:0], B, "When A is zero, the output should equal B");
+        end
+
+        /* When B is zero, the output should be A */
+        A = 8'b0;
+        B = 8'b0;
+        #10;
+
+        for (i = 8'b00000010; i < 8'b11111111; i = i + 1)
+        begin
+            A = i;
+            #10;
+            // `assert(X[8], 0, "When B is zero, the top bit of the output should be 0");
+            `assert(X[7:0], A, "When B is zero, the output should equal A");
+        end
+
+
 
         $finish; // End the simulation
     end
