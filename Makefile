@@ -7,16 +7,16 @@ check:
 	${PYTHON} -m mypy *.py
 
 cells:
-	${PYTHON} cells.py warmup
+	${PYTHON} cells.py puzzle
 
 stats:
-	${PYTHON} stats.py warmup
+	${PYTHON} stats.py puzzle
 
 network:
-	${PYTHON} network.py warmup
+	${PYTHON} network.py puzzle
 
 simplify:
-	${PYTHON} simplify.py warmup
+	${PYTHON} simplify.py puzzle
 
 #
 # Build and test all components

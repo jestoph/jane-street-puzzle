@@ -1,24 +1,10 @@
 import sys
 import json
 import os
+from common import IO_PORTS
 
-def get_io():
+STRICT = False
 
-    with open("cell-to-pins.txt") as fp:
-        data = fp.read()
-
-    ret = {}
-    lines = data.splitlines()[2:]
-    for line in lines:
-        port, ins, outs = line.split("|")
-        port = port.strip().replace('sky130_fd_sc_hd__','')
-        ins = ins.strip().split(',')
-        outs = outs.strip().split(',')
-        ret[port] = (set(ins), set(outs))
-
-    return ret
-
-IO_PORTS=get_io()
 def get_wire_segments(conns):
     list_of_wire_segments = []
     for l, r in conns:
@@ -57,12 +43,20 @@ def find_wires(conns):
             if 'clkbuf' in curr:
                 seen.add(curr.replace("X","A"))
                 seen.add(curr.replace("A","X"))
-                for n in conn_mapping[curr.replace("X", "A")]:
-                    if n not in seen:
-                        wires.append(n)
-                for n in conn_mapping[curr.replace("A", "X")]:
-                    if n not in seen:
-                        wires.append(n)
+                if STRICT:
+                    for n in conn_mapping[curr.replace("X", "A")]:
+                        if n not in seen:
+                            wires.append(n)
+                    for n in conn_mapping[curr.replace("A", "X")]:
+                        if n not in seen:
+                            wires.append(n)
+                else:
+                    for n in conn_mapping.get(curr.replace("X", "A"),[]):
+                        if n not in seen:
+                            wires.append(n)
+                    for n in conn_mapping.get(curr.replace("A", "X"),[]):
+                        if n not in seen:
+                            wires.append(n)
                 collected.add(curr.replace("X", "A"))
                 collected.add(curr.replace("A", "X"))
             else:
@@ -76,7 +70,12 @@ def find_wires(conns):
 
 
     n_collected = sum([len(wires) for wires in all_wire_segments])
-    assert n_collected == len(list_of_wire_segments), f"{n_collected=} {len(list_of_wire_segments)=}"
+    if STRICT:
+        assert n_collected == len(list_of_wire_segments), f"{n_collected=} {len(list_of_wire_segments)=}"
+    else:
+        if n_collected != len(list_of_wire_segments):
+            print(f"WARNING: {n_collected=} {len(list_of_wire_segments)=}")
+
 
 
     wire_id = 0
@@ -343,6 +342,23 @@ def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
     for wire in inputs:
         print(f"Input: [outside] -> {wire} -> [inside]")
 
+def read_wire_segments(filename):
+    all_wire_segments = []
+    with open(filename) as fp:
+        for line in fp:
+            l, _, r = line.split()
+            all_wire_segments.append((l, r))
+    return all_wire_segments
+
+def check_ports(segments):
+    data = IO_PORTS
+    for segment in segments:
+        for x in segment:
+            if 'wire' in x: continue
+            _, _, _, _, cname, _, pname = x.split(":")
+            assert cname in IO_PORTS, f"Don't have io ports for {cname}"
+            all_pins = IO_PORTS[cname][0] | IO_PORTS[cname][1]
+            assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
 
 
 if __name__ == '__main__':
@@ -381,11 +397,9 @@ if __name__ == '__main__':
 
     if sys.argv[1] == 'warmup':
 
-        all_wire_segments = []
-        with open('outputs/warmup.txt') as fp:
-            for line in fp:
-                l, _, r = line.split()
-                all_wire_segments.append((l, r))
+        all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
+
+        check_ports(all_wire_segments)
 
         port_to_wire = find_wires(all_wire_segments)
 
@@ -410,7 +424,21 @@ if __name__ == '__main__':
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
     elif sys.argv[1] == 'puzzle':
-        pass
+
+        all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
+
+        if STRICT:
+            check_ports(all_wire_segments)
+
+        port_to_wire = find_wires(all_wire_segments)
+
+        wire_to_ports = reverse_map(port_to_wire)
+
+        if STRICT:
+            check_only_single_output_on_wire(wire_to_ports)
+            check_all_ports_filled(port_to_wire)
+        print_element_as_json('puzzle', port_to_wire, wire_to_ports)
+        # 
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)

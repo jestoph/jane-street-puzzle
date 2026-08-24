@@ -1,38 +1,9 @@
 import gdstk
 import sys
+from common import read_layers, mdtable
 
-def read_layers():
-    # Headers are layer_name,purpose,layer,datatype,description
-    import csv
-    with open('gds_layers.csv') as fp:
-        list_of_dicts = list(csv.DictReader(fp))
-    return list_of_dicts
 
-def mdtable(data):
-    """
-    Added as a convenience - my vim tool will do this for me
-    """
-    if not data: return
-    maxlens = {k: len(k) for k in data[0]}
-    header_list = list(data[0].keys()) # To ensure consistent sorting
-
-    for dat in data:
-        for key, val in dat.items():
-            maxlens[key] = max(maxlens[key], len(str(val)))
-
-    headers = [f"{header:{maxlens[header]}}" for header in header_list]
-    header_str = " | ".join(headers)
-    horiz = "-"*len(header_str)
-
-    print(header_str)
-    print(horiz)
-
-    for dat in data:
-        vals = [(str(dat[key]) + " "*100)[:maxlens[key]] for key in header_list]
-        vals_str = " | ".join(vals)
-        print(vals_str)
-
-def stats(filename):
+def stats(filename, top):
 
     data = gdstk.gds_info(filename)
     for k in ["num_polygons", "num_paths", "num_references", "num_labels", "unit", "precision"]:
@@ -56,9 +27,11 @@ def stats(filename):
 
     print(f"{len(library.top_level())=}")
     print(f"{len(library.cells)=}")
+    print(f"{len(library.top_level()[0].references)=}")
     print()
 
-    library['adder_demo'].flatten()
+    cell = library[top]
+    cell.flatten()
 
     md = []
     for cell in sorted(library.cells, key=lambda x: x.name.lower()):
@@ -75,11 +48,12 @@ def stats(filename):
 
     mdtable(md)
 
-    layer_polys(library)
+    layer_polys(library, top)
 
-def layer_polys(library):
+def layer_polys(library, top):
 
-    library['adder_demo'].flatten()
+    cell = library[top]
+    cell.flatten()
 
     layer_poly_count = {}
     layer_map = {v:k for k,v in {
@@ -106,9 +80,9 @@ def layer_polys(library):
 
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':
-        stats("warmup/04_final.gds")
+        stats("warmup/04_final.gds", top="adder_demo")
     elif sys.argv[1] == 'puzzle':
-        stats("puzzle.gds")
+        stats("puzzle.gds", top="puzzle")
     else:
         raise ValueError(f"{sys.argv[1]=} not valid target")
 

@@ -94,5 +94,8 @@
 
 ## Real Circuit
 
-
-
+### Basic valication
+[x] Check all cells are showing ports correctly - they all look OK
+[ ] Check stats
+[ ] Check can read circuit
+[ ] Check can simplify - some errors I'll need to resolve

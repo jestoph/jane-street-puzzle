@@ -1,64 +1,6 @@
 import gdstk
 import sys
-
-labels_i_care_about = {
-    "A", "A_N",
-    "A0", "A1", "A2", "A2", "A3",
-    "B", "B_N", "B1", "B1_N",
-    "C", "CLK",
-    "D",
-    "RESET_B",
-    "X",
-    "Y",
-    "S",
-    "Q"
-}
-
-
-def increase_view(svgfile):
-    """
-    My apologies for how stupid this is.
-    """
-
-    with open(svgfile) as fp:
-        lines = fp.readlines()
-
-    line = lines[1]
-
-    assert '<svg xmlns' in line, f'{line=}'
-
-    """
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34.6" height="35.2" viewBox="-3.5 -31.2 34.6 35.2">
-
-    to
-
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="346" height="352" viewBox="-3.5 -31.2 34.6 35.2">
-    """
-
-    h = line.find("height=")
-    s = line.find('"', h+1)
-    e = line.find('"', s+1)
-
-    print(f"{line[s+1:]=}")
-
-    height = float(line[s+1:e])*10
-
-    line = line[:s+1] + str(height) + line[e:]
-
-    w = line.find("width=")
-    s = line.find('"', w+1)
-    e = line.find('"', s+1)
-
-    width = float(line[s+1:e])*10
-
-    line = line[:s+1] + str(width) + line[e:]
-
-    lines = [lines[0], line] + lines[2:]
-
-    with open(svgfile, "w") as fp:
-        for line in lines:
-            print(line, file=fp, end='')
-
+from common import labels_i_care_about, increase_view
 
 def write_files(cell, name):
     filename = f"{name}.svg"

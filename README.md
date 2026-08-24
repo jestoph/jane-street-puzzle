@@ -146,7 +146,13 @@ Ok so I built a harness for my circuit simulator. But it's really hard to visual
 
 ### Several days later
 
-Ok so I built a waveform and circuit viewer in Raylib. Where were we again?
+Ok so I gave up on writing a wave form viewer and decided to just use 'surfer'. But these gds files are hard to
+work with, how can I make that easier?
+
+### Several days later
+
+Ok so I wrote a basic GDS viewer in raylib but I can't get the blocks to sit quite the way I want to. So anyway,
+I realised I'm down too many tangents and it's time to drop all of the custom software.
 
 ## Looking at the actual gds file
 
@@ -506,3 +512,28 @@ Unconnected segments:
 Given how long it took me to validate the spaghetti version of the shift registers, this is going to be a long session.
 
 If only there were some way of doing this that didn't involve trading off my sanity for progress.
+
+.... And it's done! I finally got this thing to work! It was way more manual maintaining maps between sections,
+but once the wire names were canonicalised everything started to make a bit more sense.
+
+[Waveform](surfer.jpg)
+
+
+## On to the real puzzle
+The real puzzle has many more component types (81 vs 20 or so) and many more of them (almost 10k vs 1k).
+I was able to quickly get most aspects of my script working, so long as I dropped all validation. Which is ...
+not great. And the process of extracting the circuit takes almost a minute instead of 2s.
+
+But I could generate a json description of the file and use it to find some fairly expected things - that
+common, global signals are common and global
+
+* RESET_B is Wire 29
+* CLK is Wire 34
+* Enable appears to be Wire 75 in my ordering system (though there are some other resets which is strange. Perhaps
+  I have a bug here)
+
+I seem to always do things in the dumbest way possible, so I find myself grepping some json
+```bash
+% cat outputs/puzzle.json | jq . | grep ':RESET' | grep -o "Wire.*" | sort | uniq -c
+  84 Wire:29",
+```

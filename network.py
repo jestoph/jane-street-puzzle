@@ -3,6 +3,7 @@ import os
 import time
 from contextlib import contextmanager
 import sys
+from common import labels_i_care_about, increase_view, name_to_layer, layer_to_name, layer_ordering, layers_i_care_about
 
 """
 We build up the network like this:
@@ -10,107 +11,6 @@ We build up the network like this:
     2. Attach the cell name and port name to the geometry as a 'property'
     3. Flatten the design in a custom way so that we can also attach the reference id
 """
-
-labels_i_care_about = {
-    "A", "A_N",
-    "A0", "A1", "A2", "A2", "A3",
-    "B", "B_N", "B1", "B1_N",
-    "C", "CLK",
-    "D",
-    "RESET_B",
-    "X",
-    "Y",
-    "S",
-    "Q"
-}
-
-"""
-From CSV
-
-li1,"drawing, text",67,20,Local interconnect
-mcon,drawing,67,44,Contact from local interconnect to metal1
-met1,"drawing, text",68,20,Metal 1
-via,drawing,68,44,Contact from metal 1 to metal 2
-met2,"drawing, text",69,20,Metal 2
-via2,drawing,69,44,Contact from metal 2 to metal 3
-met3,"drawing, text",70,20,Metal 3
-via3,drawing,70,44,Contact from metal 3 to metal 4
-met4,"drawing, text",71,20,Metal 4
-"""
-
-name_to_layer = {
-    "li1" :(67,20),
-    "mcon":(67,44),
-    "met1":(68,20),
-    "via" :(68,44),
-    "met2":(69,20),
-    "via2":(69,44),
-    "met3":(70,20),
-    "via3":(70,44),
-    "met4":(71,20),
-}
-
-layer_to_name = {val:key for key,val in name_to_layer.items()}
-
-layer_ordering = [
-    "li1",
-    "mcon",
-    "met1",
-    "via",
-    "met2",
-    "via2",
-    "met3",
-    "via3",
-    "met4",
-]
-
-layers_i_care_about = set(name_to_layer.values())
-
-
-def increase_view(svgfile):
-    """
-    My apologies for how stupid this is.
-    """
-
-    with open(svgfile) as fp:
-        lines = fp.readlines()
-
-    line = lines[1]
-
-    assert '<svg xmlns' in line, f'{line=}'
-
-    """
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34.6" height="35.2" viewBox="-3.5 -31.2 34.6 35.2">
-
-    to
-
-    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="346" height="352" viewBox="-3.5 -31.2 34.6 35.2">
-    """
-
-    h = line.find("height=")
-    s = line.find('"', h+1)
-    e = line.find('"', s+1)
-
-    print(f"{line[s+1:]=}")
-
-    height = float(line[s+1:e])*10
-
-    line = line[:s+1] + str(height) + line[e:]
-
-    w = line.find("width=")
-    s = line.find('"', w+1)
-    e = line.find('"', s+1)
-
-    width = float(line[s+1:e])*10
-
-    line = line[:s+1] + str(width) + line[e:]
-
-    lines = [lines[0], line] + lines[2:]
-
-    with open(svgfile, "w") as fp:
-        for line in lines:
-            print(line, file=fp, end='')
-
 
 def write_files(library, cell, name):
     filename = f"{name}.svg"
@@ -149,8 +49,10 @@ def filter_layers(library):
 
 def filter_filters(library):
 
-    top = library['adder_demo']
-    for ref in top.references:
+    top = library.top_level()
+    assert len(top) == 1
+    cell = top[0]
+    for ref in cell.references:
 
         # print(f"{ref.cell.name=}")
         # Filters
@@ -229,7 +131,9 @@ def custom_flatten(library):
 
     count = {}
 
-    cell = library['adder_demo']
+    top = library.top_level()
+    assert len(top) == 1
+    cell = top[0]
     for i, ref in enumerate(cell.references):
 
         name = ref.cell.name
@@ -494,10 +398,10 @@ def measure_time(name):
         print(f"> {name} - {s - t}")
 
 
-def counts(library):
+def counts(library, top):
 
     cnts = {}
-    for poly in library['adder_demo'].polygons:
+    for poly in library[top].polygons:
         if port_name := poly.get_property("port_name"):
             port_name = port_name[0].decode('utf-8')
             name, port = port_name.split(":")
@@ -516,7 +420,7 @@ def compare_counts(a,b):
             assert a[name][port] == b[name][port], f"a[{name}]{port}]={a[name][port]} b[{name}][{port}]={b[name][port]}"
             print(name, port, a[name][port])
 
-def network(filename, output):
+def network(filename, top, output):
     library = gdstk.read_gds(filename)
     with measure_time("converting_paths"):
         convert_paths(library)
@@ -529,24 +433,23 @@ def network(filename, output):
     with measure_time("custom_flatten"):
         custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     with measure_time("connected_components"):
-        before = counts(library)
-        connected_components(library['adder_demo'])
-        after = counts(library)
-        compare_counts(before, after)
+        before = counts(library, top)
+        connected_components(library[top])
+        after = counts(library, top)
+        # compare_counts(before, after)
     with measure_time("call_graph"):
-        els = cell_graph(library['adder_demo'])
+        els = cell_graph(library[top])
     with open(f"outputs/{output}.txt", "w") as fp:
         for x,y in els:
             print(f"{x} -> {y}", file=fp)
 
-    # dotfile(library['adder_demo'])
-    write_files(library, library['adder_demo'], "outputs/adder_demo_network")
+    write_files(library, library[top], "outputs/network")
 
 
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':
-        network("warmup/04_final.gds", sys.argv[1])
+        network("warmup/04_final.gds", 'adder_demo', sys.argv[1])
     elif sys.argv[1] == 'puzzle':
-        network("puzzle.gds", sys.argv[1])
+        network("puzzle.gds", 'puzzle', sys.argv[1])
     else:
         raise ValueError(f"{sys.argv[1]=} not valid target")
