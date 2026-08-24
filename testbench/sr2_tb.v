@@ -18,23 +18,24 @@ module sr2_tb;
     // Outputs
     wire [7:0] X;
 
+    integer i;
 
     sr2 sr2_1 (
       /* inputs */
       .Wire_8(EN),
-      .Wire_21(IN),
+      .Wire_31(IN),
       .Wire_34(CLK),
       .Wire_11(RESET_B),
 
       /* output */
-      .Wire_23(X[0]),
-      .Wire_80(X[1]),
-      .Wire_74(X[2]),
-      .Wire_73(X[3]),
-      .Wire_81(X[4]),
-      .Wire_79(X[5]),
-      .Wire_22(X[6]),
-      .Wire_77(X[7])
+      .Wire_21(X[7]),
+      .Wire_28(X[6]),
+      .Wire_29(X[5]),
+      .Wire_27(X[4]),
+      .Wire_20(X[3]),
+      .Wire_30(X[2]),
+      .Wire_25(X[1]),
+      .Wire_26(X[0])
     );
 
     initial begin
@@ -43,9 +44,55 @@ module sr2_tb;
         $dumpvars(0, sr2_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | IN=%b RESET_B=%b EN=%b CLK=%b | X=%b", $time, IN, RESET_B, EN, CLK, X);
+        $monitor("Time=%0t | IN=%b RESET_B=%b EN=%b CLK=%b i=%b | X=%b", $time, IN, RESET_B, EN, CLK, i[7:0], X);
 
-        EN  = 1'b0 ; #10;
+        EN  = 1'b1;
+        RESET_B = 1'b1;
+        CLK = 1'b0;
+        #10;
+        RESET_B = 1'b0;
+        #10;
+        CLK = 1'b0;
+        #10;
+        CLK = 1'b1;
+        #10;
+        CLK = 1'b0;
+
+
+
+        RESET_B = 1'b1;
+        #10;
+
+        // Set a single bit
+        IN = 1'b1;
+        #10;
+        CLK = 1'b1;
+        #10;
+        CLK = 1'b0;
+        #10;
+        IN = 1'b0;
+
+        for (i = 8'b00000001; i > 8'b0 ; i = (i << 1) & 8'b11111111)
+        begin
+            `assert(X, i, "Basic shifting behavior")
+
+            EN = 1'b0;
+            #10;
+            CLK = 1'b1;
+            #10;
+            CLK = 1'b0;
+            #10;
+            EN = 1'b1;
+            #10;
+
+            `assert(X, i, "Clocking when EN is low has no effect")
+
+            CLK = 1'b1;
+            #10;
+            CLK = 1'b0;
+            #10;
+        end
+        `assert(X, 8'b0, "Fully passed through")
 
         $finish; // End the simulation
     end

@@ -76,6 +76,20 @@ module sr1_tb;
         for (i = 8'b00000001; i > 8'b0 ; i = (i << 1) & 8'b11111111)
         begin
             `assert(X, i, "Basic shifting behavior")
+
+
+            EN = 1'b0;
+            #10;
+            CLK = 1'b1;
+            #10;
+            CLK = 1'b0;
+            #10;
+            EN = 1'b1;
+            #10;
+
+            `assert(X, i, "Clocking when EN is low has no effect")
+
+
             CLK = 1'b1;
             #10;
             CLK = 1'b0;

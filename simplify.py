@@ -376,6 +376,8 @@ if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
+    sr1_out = set(["Wire:1","Wire:32","Wire:12","Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"])#  All the Q outputs
+    sr2_out = set(["Wire:28", "Wire:20", "Wire:21", "Wire:30", "Wire:25", "Wire:29", "Wire:26", "Wire:27"]) # All the Q outputs
     warmup_io_map = {
         "comparitor": (
             set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"]),
@@ -383,19 +385,18 @@ if __name__ == '__main__':
             ),
         "adder": (
             # Possibly wrong here
-            set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
+            # set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
+            sr1_out | sr2_out,
             set(["Wire:104","Wire:114","Wire:99","Wire:2","Wire:71","Wire:112","Wire:105","Wire:103","Wire:72"])
             ),
         # TODO: These seem a bit odd - sr1 and sr2 should have the same clock!
         "sr1": (
             set(["Wire:11", "Wire:3", "Wire:8", "Wire:35"]), # RESET_B, CLK, EN, A
-            set(["Wire:1","Wire:32","Wire:12","Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"])#  All the Q outputs
+            sr1_out
             ),
         "sr2": (
             set(["Wire:11", "Wire:34", "Wire:8", "Wire:31"]), # RESET_B, CLK, EN, B
-            set(["Wire:1","Wire:32","Wire:12Wire:14","Wire:13","Wire:24","Wire:10","Wire:9"]) # All the Q outputs
-
-
+            sr2_out
             ),
         "all": (
             # TODO:
