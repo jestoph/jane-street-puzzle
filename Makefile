@@ -29,3 +29,6 @@ test-subcircuits:
 
 clean:
 	rm -f outputs/*
+
+find-unfinished-components:
+	grep -r "TODO: provide" component
