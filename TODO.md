@@ -24,7 +24,7 @@
   [x] Shift Register 1
   [x] Shift Register 2
 [ ] Run real test sims of
-  [ ] Comparitor
+  [x] Comparitor
   [ ] Shift Register 1
   [ ] Shift Register 2
   [ ] Adder
