@@ -1,9 +1,7 @@
 import gdstk
 import os
-import time
-from contextlib import contextmanager
 import sys
-from common import labels_i_care_about, increase_view, name_to_layer, layer_to_name, layer_ordering, layers_i_care_about
+from common import labels_i_care_about, increase_view, name_to_layer, layer_to_name, layer_ordering, layers_i_care_about, measure_time
 
 """
 We build up the network like this:
@@ -387,16 +385,6 @@ def cell_graph(cell):
                     ret.append((str(wire2_id), str(wire_seg_id)))
 
     return ret
-
-@contextmanager
-def measure_time(name):
-    t = time.time()
-    try:
-        yield
-    finally:
-        s = time.time()
-        print(f"> {name} - {s - t}")
-
 
 def counts(library, top):
 

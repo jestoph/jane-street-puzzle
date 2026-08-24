@@ -1,7 +1,7 @@
 import sys
 import json
 import os
-from common import IO_PORTS
+from common import IO_PORTS, measure_time
 
 STRICT = False
 
@@ -12,9 +12,9 @@ def get_wire_segments(conns):
             list_of_wire_segments.append(l)
         if 'wire' in r:
             list_of_wire_segments.append(r)
-        if 'clkbuf' in l:
+        if 'buf' in l:
             list_of_wire_segments.append(l)
-        if 'clkbuf' in r:
+        if 'buf' in r:
             list_of_wire_segments.append(r)
     return list(set(list_of_wire_segments))
 
@@ -40,7 +40,7 @@ def find_wires(conns):
         wires = [wire_id]
         while wires:
             curr = wires.pop()
-            if 'clkbuf' in curr:
+            if 'buf' in curr:
                 seen.add(curr.replace("X","A"))
                 seen.add(curr.replace("A","X"))
                 if STRICT:
@@ -90,11 +90,11 @@ def find_wires(conns):
     port_to_wire = {}
     for port, wire_segment in conns:
         if 'wire' in port: continue
-        if 'clkbuf' in port: continue
+        if 'buf' in port: continue
         if port in port_to_wire:
             # This can happen (AND BE DIFFERENT) if a port has two pins on it I guess
-            print(f" duplicate {port} -> {segment_to_wire[wire_segment]}")
-            print(f" and       {port} -> {port_to_wire[port]}")
+            # print(f" duplicate {port} -> {segment_to_wire[wire_segment]}")
+            # print(f" and       {port} -> {port_to_wire[port]}")
             assert segment_to_wire[wire_segment] == port_to_wire[port]
         port_to_wire[port] = segment_to_wire[wire_segment]
 
@@ -112,7 +112,7 @@ def find_bounding(port_to_wire, box):
 
         # It seems clocks don't always keep within domains
         # so just add them in
-        if 'clkbuf' in name:
+        if 'buf' in name:
             ret[port] = wire
 
         if x < xmin or x > xmax or y < ymin or y > ymax:
@@ -168,7 +168,6 @@ def print_element_as_json(name, port_wire_map, wire_port_map):
         pretty = element(port)
         _, x, _, y, _, _, _ = port.split(":")
         x, y = float(x), float(y)
-        print(x,y)
         element_position[pretty] = element_position.get(pretty, (10_000, 10_000))
         if element_position[pretty] > (x, y):
             element_position[pretty] = (x, y)
@@ -397,16 +396,21 @@ if __name__ == '__main__':
 
     if sys.argv[1] == 'warmup':
 
-        all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
+        with measure_time("read segments"):
+            all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
 
-        check_ports(all_wire_segments)
+        with measure_time("check ports"):
+            check_ports(all_wire_segments)
 
-        port_to_wire = find_wires(all_wire_segments)
+        with measure_time("Find wires"):
+            port_to_wire = find_wires(all_wire_segments)
 
-        wire_to_ports = reverse_map(port_to_wire)
+        with measure_time("reverse map"):
+            wire_to_ports = reverse_map(port_to_wire)
 
-        check_only_single_output_on_wire(wire_to_ports)
-        check_all_ports_filled(port_to_wire)
+        with measure_time("Validations"):
+            check_only_single_output_on_wire(wire_to_ports)
+            check_all_ports_filled(port_to_wire)
 
         for name, box in [
                     ('comparitor', ((50, 40), (100,60))), # Bit of a guess
@@ -425,20 +429,25 @@ if __name__ == '__main__':
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
     elif sys.argv[1] == 'puzzle':
 
-        all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
+        with measure_time("read segments"):
+            all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
 
         if STRICT:
-            check_ports(all_wire_segments)
+            with measure_time("check ports"):
+                check_ports(all_wire_segments)
 
-        port_to_wire = find_wires(all_wire_segments)
+        with measure_time("Find wires"):
+            port_to_wire = find_wires(all_wire_segments)
 
-        wire_to_ports = reverse_map(port_to_wire)
+        with measure_time("reverse map"):
+            wire_to_ports = reverse_map(port_to_wire)
 
         if STRICT:
-            check_only_single_output_on_wire(wire_to_ports)
-            check_all_ports_filled(port_to_wire)
-        print_element_as_json('puzzle', port_to_wire, wire_to_ports)
-        # 
+            with measure_time("Validations"):
+                check_only_single_output_on_wire(wire_to_ports)
+                check_all_ports_filled(port_to_wire)
+        with measure_time("Print as json"):
+            print_element_as_json('puzzle', port_to_wire, wire_to_ports)
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)

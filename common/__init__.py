@@ -1,5 +1,7 @@
 import gdstk
 import sys
+import time
+from contextlib import contextmanager
 
 labels_i_care_about = {
     "A",
@@ -161,3 +163,14 @@ def get_io():
     return ret
 
 IO_PORTS=get_io()
+
+@contextmanager
+def measure_time(name):
+    t = time.time()
+    try:
+        yield
+    finally:
+        s = time.time()
+        print(f"> {name} - {s - t}")
+
+

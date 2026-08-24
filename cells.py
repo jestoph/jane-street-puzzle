@@ -1,6 +1,6 @@
 import gdstk
 import sys
-from common import labels_i_care_about, increase_view
+from common import labels_i_care_about, increase_view, IO_PORTS
 
 def write_files(cell, name):
     filename = f"{name}.svg"
@@ -60,6 +60,7 @@ def cells_io(filename):
                 # only one has the label over it
                 if polygon.contain(label.origin):
                     keep = True
+                    polygon.set_property("port", f"{label.text}")
             if not keep:
                 cell.remove(polygon)
 
@@ -67,6 +68,44 @@ def cells_io(filename):
         # TODO: Do paths as well
 
         write_files(cell, f"outputs/{name}.li.io")
+
+        # dump_ports(cell)
+
+        check_ports(cell)
+
+
+def dump_ports(cell):
+    """
+    This is a bit cheeky to use the circuit to check itself but it'll
+    take forever to do 60+ elements
+    """
+    if 'sky130' not in cell.name: return
+
+    seen = set()
+    for polygon in cell.polygons:
+        pname = polygon.get_property("port")[0].decode('utf-8')
+        seen.add(pname)
+
+    with open('output.txt', 'a') as fp:
+        print(cell.name, "|", ",".join(sorted(seen)), file=fp)
+
+def check_ports(cell):
+
+    if 'sky130' not in cell.name: return
+
+    cname = cell.name.replace('sky130_fd_sc_hd__','')
+
+    assert cname in IO_PORTS, f"Missing port information on {cname}"
+
+    all_pins = IO_PORTS[cname][0] | IO_PORTS[cname][1]
+    seen = set()
+    for polygon in cell.polygons:
+        pname = polygon.get_property("port")[0].decode('utf-8')
+        seen.add(pname)
+        assert cname in IO_PORTS, f"Don't have io ports for {cname}"
+        assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
+
+    assert seen == all_pins, f"Missing some pins {seen^all_pins}"
 
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':

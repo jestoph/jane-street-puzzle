@@ -99,3 +99,7 @@
 [ ] Check stats
 [ ] Check can read circuit
 [ ] Check can simplify - some errors I'll need to resolve
+
+[ ] Simplify the following:
+  [x] All clkbufs just wires
+  [x] All bufs are just wires
