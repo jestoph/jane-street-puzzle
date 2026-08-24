@@ -50,23 +50,23 @@ module a31o_tb;
         A1 = 0; A2 = 1; A3 = 1; B1 = 0; #10;
         `assert(X, 0, "");
         A1 = 1; A2 = 1; A3 = 1; B1 = 0; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 0; A2 = 0; A3 = 0; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 1; A2 = 0; A3 = 0; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 0; A2 = 1; A3 = 0; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 1; A2 = 1; A3 = 0; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 0; A2 = 0; A3 = 1; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 1; A2 = 0; A3 = 1; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 0; A2 = 1; A3 = 1; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
         A1 = 1; A2 = 1; A3 = 1; B1 = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
 
 
         $finish; // End the simulation

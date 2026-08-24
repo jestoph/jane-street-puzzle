@@ -33,7 +33,7 @@ module xnor2_tb;
         $monitor("Time=%0t | A=%b B=%b | Y=%b", $time, A, B, Y);
 
         A = 0; B = 0; #10;
-        `assert(Y, 0, "");
+        `assert(Y, 1, "");
 
         A = 1; B = 0; #10;
         `assert(Y, 0, "");
@@ -42,7 +42,7 @@ module xnor2_tb;
         `assert(Y, 0, "");
 
         A = 1; B = 1; #10;
-        `assert(Y, 0, "");
+        `assert(Y, 1, "");
 
         $finish; // End the simulation
     end

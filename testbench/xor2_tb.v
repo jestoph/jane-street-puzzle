@@ -36,10 +36,10 @@ module xor2_tb;
         `assert(X, 0, "");
 
         A = 1; B = 0; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
 
         A = 0; B = 1; #10;
-        `assert(X, 0, "");
+        `assert(X, 1, "");
 
         A = 1; B = 1; #10;
         `assert(X, 0, "");

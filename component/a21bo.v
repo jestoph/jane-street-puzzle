@@ -4,5 +4,7 @@ module a21bo(
     input wire B1_N,
     output wire X
 );
-    assign X = ~(~(A1 & A2) & B1_N); // TODO: I think this is wrong? I think should have an 'or' in there?
+    // TODO: The doc says 'or' but the picture shows 'and'?
+    // https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html
+    assign X = ~(~(A1 & A2) | B1_N);
 endmodule

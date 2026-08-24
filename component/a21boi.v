@@ -4,5 +4,6 @@ module a21boi(
     input wire B1_N,
     output wire Y
 );
-    assign X = ~(~(A1 & A2) | B1_N); // TODO: is this correct?
+    // TODO: https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21boi/README.html
+    assign Y = ~((A1 & A2) | ~B1_N);
 endmodule

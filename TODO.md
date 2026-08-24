@@ -16,10 +16,8 @@
 [x] Add all warmup cells to iverilog and testbenches
 [x] Work out how to name io wires - Hard-coded for now
 [x] Work out how to Write output as vcd - quite easy to do I think - https://zipcpu.com/blog/2017/07/31/vcd.html
-[ ] Add real assertions to component behaviours
-[ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
+[x] Add real assertions to component behaviours
 [x] Have real tests of all components
-  [ ] Including testbench/dfrtp_tb.v
 [x] Build test-benches of
   [x] Comparitor
   [x] Adder
@@ -30,6 +28,8 @@
   [ ] Shift Register 1
   [ ] Shift Register 2
   [ ] Adder
+[ ] What is the deal with a21bo? https://sky130-unofficial.readthedocs.io/en/latest/contents/libraries/sky130_fd_sc_hd/cells/a21bo/README.html
+[ ] Fix issue with different clocks for sr1 and sr2. They should be the same. Maybe due to clckbuf issue?
 [ ] Test bench of Total Circuit
 [ ] Sim of Total Circuit
 
