@@ -94,7 +94,8 @@
 
 ## Real Circuit
 
-### Basic valication
+
+### Basic validation
 [x] Check all cells are showing ports correctly - they all look OK
 [x] Check stats
 [x] Check can read circuit
@@ -105,4 +106,8 @@
 [ ] What is the pattern in the example input? Does it give a hint?
 [ ] Fix errors in simplify step
 [ ] What are the diodes doing? Why does my filter still include with end bits? Why are they in the circuit?
-  [ ] Should I include them? I can see they have some things attached....
+  [x] Should I include them? I can see they have some things attached.... Treating the pads as wires
+[ ] Add implementations for components
+  [ ] 2 x flip-flops ('df') components
+  [ ] 12 x 'a' components
+  [ ] 14 x 'o' components
