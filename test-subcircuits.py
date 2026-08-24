@@ -6,6 +6,7 @@ adder
 comparitor
 sr1
 sr2
+all
 """.split() # TODO: add 'all.v'
 
 def compile(component):

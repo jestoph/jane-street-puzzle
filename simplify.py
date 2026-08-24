@@ -387,7 +387,7 @@ if __name__ == '__main__':
             ),
         "all": (
             # TODO:
-            set(["Wire:10", "Wire:3", "Wire:7", "Wire:32", "Wire:29"]), # RESET_B, CLK, EN, A, B
+            set(["Wire:11", "Wire:3", "Wire:8", "Wire:32", "Wire:30"]), # RESET_B, CLK, EN, A, B
             set(["Wire:33"]), # Output is a bool
             )
     }

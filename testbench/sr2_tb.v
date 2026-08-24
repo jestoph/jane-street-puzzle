@@ -94,6 +94,17 @@ module sr2_tb;
         end
         `assert(X, 8'b0, "Fully passed through")
 
+        IN = 1;
+        for (i = 9'b00000001; i < 9'b100000000 ; i = (i << 1) | 9'b00000001)
+        begin
+
+            CLK = 1'b1;
+            #10;
+            CLK = 1'b0;
+            #10;
+            `assert(X, i, "Passing in constant 1's")
+        end
+
         $finish; // End the simulation
     end
 

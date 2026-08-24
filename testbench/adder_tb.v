@@ -145,6 +145,11 @@ module adder_tb;
             `assert(X, tmp, "X = A + B");
         end
 
+        A = 8'b11111000;
+        B = 8'b11111000;
+        #10
+        `assert(X, 9'b111110000, "Result");
+
 
 
         $finish; // End the simulation
