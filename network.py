@@ -440,7 +440,7 @@ def find_io_labels(library, io_labels):
     return labels
 
 
-def near_label(poly, labels, offset=1.0):
+def near_label(poly, labels, offset):
     for label in labels:
         x, y = label.origin
         label_minx, label_miny, label_maxx, label_maxy = x-offset, y-offset, x+offset, y+offset
@@ -451,18 +451,18 @@ def near_label(poly, labels, offset=1.0):
 
 
 
-def assign_io_aliases(cell, labels):
+def assign_io_aliases(cell, labels, offset):
     all_labels = set([label.text for label in labels])
     seen = set()
     for poly in cell.polygons:
-        if label := near_label(poly, labels):
+        if label := near_label(poly, labels, offset):
             print("FOUND", label.text)
             poly.set_property("io_alias", label.text)
             seen.add(label.text)
 
     assert seen == all_labels, f"Missing some IO labels for aliases {seen ^ all_labels}"
 
-def network(filename, top, output, io_labels):
+def network(filename, top, output, io_labels, offset):
     library = gdstk.read_gds(filename)
     with measure_time("finding io labels"):
         labels = find_io_labels(library, io_labels)
@@ -477,7 +477,7 @@ def network(filename, top, output, io_labels):
     with measure_time("custom_flatten"):
         custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
     with measure_time("Assign IO aliases"):
-        assign_io_aliases(library[top], labels)
+        assign_io_aliases(library[top], labels, offset)
     with measure_time("connected_components"):
         before = counts(library, top)
         aliases = connected_components(library[top])
@@ -499,9 +499,9 @@ def network(filename, top, output, io_labels):
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':
         WARMUP_IO_LABELS = {"A","B","S","clk","en","rst_n"}
-        network("warmup/04_final.gds", 'adder_demo', sys.argv[1], WARMUP_IO_LABELS)
+        network("warmup/04_final.gds", 'adder_demo', sys.argv[1], WARMUP_IO_LABELS, offset=1.0)
     elif sys.argv[1] == 'puzzle':
         PUZZLE_IO_LABELS = {"I","O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","clk","enable","rst_n","success"}
-        network("puzzle.gds", 'puzzle', sys.argv[1], PUZZLE_IO_LABELS)
+        network("puzzle.gds", 'puzzle', sys.argv[1], PUZZLE_IO_LABELS, offset=0.1)
     else:
         raise ValueError(f"{sys.argv[1]=} not valid target")

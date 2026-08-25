@@ -403,7 +403,6 @@ if __name__ == '__main__':
 
         with measure_time("Find wires and aliases"):
             port_to_wire, segment_to_wire = find_wires(all_wire_segments)
-            print_wire_aliases(segment_aliases, segment_to_wire)
             wire_to_alias = {
                 segment_to_wire[segment]: alias for segment, alias in segment_aliases
             }
@@ -431,6 +430,7 @@ if __name__ == '__main__':
             print_element_as_json(name, sub_circuit, revd, wire_to_alias)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
+            print_wire_aliases(segment_aliases, segment_to_wire)
 
     elif sys.argv[1] == 'puzzle':
 
@@ -447,6 +447,10 @@ if __name__ == '__main__':
         with measure_time("Find wires"):
             port_to_wire, segment_to_wire = find_wires(all_wire_segments)
 
+            wire_to_alias = {
+                segment_to_wire[segment]: alias for segment, alias in segment_aliases
+            }
+
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
 
@@ -455,7 +459,7 @@ if __name__ == '__main__':
                 check_only_single_output_on_wire(wire_to_ports)
                 check_all_ports_filled(port_to_wire)
         with measure_time("Print as json"):
-            print_element_as_json('puzzle', port_to_wire, wire_to_ports)
+            print_element_as_json('puzzle', port_to_wire, wire_to_ports, wire_to_alias)
         print_wire_aliases(segment_aliases, segment_to_wire)
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
