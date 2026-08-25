@@ -2,6 +2,7 @@ import subprocess as sp
 import sys
 
 components = """\
+puzzle
 adder
 comparitor
 sr1

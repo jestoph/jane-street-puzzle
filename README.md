@@ -550,3 +550,14 @@ spending a large amount of time checking if shapes overlap
 ### Looking at the waveform
 I realise now that the input might be a clue. It seems to be a 121 bit input, and there's two of them. Maybe it's
 11 x 11 bit chars or something?
+
+### Extracting the real puzzle
+It took a long time, but I added implementations of all of the 40 or so components in the real puzzle. After that,
+and some quality-of-life improvements around having wire aliases I was able to build and run a simulation of the
+real puzzle. It doesn't work, but still, I think that means I'm in with a shot of solving this thing.
+
+[Waveform](broken_output.jpg)
+
+### Working backwards
+The circuit is a lot more complicated, so I'm going to start working backwards to understand the network feeding the
+'success' output.

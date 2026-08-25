@@ -94,6 +94,9 @@
 
 ## Real Circuit
 
+[ ] What is the pattern in the example input? Does it give a hint?
+[ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
+[ ] What are `INTERNAL_3` and `INTERNAL_7`?
 
 ### Basic validation
 [x] Check all cells are showing ports correctly - they all look OK
@@ -113,9 +116,7 @@
   [x] Detect aliases
   [x] Use in outputs
 [x] Fix errors in simplify step
-[ ] What is the pattern in the example input? Does it give a hint?
-[ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
-[ ] What are `INTERNAL_3` and `INTERNAL_7`?
+[ ] Work out the behavioural differences between 'dfrtp', 'dfstp', 'dfxtp' flip-flops
 
 ### Simplify Network by working backwards from output
 
