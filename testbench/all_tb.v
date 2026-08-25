@@ -25,13 +25,13 @@ module all_tb;
 
     all all_1 (
 
-      .Wire_32(A),
-      .Wire_30(B),
-      .Wire_3(CLK),
-      .Wire_8(EN),
-      .Wire_11(RESET_B),
+      .A(A),
+      .B(B),
+      .clk(CLK),
+      .en(EN),
+      .rst_n(RESET_B),
 
-      .Wire_33(X)
+      .S(X)
     );
 
     initial begin

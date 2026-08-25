@@ -32,8 +32,7 @@ module comparitor_tb;
       .Wire_109(I[2]),
       .Wire_96 (I[3]),
 
-
-      .Wire_33(X)
+      .S(X)
     );
 
     initial begin

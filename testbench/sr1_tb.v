@@ -22,10 +22,11 @@ module sr1_tb;
 
     sr1 sr1_1 (
       /* inputs */
-      .Wire_8(EN),
-      .Wire_32(IN),
-      .Wire_3(CLK),
-      .Wire_11(RESET_B),
+      .en(EN),
+      .A(IN),
+      .clk(CLK),
+      .rst_n(RESET_B),
+
 
       /* output - Manually specified */
       .Wire_9 (X[7]),

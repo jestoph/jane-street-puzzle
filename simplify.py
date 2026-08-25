@@ -158,7 +158,7 @@ def print_element(name, port_wire_map):
 def element(port):
     return ":".join(port.split(":")[4:6]).replace("_1","").replace("_2","")
 
-def print_element_as_json(name, port_wire_map, wire_port_map):
+def print_element_as_json(name, port_wire_map, wire_port_map, wire_to_alias):
 
     ret = {}
 
@@ -179,6 +179,7 @@ def print_element_as_json(name, port_wire_map, wire_port_map):
 
     ret["port_to_wire"] = {prettify(port): wire for port, wire in port_wire_map.items()}
     ret["wire_to_ports"] = {wire: [prettify(port) for port in ports] for wire, ports, in wire_port_map.items()}
+    ret["wire_to_alias"] = wire_to_alias
 
 
     name = f"outputs/{name}.json"
@@ -198,24 +199,9 @@ def prettify1(port):
     _type = _type.replace("_1","").replace("_2","")
     return f"{_type}:{_id}.{_pin}"
 
-def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs):
+def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs, wire_to_alias):
     """
-    module and2(
-        input wire A,
-        input wire B,
-        output wire Y
-    );
-        assign Y = A & B;
-    endmodule
-
-    // Instantiate the MUX design
-    and3 and3_1 (
-        .A(A),
-        .B(B),
-        .C(C),
-        .Y(Y)
-    );
-
+    I sort the outputs as it makes it easier to compare changes
     """
 
     element_to_ports = {}
@@ -225,41 +211,45 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
         element_to_ports[el].append(port)
 
 
-    # Start writing the file 
+    # Start writing the file
     lines = [f"// {name.upper()}"]
     lines.append(f"module {name}(")
-    for _in in inputs:
-        lines.append(f"  input wire {_in.replace(":","_")},")
-    for i, _out in enumerate(outputs):
-        line = f"  output wire {_out.replace(":","_")}"
-        if i < len(outputs) - 1:
-            line += ","
-        lines.append(line)
+
+    io_lines = []
+    for _in in sorted(inputs):
+        _in = wire_to_alias.get(_in, _in)
+        io_lines.append(f"  input wire {_in.replace(":","_")}")
+    for _out in sorted(outputs):
+        _out = wire_to_alias.get(_out, _out)
+        io_lines.append(f"  output wire {_out.replace(":","_")}")
+
+    lines.append(",\n".join(io_lines))
     lines.append(f");")
 
     lines.append("")
 
-    for wire in wire_port_map:
+    for wire in sorted(wire_port_map):
         if wire in inputs: continue
         if wire in outputs: continue
+        wire = wire_to_alias.get(wire, wire)
         lines.append(f"  wire {wire.replace(":","_")};")
 
     lines.append("")
 
-    for nodename, ports in element_to_ports.items():
+    for nodename, ports in sorted(element_to_ports.items()):
         node_type = nodename.split(":")[0]
         node_name = "_".join(nodename.split(":"))
         lines.append(f"  {node_type} {node_name} (")
-        for i, port in enumerate(ports):
+
+        port_lines = []
+        for port in sorted(ports):
             pinname = port.split(":")[-1]
-            wirename = port_to_wire[port].replace(":","_")
+            wirename = port_to_wire[port]
+            wirename = wire_to_alias.get(wirename, wirename).replace(":", "_")
             line = f"    .{pinname}({wirename})"
-            if i < len(ports) - 1:
-                line += ","
-            lines.append(line)
+            port_lines.append(line)
+        lines.append(",\n".join(port_lines))
         lines.append("  );")
-
-
 
     lines.append("endmodule")
 
@@ -411,8 +401,12 @@ if __name__ == '__main__':
         with measure_time("check ports"):
             check_ports(all_wire_segments)
 
-        with measure_time("Find wires"):
+        with measure_time("Find wires and aliases"):
             port_to_wire, segment_to_wire = find_wires(all_wire_segments)
+            print_wire_aliases(segment_aliases, segment_to_wire)
+            wire_to_alias = {
+                segment_to_wire[segment]: alias for segment, alias in segment_aliases
+            }
 
 
         with measure_time("reverse map"):
@@ -434,11 +428,10 @@ if __name__ == '__main__':
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            print_element_as_json(name, sub_circuit, revd)
+            print_element_as_json(name, sub_circuit, revd, wire_to_alias)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
+            print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
 
-        print_wire_aliases(segment_aliases, segment_to_wire)
     elif sys.argv[1] == 'puzzle':
 
         with measure_time("read segments"):

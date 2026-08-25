@@ -22,10 +22,10 @@ module sr2_tb;
 
     sr2 sr2_1 (
       /* inputs */
-      .Wire_8(EN),
-      .Wire_30(IN),
-      .Wire_3(CLK),
-      .Wire_11(RESET_B),
+      .en(EN),
+      .B(IN),
+      .clk(CLK),
+      .rst_n(RESET_B),
 
       /* output */
       .Wire_20(X[7]),
