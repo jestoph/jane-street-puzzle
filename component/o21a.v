@@ -4,5 +4,5 @@ module o21a(
   input wire B1,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = ((A1 | A2) & B1);
 endmodule

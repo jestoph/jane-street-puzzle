@@ -6,5 +6,5 @@ module o32ai(
   input wire B2,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign X = (((A1 | A2) | A3) & (B1 | B2));
 endmodule

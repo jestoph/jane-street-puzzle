@@ -4,5 +4,5 @@ module o21ai(
   input wire B1,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign X = ~((A1 | A2) & B1);
 endmodule

@@ -6,5 +6,5 @@ module a41oi(
   input wire B1,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~((A1 & A2 & A3 & A4) | B1);
 endmodule

@@ -5,5 +5,5 @@ module o2bb2a(
   input wire B2,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = (~(A1_N & A2_N) & (B1 | B2));
 endmodule

@@ -5,5 +5,5 @@ module o211a(
   input wire C1,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = ((A1 | A2) & B1) & C1;
 endmodule

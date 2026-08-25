@@ -6,5 +6,5 @@ module a2111oi(
   input wire D1,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign Y = ~((A1 & A2) | B1 | C1 | D1 );
 endmodule

@@ -5,5 +5,5 @@ module a22o(
   input wire B2,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = (B1 & B2) | (A1 & A2);
 endmodule

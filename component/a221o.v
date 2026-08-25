@@ -6,5 +6,5 @@ module a221o(
   input wire C1,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = ((A1 & A2) | (B1 & B2)) | C1;
 endmodule

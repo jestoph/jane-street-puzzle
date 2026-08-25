@@ -5,5 +5,5 @@ module o22ai(
   input wire B2,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign X = ~((A1 | A2) & (B1 | B2));
 endmodule

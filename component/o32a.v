@@ -6,5 +6,5 @@ module o32a(
   input wire B2,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = (((A1 | A2) | A3) & (B1 | B2));
 endmodule

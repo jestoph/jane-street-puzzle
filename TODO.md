@@ -103,11 +103,11 @@
 [x] Simplify the following:
   [x] All clkbufs just wires
   [x] All bufs are just wires
+[x] Add implementations for components
+  [x] 2 x flip-flops ('df') components
+  [x] 12 x 'a' components
+  [x] 14 x 'o' components
+[x] What are the diodes doing? Why does my filter still include with end bits? Why are they in the circuit?
+  [x] Should I include them? I can see they have some things attached.... Treating the pads as wires
 [ ] What is the pattern in the example input? Does it give a hint?
 [ ] Fix errors in simplify step
-[ ] What are the diodes doing? Why does my filter still include with end bits? Why are they in the circuit?
-  [x] Should I include them? I can see they have some things attached.... Treating the pads as wires
-[ ] Add implementations for components
-  [ ] 2 x flip-flops ('df') components
-  [ ] 12 x 'a' components
-  [ ] 14 x 'o' components

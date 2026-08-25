@@ -5,5 +5,5 @@ module o31a(
   input wire B1,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = (((A1 | A2) | A3) & B1);
 endmodule

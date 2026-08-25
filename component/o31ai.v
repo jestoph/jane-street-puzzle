@@ -5,5 +5,5 @@ module o31ai(
   input wire B1,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign X = ~(((A1 | A2) | A3) & B1);
 endmodule

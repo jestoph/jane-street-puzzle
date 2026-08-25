@@ -4,5 +4,5 @@ module o21ba(
   input wire B1_N,
   output wire X
 );
-    /* TODO: provide implementation */
+    assign X = ~(~(A1 | A2) | B1_N);
 endmodule

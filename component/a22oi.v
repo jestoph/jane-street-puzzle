@@ -5,5 +5,5 @@ module a22oi(
   input wire B2,
   output wire Y
 );
-    /* TODO: provide implementation */
+    assign X = ~((B1 & B2) | (A1 & A2));
 endmodule

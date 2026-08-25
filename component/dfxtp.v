@@ -3,5 +3,9 @@ module dfxtp(
   input wire D,
   output wire Q
 );
-    /* TODO: provide implementation */
+  reg tmp;
+  always @(posedge CLK) begin
+      tmp <= D; // TODO: This is a guess!
+  end
+  assign Q = tmp;
 endmodule
