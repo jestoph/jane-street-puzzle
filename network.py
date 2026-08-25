@@ -258,6 +258,8 @@ def connected_components(cell):
 
     print("Connected components")
 
+    aliases = []
+
     layer_elements = {
         key: [] for key in name_to_layer.keys()
     }
@@ -297,7 +299,12 @@ def connected_components(cell):
         else:
             wires += 1
             if not poly.get_property("port_id"):
-                poly.set_property("wire_seg_id", f"wire:{wires}")
+                segment_id = f"wire:{wires}"
+                poly.set_property("wire_seg_id", segment_id)
+                if alias := poly.get_property("io_alias"):
+                    alias = alias[0].decode('utf-8')
+                    print(f"ALIAS: {segment_id}  :=> {alias}")
+                    aliases.append((f"{segment_id}", alias))
 
     for poly in cell.polygons:
         layer_name = layer_to_name[poly.layer, poly.datatype]
@@ -326,12 +333,18 @@ def connected_components(cell):
         else:
             wires += 1
             if not poly.get_property("port_id"):
-                poly.set_property("wire_seg_id", f"wire:{wires}")
+                segment_id = f"wire:{wires}"
+                poly.set_property("wire_seg_id", segment_id)
+                if alias := poly.get_property("io_alias"):
+                    alias = alias[0].decode('utf-8')
+                    print(f"ALIAS: {segment_id}  :=> {alias}")
+                    aliases.append((f"{segment_id}", alias))
 
     # TODO: Improve via filtering? Vias must connect above and below
     # TODO: Would there be any abutted elements? like a poly to a line on the same layer?
 
     # WORKING UP TO HERE WITH DIRECTIONAL ARTIFACTS
+    return aliases
 
 def convert_paths(library):
     for cell in library.cells:
@@ -415,8 +428,44 @@ def compare_counts(a,b):
             assert a[name][port] == b[name][port], f"a[{name}]{port}]={a[name][port]} b[{name}][{port}]={b[name][port]}"
             print(name, port, a[name][port])
 
-def network(filename, top, output):
+def find_io_labels(library, io_labels):
+    seen = set()
+    labels = set()
+    for label in library.top_level()[0].labels:
+        if label.text in io_labels:
+            seen.add(label.text)
+            labels.add(label)
+    assert seen == io_labels, f"Missing some IO labels {seen ^ io_labels}"
+
+    return labels
+
+
+def near_label(poly, labels, offset=1.0):
+    for label in labels:
+        x, y = label.origin
+        label_minx, label_miny, label_maxx, label_maxy = x-offset, y-offset, x+offset, y+offset
+        rect = gdstk.rectangle((label_minx, label_miny), (label_maxx, label_maxy))
+        if overlaps(poly, rect):
+            return label
+
+
+
+
+def assign_io_aliases(cell, labels):
+    all_labels = set([label.text for label in labels])
+    seen = set()
+    for poly in cell.polygons:
+        if label := near_label(poly, labels):
+            print("FOUND", label.text)
+            poly.set_property("io_alias", label.text)
+            seen.add(label.text)
+
+    assert seen == all_labels, f"Missing some IO labels for aliases {seen ^ all_labels}"
+
+def network(filename, top, output, io_labels):
     library = gdstk.read_gds(filename)
+    with measure_time("finding io labels"):
+        labels = find_io_labels(library, io_labels)
     with measure_time("converting_paths"):
         convert_paths(library)
     with measure_time("filter_layers"):
@@ -427,24 +476,32 @@ def network(filename, top, output):
         filter_pads(library) # <- Keep pads that overlap with labels
     with measure_time("custom_flatten"):
         custom_flatten(library) # Why doesn't this work? It's like the library doesn't like references being removed?
+    with measure_time("Assign IO aliases"):
+        assign_io_aliases(library[top], labels)
     with measure_time("connected_components"):
         before = counts(library, top)
-        connected_components(library[top])
+        aliases = connected_components(library[top])
         after = counts(library, top)
         # compare_counts(before, after)
+        with open(f"outputs/{output}-aliases.txt", "w") as fp:
+            for x, y in aliases:
+                print(f"{x} -> {y}", file=fp)
+
     with measure_time("call_graph"):
         els = cell_graph(library[top])
-    with open(f"outputs/{output}.txt", "w") as fp:
-        for x,y in els:
-            print(f"{x} -> {y}", file=fp)
+        with open(f"outputs/{output}.txt", "w") as fp:
+            for x,y in els:
+                print(f"{x} -> {y}", file=fp)
 
-    write_files(library, library[top], "outputs/network")
+    # write_files(library, library[top], f"outputs/network-{output}")
 
 
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':
-        network("warmup/04_final.gds", 'adder_demo', sys.argv[1])
+        WARMUP_IO_LABELS = {"A","B","S","clk","en","rst_n"}
+        network("warmup/04_final.gds", 'adder_demo', sys.argv[1], WARMUP_IO_LABELS)
     elif sys.argv[1] == 'puzzle':
-        network("puzzle.gds", 'puzzle', sys.argv[1])
+        PUZZLE_IO_LABELS = {"I","O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","clk","enable","rst_n","success"}
+        network("puzzle.gds", 'puzzle', sys.argv[1], PUZZLE_IO_LABELS)
     else:
         raise ValueError(f"{sys.argv[1]=} not valid target")

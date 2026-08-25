@@ -101,7 +101,7 @@ def find_wires(conns):
             assert segment_to_wire[wire_segment] == port_to_wire[port]
         port_to_wire[port] = segment_to_wire[wire_segment]
 
-    return port_to_wire
+    return port_to_wire, segment_to_wire
 
 
 def find_bounding(port_to_wire, box):
@@ -362,6 +362,9 @@ def check_ports(segments):
             all_pins = IO_PORTS[cname][0] | IO_PORTS[cname][1]
             assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
 
+def print_wire_aliases(segment_aliases, segment_to_wire):
+    for segment, alias in segment_aliases:
+        print(f"ALIAS {segment_to_wire[segment]} -> {alias}")
 
 if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
@@ -402,11 +405,15 @@ if __name__ == '__main__':
         with measure_time("read segments"):
             all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
 
+        with measure_time("read aliases"):
+            segment_aliases = read_wire_segments(f"outputs/{sys.argv[1]}-aliases.txt")
+
         with measure_time("check ports"):
             check_ports(all_wire_segments)
 
         with measure_time("Find wires"):
-            port_to_wire = find_wires(all_wire_segments)
+            port_to_wire, segment_to_wire = find_wires(all_wire_segments)
+
 
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
@@ -430,17 +437,22 @@ if __name__ == '__main__':
             print_element_as_json(name, sub_circuit, revd)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1])
+
+        print_wire_aliases(segment_aliases, segment_to_wire)
     elif sys.argv[1] == 'puzzle':
 
         with measure_time("read segments"):
             all_wire_segments = read_wire_segments(f"outputs/{sys.argv[1]}.txt")
+
+        with measure_time("read aliases"):
+            segment_aliases = read_wire_segments(f"outputs/{sys.argv[1]}-aliases.txt")
 
         if STRICT:
             with measure_time("check ports"):
                 check_ports(all_wire_segments)
 
         with measure_time("Find wires"):
-            port_to_wire = find_wires(all_wire_segments)
+            port_to_wire, segment_to_wire = find_wires(all_wire_segments)
 
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
@@ -451,6 +463,7 @@ if __name__ == '__main__':
                 check_all_ports_filled(port_to_wire)
         with measure_time("Print as json"):
             print_element_as_json('puzzle', port_to_wire, wire_to_ports)
+        print_wire_aliases(segment_aliases, segment_to_wire)
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)

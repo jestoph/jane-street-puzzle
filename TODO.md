@@ -111,3 +111,8 @@
   [x] Should I include them? I can see they have some things attached.... Treating the pads as wires
 [ ] What is the pattern in the example input? Does it give a hint?
 [ ] Fix errors in simplify step
+[ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
+[ ] What are `INTERNAL_3` and `INTERNAL_7`?
+
+### Simplify Network by working backwards from output
+
