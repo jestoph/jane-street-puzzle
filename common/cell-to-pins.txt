@@ -33,7 +33,7 @@ sky130_fd_sc_hd__decap_3       |                 |
 sky130_fd_sc_hd__dfrtp_2       | CLK,D,RESET_B   | Q
 sky130_fd_sc_hd__dfstp_2       | CLK,D,SET_B     | Q
 sky130_fd_sc_hd__dfxtp_2       | CLK,D           | Q
-sky130_fd_sc_hd__diode_2       |                 |
+sky130_fd_sc_hd__diode_2       | DIODE           |
 sky130_fd_sc_hd__inv_2         | A               | Y
 sky130_fd_sc_hd__mux2_1        | A0,A1,S         | X
 sky130_fd_sc_hd__nand2_2       | A,B             | Y

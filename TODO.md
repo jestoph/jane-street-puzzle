@@ -109,11 +109,11 @@
   [x] 14 x 'o' components
 [x] What are the diodes doing? Why does my filter still include with end bits? Why are they in the circuit?
   [x] Should I include them? I can see they have some things attached.... Treating the pads as wires
-[ ] Get input and output wire aliases working
+[x] Get input and output wire aliases working
   [x] Detect aliases
-  [ ] Use in outputs
+  [x] Use in outputs
+[x] Fix errors in simplify step
 [ ] What is the pattern in the example input? Does it give a hint?
-[ ] Fix errors in simplify step
 [ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
 [ ] What are `INTERNAL_3` and `INTERNAL_7`?
 

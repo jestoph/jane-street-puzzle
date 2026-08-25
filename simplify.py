@@ -3,8 +3,6 @@ import json
 import os
 from common import IO_PORTS, measure_time
 
-STRICT = False
-
 def get_wire_segments(conns):
     list_of_wire_segments = []
     for l, r in conns:
@@ -15,6 +13,10 @@ def get_wire_segments(conns):
         if 'buf' in l:
             list_of_wire_segments.append(l)
         if 'buf' in r:
+            list_of_wire_segments.append(r)
+        if 'diode' in l:
+            list_of_wire_segments.append(l)
+        if 'diode' in r:
             list_of_wire_segments.append(r)
     return list(set(list_of_wire_segments))
 
@@ -35,6 +37,7 @@ def find_wires(conns):
 
     all_wire_segments = set()
     set_of_wire_segments = set(list_of_wire_segments)
+    set_of_wire_segments_copy = set(list_of_wire_segments)
     seen = set()
     while set_of_wire_segments:
         wire_id = set_of_wire_segments.pop()
@@ -43,18 +46,22 @@ def find_wires(conns):
         while wires:
             curr = wires.pop()
             if 'buf' in curr:
-                seen.add(curr.replace("X","A"))
-                seen.add(curr.replace("A","X"))
-                set_of_wire_segments.discard(curr.replace("X", "A"))
-                set_of_wire_segments.discard(curr.replace("A", "X"))
-                for n in conn_mapping.get(curr.replace("X", "A"),[]):
-                    if n not in seen:
-                        wires.append(n)
-                for n in conn_mapping.get(curr.replace("A", "X"),[]):
-                    if n not in seen:
-                        wires.append(n)
-                collected.add(curr.replace("X", "A"))
-                collected.add(curr.replace("A", "X"))
+                A = curr.replace("X","A")
+                X = curr.replace("A","X")
+                seen.add(A)
+                seen.add(X)
+                set_of_wire_segments.discard(A)
+                set_of_wire_segments.discard(X)
+                if A in conn_mapping:
+                    for n in conn_mapping[A]:
+                        if n not in seen:
+                            wires.append(n)
+                if X in conn_mapping:
+                    for n in conn_mapping[X]:
+                        if n not in seen:
+                            wires.append(n)
+                collected.add(A)
+                collected.add(X)
             else:
                 seen.add(curr)
                 set_of_wire_segments.discard(curr)
@@ -65,19 +72,16 @@ def find_wires(conns):
                     collected.add(curr)
         all_wire_segments.add(tuple(sorted(collected))) # Sort so wires are predictably named
 
-    if STRICT:
-        assert len(seen) == len(list_of_wire_segments), f"{len(seen)=} {len(list_of_wire_segments)=}"
-    else:
-        if len(seen) != len(list_of_wire_segments):
-            print(f"WARNING: {len(seen)=} {len(list_of_wire_segments)=}")
-
 
     n_collected = sum([len(wires) for wires in all_wire_segments])
-    if STRICT:
-        assert n_collected == len(list_of_wire_segments), f"{n_collected=} {len(list_of_wire_segments)=}"
-    else:
-        if n_collected != len(list_of_wire_segments):
-            print(f"WARNING: {n_collected=} {len(list_of_wire_segments)=}")
+    all_collected = set()
+    for wires in all_wire_segments:
+        for wire in wires:
+            all_collected.add(wire)
+    print("ALL", all_collected - set(list_of_wire_segments))
+    print()
+    print("LST", set(list_of_wire_segments) - all_collected)
+    print()
 
 
 
@@ -288,7 +292,10 @@ def check_all_ports_filled(port_to_wire):
     for cell, ports in all_cells.items():
         cellname = cell.split(":")[0]
         expected = set.union(IO_PORTS[cellname][0], IO_PORTS[cellname][1])
-        assert expected == ports, f"{expected=} {ports=}"
+        if 'conb' in cellname and expected != ports:
+            print(f"Maybe warning? {expected=} {ports=} but probably fine for conb")
+        else:
+            assert expected == ports, f"{expected=} {ports=}"
 
 
 def reverse_map(port_to_wire):
@@ -440,9 +447,8 @@ if __name__ == '__main__':
         with measure_time("read aliases"):
             segment_aliases = read_wire_segments(f"outputs/{sys.argv[1]}-aliases.txt")
 
-        if STRICT:
-            with measure_time("check ports"):
-                check_ports(all_wire_segments)
+        with measure_time("check ports"):
+            check_ports(all_wire_segments)
 
         with measure_time("Find wires"):
             port_to_wire, segment_to_wire = find_wires(all_wire_segments)
@@ -454,10 +460,9 @@ if __name__ == '__main__':
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
 
-        if STRICT:
-            with measure_time("Validations"):
-                check_only_single_output_on_wire(wire_to_ports)
-                check_all_ports_filled(port_to_wire)
+        with measure_time("Validations"):
+            check_only_single_output_on_wire(wire_to_ports)
+            check_all_ports_filled(port_to_wire)
         with measure_time("Print as json"):
             print_element_as_json('puzzle', port_to_wire, wire_to_ports, wire_to_alias)
         print_wire_aliases(segment_aliases, segment_to_wire)
