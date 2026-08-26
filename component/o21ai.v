@@ -4,5 +4,5 @@ module o21ai(
   input wire B1,
   output wire Y
 );
-    assign X = ~((A1 | A2) & B1);
+    assign Y = ~((A1 | A2) & B1);
 endmodule

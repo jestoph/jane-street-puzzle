@@ -561,3 +561,5 @@ real puzzle. It doesn't work, but still, I think that means I'm in with a shot o
 ### Working backwards
 The circuit is a lot more complicated, so I'm going to start working backwards to understand the network feeding the
 'success' output.
+
+The input to the last stage has 11 wires - does that correspond to the 121 clocks in the waveform file?

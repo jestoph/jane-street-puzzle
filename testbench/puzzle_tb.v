@@ -69,7 +69,17 @@ module puzzle_tb;
         $dumpvars(0, puzzle_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | I=%b clk=%b enable=%b rst_n=%b | success=%b O[0]=%b", $time, I, clk, enable, rst_n, success, O0);
+        $monitor("Time=%0t | I=%b clk=%b enable=%b rst_n=%b | success=%b O[0]=%b Wire_3=%b Wire_488=%b",
+          $time,
+          I,
+          clk,
+          enable,
+          rst_n,
+          success,
+          O0,
+          puzzle_1.Wire_3,
+          puzzle_1.Wire_488,
+        );
 
 
         // clk -> !
@@ -122,9 +132,8 @@ module puzzle_tb;
           #5000; clk = ~clk;
         end
 
-        enable = 1;
+        enable = 0;
         #5000; clk = ~clk;
-        rst_n = 0;
         #5000; clk = ~clk;
 
         for( i = 0 ; i < 130 ; i = i + 1)

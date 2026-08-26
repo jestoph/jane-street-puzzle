@@ -162,7 +162,7 @@ def print_element(name, port_wire_map):
 def element(port):
     return ":".join(port.split(":")[4:6]).replace("_1","").replace("_2","")
 
-def print_element_as_json(name, port_wire_map, wire_port_map, wire_to_alias, segment_to_wire):
+def print_element_as_json(name, port_wire_map, wire_port_map, wire_to_alias, segment_to_wire, inputs, outputs):
 
     ret = {}
 
@@ -185,6 +185,8 @@ def print_element_as_json(name, port_wire_map, wire_port_map, wire_to_alias, seg
     ret["wire_to_ports"] = {wire: [prettify(port) for port in ports] for wire, ports, in wire_port_map.items()}
     ret["wire_to_alias"] = wire_to_alias
     ret["segment_to_wire"] = segment_to_wire
+    ret["possible_inputs"] = list(inputs)
+    ret["possible_outputs"] = list(outputs)
 
 
     name = f"outputs/{name}.json"
@@ -407,7 +409,18 @@ if __name__ == '__main__':
         "puzzle": (
             set(["Wire:15","Wire:39","Wire:429","Wire:34"]),
             set(["Wire:412","Wire:392","Wire:405","Wire:430","Wire:431","Wire:433","Wire:81","Wire:435","Wire:2"])
-            )
+            ),
+        "part1": (set(), set()),
+        "part2": (set(), set()),
+        "part3": (set(), set()),
+        "part4": (set(), set()),
+        "part5": (set(), set()),
+        "part6": (set(), set()),
+        "part7": (set(), set()),
+        "part8": (set(), set()),
+        "part9": (set(), set()),
+        "output": (set(), set()),
+        "blob": (set(), set()),
     }
 
     if sys.argv[1] == 'warmup':
@@ -436,19 +449,19 @@ if __name__ == '__main__':
             check_all_ports_filled(port_to_wire)
 
         for name, box in [
-                    ('comparitor', ((50, 40), (100,60))), # Bit of a guess
-                    ('adder', ((50, 0), (100,40))), # Bit of a guess
-                    ('sr1', ((0, 45), (50, 100))),
-                    ('sr2', ((0, 0), (50, 45))),
-                    ('all', ((0, 0), (100, 100))),
+                    ('comparitor', ((50, 40), (100, 60))), # Bit of a guess
+                    ('adder',      ((50, 0),  (100, 40))), # Bit of a guess
+                    ('sr1',        ((0,  45), (50,  100))),
+                    ('sr2',        ((0,  0),  (50,  45))),
+                    ('all',        ((0,  0),  (100, 100))),
                     ]:
             sub_circuit = find_bounding(port_to_wire, box)
             revd = reverse_map(sub_circuit)
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
 
@@ -478,9 +491,34 @@ if __name__ == '__main__':
             check_only_single_output_on_wire(wire_to_ports)
             check_all_ports_filled(port_to_wire)
         with measure_time("Print as json"):
-            print_element_as_json('puzzle', port_to_wire, wire_to_ports, wire_to_alias, segment_to_wire)
+            print_element_as_json('puzzle', port_to_wire, wire_to_ports, wire_to_alias, segment_to_wire, [], [])
         print_wire_aliases(segment_aliases, segment_to_wire)
         print_element_as_verilog(name, port_to_wire, wire_to_ports, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
+
+        for name, box in [
+                ('part1', ((23, 190), (48, 212))),
+                ('part2', ((23, 136), (48, 170))),
+                ('part3', ((23, 87),  (48, 120))),
+                ('part4', ((61, 125), (100, 170))),
+                ('part5', ((61, 87),  (100, 125))),
+                ('part6', ((61, 10),  (100, 67))),
+                ('part7', ((100, 179), (138, 300))),
+                ('part8', ((100, 34), (138, 174))),
+                ('output', ((151, 266), (200, 300))), # Checked and this looks to be correct
+                ('part9', ((138, 70), (200, 266))),
+                ('blob', ((138, 5), (200, 70))),
+                ]:
+            sub_circuit = find_bounding(port_to_wire, box)
+            revd = reverse_map(sub_circuit)
+            print_unconnected_elements(revd)
+            print_element(name.upper(), sub_circuit)
+            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
+            print_element_as_verilog(name, sub_circuit, revd, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
+            print_wire_aliases(segment_aliases, segment_to_wire)
+
+
     else:
         print(f"Unknown object '{sys.argv[1]}'", file=sys.stderr)
         sys.exit(1)

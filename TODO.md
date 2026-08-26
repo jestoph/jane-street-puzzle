@@ -120,3 +120,28 @@
 
 ### Simplify Network by working backwards from output
 
+[x] Output errors on `O[7:0]` are likely due to issues with `Wire_3` or `Wire_488` as they're the common wires across all the outputs- nope was bad components
+[ ] The detection of inputs and outputs in my sub circuits is not good enough to be useful - there are better heuristics I think
+[ ] Confirm that regions are correct for th simple sections
+ [x] outputs/part1.json
+ [x] outputs/part2.json
+ [x] outputs/part3.json
+ [x] outputs/part4.json <- Probably a 12 or 13 bit shift register! Has 13 x drftp and 12 x mux like in warmup puzzle
+ [x] outputs/part5.json
+ [x] outputs/part6.json
+ [x] outputs/output.json
+ [x] outputs/blob.json - is probably fine.
+[ ] Consider breaking the larger sections out
+ [ ] outputs/part7.json <- could be 3 sections
+ [ ] outputs/part9.json <- could be 5 sections
+[ ] Write test benches for:
+ [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully deterministic
+ [ ] outputs/part1.v
+ [ ] outputs/part2.v
+ [ ] outputs/part3.v
+ [ ] outputs/part4.v (maybe)
+ [ ] outputs/part5.v (maybe)
+ [ ] outputs/part6.v (maybe)
+ [ ] outputs/output.v
+[ ] Consider splitting the later parts into more? Could maybe do 15 or so?
+

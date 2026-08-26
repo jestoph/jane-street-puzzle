@@ -5,5 +5,5 @@ module a211oi(
   input wire C1,
   output wire Y
 );
-    assign X = ~(((A1 & A2) | C1) | B1);
+    assign Y = ~(((A1 & A2) | C1) | B1);
 endmodule
