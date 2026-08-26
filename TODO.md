@@ -121,34 +121,51 @@
 ### Simplify Network by working backwards from output
 
 [x] Output errors on `O[7:0]` are likely due to issues with `Wire_3` or `Wire_488` as they're the common wires across all the outputs- nope was bad components
+[x] Consider breaking the larger sections out
+ [x] outputs/part7.json <- could be 3 sections
+ [x] outputs/part9.json <- could be 5 sections
 [ ] Fix detection of inputs and outputs - two heuristics should help
-[ ] Confirm that regions are correct for th simple sections
+[x] Confirm that regions are correct for the simple regions
  [x] outputs/part1.json
  [x] outputs/part2.json
  [x] outputs/part3.json
  [x] outputs/part4.json <- Probably a 12 or 13 bit shift register! Has 13 x drftp and 12 x mux like in warmup puzzle
  [x] outputs/part5.json
  [x] outputs/part6.json
- [x] outputs/output.json
- [x] outputs/blob.json - is probably fine.
-[ ] Consider breaking the larger sections out
- [ ] outputs/part7.json <- could be 3 sections
- [ ] outputs/part9.json <- could be 5 sections
-[ ] Write test benches for:
- [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully deterministic
- [ ] outputs/part1.v
- [ ] outputs/part2.v
- [ ] outputs/part3.v
- [ ] outputs/part4.v (maybe)
- [ ] outputs/part5.v (maybe)
- [ ] outputs/part6.v (maybe)
- [ ] outputs/output.v
-[ ] Consider splitting the later parts into more? Could maybe do 15 or so?
+ [x] outputs/part7a.json
+ [x] outputs/part7c.json
+ [x] outputs/part9a.json
+ [x] outputs/part9c.json
+ [x] outputs/part9d.json
+ [x] outputs/part9e.json
+ [x] outputs/output_section.json
+ [x] outputs/blob.json - is probably fine as has no memory
+[ ] Confirm that regions are correct for the less simple regions
+ [ ] outputs/part7b.json
+ [ ] outputs/part8.json
+ [ ] outputs/part9b.json
 
 ### Run Simulations
 [x] Output section - Got pattern `5'b11111` as the 'success' pattern, other patterns with output A and B though.
     Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
-[ ] Blob - is easy as is deterministic, but need to add outputs/inputs to script
+[ ] Write test benches for:
+ [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully io determined
+ [ ] outputs/part1.v
+ [ ] outputs/part2.v
+ [ ] outputs/part3.v
+ [ ] outputs/part4.v
+ [ ] outputs/part5.v
+ [ ] outputs/part6.v
+ [ ] outputs/part7a.v
+ [ ] outputs/part7b.v
+ [ ] outputs/part7c.v
+ [ ] outputs/part8.v
+ [ ] outputs/part9a.v
+ [ ] outputs/part9b.v
+ [ ] outputs/part9c.v
+ [ ] outputs/part9d.v
+ [ ] outputs/part9e.v
+ [x] outputs/output_section.v
 
 ### Quality-of-life
 [ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying

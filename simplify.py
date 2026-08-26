@@ -337,6 +337,15 @@ def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, ali
     outputs = set()
     for cell, wire in subcircuit.items():
 
+        if alias := aliases.get(wire):
+            # TODO: This is very hard-coded, we should fix this
+            if 'O' in alias or 'success' in alias:
+                outputs.add(alias)
+            else:
+                inputs.add(alias)
+            continue
+
+
         # All references are internal - it must be an internal wire
         if all([ port in subcircuit for port in wire_to_ports[wire]]):
             print(f"{wire} is internal")
@@ -436,9 +445,15 @@ if __name__ == '__main__':
         "part4": (set(), set()),
         "part5": (set(), set()),
         "part6": (set(), set()),
-        "part7": (set(), set()),
+        "part7a": (set(), set()),
+        "part7b": (set(), set()),
+        "part7c": (set(), set()),
         "part8": (set(), set()),
-        "part9": (set(), set()),
+        "part9a": (set(), set()),
+        "part9b": (set(), set()),
+        "part9c": (set(), set()),
+        "part9d": (set(), set()),
+        "part9e": (set(), set()),
         "output_section": (
                 set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
                 set([ "Wire:140", "Wire:3", "Wire:2" ]) # TODO: Allow aliases here, this is very annoying
@@ -519,6 +534,7 @@ if __name__ == '__main__':
         print_wire_aliases(segment_aliases, segment_to_wire)
         print_element_as_verilog(name, port_to_wire, wire_to_ports, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
 
+        total_io = {}
         for name, box in [
                 ('part1', ((23, 190), (48, 212))),
                 ('part2', ((23, 136), (48, 170))),
@@ -526,10 +542,16 @@ if __name__ == '__main__':
                 ('part4', ((61, 125), (100, 170))),
                 ('part5', ((61, 87),  (100, 125))),
                 ('part6', ((61, 10),  (100, 67))),
-                ('part7', ((100, 179), (138, 300))),
+                ('part7a', ((100, 266), (138, 300))),
+                ('part7b', ((100, 195), (138, 266))),
+                ('part7c', ((100, 179), (138, 198))),
                 ('part8', ((100, 34), (138, 174))),
                 ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
-                ('part9', ((138, 70), (200, 266))),
+                ('part9a', ((138, 235), (200, 266))),
+                ('part9b', ((138, 163), (200, 235))),
+                ('part9c', ((138, 120), (200, 163))),
+                ('part9d', ((138, 105), (200, 120))),
+                ('part9e', ((138, 70), (200, 105))),
                 ('blob', ((138, 5), (200, 70))),
                 ]:
             sub_circuit = find_bounding(port_to_wire, box)
@@ -541,6 +563,13 @@ if __name__ == '__main__':
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
+
+            total_io[name] = {}
+            total_io[name]['in'] = [wire_to_alias.get(_in,_in) for _in in sorted(inputs)]
+            total_io[name]['out'] = [wire_to_alias.get(_out,_out) for _out in sorted(outputs)]
+
+        with open("total_io.json", "w") as fp:
+            json.dump(total_io, fp)
 
 
     else:
