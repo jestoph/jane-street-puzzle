@@ -1,8 +1,8 @@
 module dfrtp(
-    input wire D,
-    input wire CLK,
-    input wire RESET_B,
-    output wire Q
+  input wire D,
+  input wire CLK,
+  input wire RESET_B,
+  output wire Q
 );
   reg tmp;
   always @(posedge CLK or negedge RESET_B) begin

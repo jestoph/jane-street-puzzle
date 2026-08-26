@@ -470,25 +470,30 @@ if __name__ == '__main__':
         "part5": (
             set([ "Wire:79", "Wire:110", "Wire:428", "Wire:80", "Wire:130", "Wire:9", "Wire:34", "Wire:39", "Wire:15" ]),
             set([ "Wire:162", "Wire:449", "Wire:446", "Wire:448" ])),
+
         "part6": (set(), set()),
         "part7a": (set(), set()),
         "part7b": (set(), set()),
         "part7c": (set(), set()),
         "part8": (set(), set()),
-        "part9a": (set(), set()),
+
+        "part9a": (
+          set([ "Wire:39", "Wire:2", "Wire:511", "Wire:508", "Wire:461", "Wire:140", "Wire:483", "Wire:510", "Wire:496", "Wire:3", "Wire:495", "Wire:393", "Wire:394", "Wire:494" ]),
+          set([ "Wire:412", "Wire:392", "Wire:405", "Wire:430", "Wire:431", "Wire:433", "Wire:81", "Wire:435",
+                "Wire:463", "Wire:84", "Wire:99", "Wire:462", "Wire:464", "Wire:100", "Wire:460", "Wire:95" ])),
         "part9b": (set(), set()),
-        "part9c": (set(), set()),
+        "part9c": (
+              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
+              set([ "Wire:399", "Wire:468", "Wire:53", "Wire:70", "Wire:69", "Wire:60", "Wire:103", "Wire:55", "Wire:52", "Wire:466", "Wire:59", "Wire:467", "Wire:400", "Wire:68", "Wire:57", "Wire:56" ])),
         "part9d": (
               set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
               set([ "Wire:62", "Wire:101", "Wire:83", "Wire:82", "Wire:64", "Wire:61", "Wire:67", "Wire:63" ])),
         "part9e": (
-            set([ "Wire:99", "Wire:84", "Wire:100", "Wire:95" ]),
+              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
               set([ "Wire:398", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" ])),
         "output_section": (
-                set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
-                set([ "Wire:140", "Wire:3", "Wire:2" ]) # TODO: Allow aliases here, this is very annoying
-                ),
-
+              set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
+              set([ "Wire:140", "Wire:3", "Wire:2" ])), # TODO: Allow aliases here, this is very annoying
         "blob": (set(), set()),
     }
 

@@ -93,9 +93,8 @@
       [x] Write tests for all of them
 
 ## Real Circuit
-
 [ ] What is the pattern in the example input? Does it give a hint?
-[ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
+[x] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct? - seems to be right
 [ ] What are `INTERNAL_3` and `INTERNAL_7`?
 
 ### Basic validation
@@ -124,7 +123,7 @@
 [x] Consider breaking the larger sections out
  [x] outputs/part7.json <- could be 3 sections
  [x] outputs/part9.json <- could be 5 sections
-[ ] Fix detection of inputs and outputs - two heuristics should help
+[x] Fix detection of inputs and outputs - two heuristics should help. Still not perfect, but will do for now
 [x] Confirm that regions are correct for the simple regions
  [x] outputs/part1.json
  [x] outputs/part2.json
@@ -159,14 +158,17 @@
  [ ] outputs/part7a.v
  [ ] outputs/part7b.v
  [ ] outputs/part7c.v
- [ ] outputs/part8.v
- [ ] outputs/part9a.v
- [ ] outputs/part9b.v
- [ ] outputs/part9c.v
- [ ] outputs/part9d.v
- [ ] outputs/part9e.v <- Should be easy
+ [ ] outputs/part8.v  <- Probably too hard
+ [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
+ [ ] outputs/part9b.v <- Probably very hard
+ [x] outputs/part9c.v
+ [x] outputs/part9d.v -> Easy
+ [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
  [x] outputs/output_section.v
 [ ] Draw out the circuit for outputs/part4.v
+[ ] Draw out inter-section maps - it's confusing at the moment but maybe there's structure?
+
+part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:95 Wire:99
 
 ### Quality-of-life
 [ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying
