@@ -324,7 +324,7 @@ def print_unconnected_elements(revd):
     print()
     for wire, ports in revd.items():
         if len(ports) == 1:
-            print("print", ports[0], "is unconnected")
+            print("WARNING ", ports[0], "is unconnected")
 
 def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases):
     """
@@ -397,6 +397,21 @@ def check_ports(segments):
             all_pins = IO_PORTS[cname][0] | IO_PORTS[cname][1]
             assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
 
+def check_all_wires_driven(wire_to_ports, wire_to_alias):
+    for wire, ports in wire_to_ports.items():
+        found = False
+        for port in ports:
+            _, _, _, _, cname, _, pname = port.split(":")
+            assert cname in IO_PORTS, f"Don't have io ports for {cname}"
+            if pname in IO_PORTS[cname][1]:
+                found = True
+                break
+
+        if not found and wire not in wire_to_alias:
+            # assert False, f"No pin is driving {wire} out of {ports}"
+            print(f"WARNING: No pin is driving {wire} out of {ports}")
+
+
 def print_wire_aliases(segment_aliases, segment_to_wire):
     for segment, alias in segment_aliases:
         print(f"ALIAS {segment_to_wire[segment]} -> {alias}")
@@ -463,7 +478,9 @@ if __name__ == '__main__':
         "part9a": (set(), set()),
         "part9b": (set(), set()),
         "part9c": (set(), set()),
-        "part9d": (set(), set()),
+        "part9d": (
+              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
+              set([ "Wire:62", "Wire:101", "Wire:83", "Wire:82", "Wire:64", "Wire:61", "Wire:67", "Wire:63" ])),
         "part9e": (
             set([ "Wire:99", "Wire:84", "Wire:100", "Wire:95" ]),
               set([ "Wire:398", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" ])),
@@ -495,6 +512,9 @@ if __name__ == '__main__':
 
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
+
+        with measure_time("check all wires are driven"):
+            check_all_wires_driven(wire_to_ports, wire_to_alias)
 
         with measure_time("Validations"):
             check_only_single_output_on_wire(wire_to_ports)
@@ -529,6 +549,7 @@ if __name__ == '__main__':
         with measure_time("check ports"):
             check_ports(all_wire_segments)
 
+
         with measure_time("Find wires"):
             port_to_wire, segment_to_wire = find_wires(all_wire_segments)
 
@@ -538,6 +559,9 @@ if __name__ == '__main__':
 
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
+
+        with measure_time("check all wires are driven"):
+            check_all_wires_driven(wire_to_ports, wire_to_alias)
 
         with measure_time("Validations"):
             check_only_single_output_on_wire(wire_to_ports)

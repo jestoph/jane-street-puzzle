@@ -12,26 +12,19 @@
             $finish; \
         end
 
-/* ref outputs/part9e.v */
-module part9e_tb;
+/* ref outputs/part9c.v */
+module part9c_tb;
 
     // Inputs
     reg [3:0] IN;
 
     // Outputs
-    wire OUT7;
-    wire OUT6;
-    wire OUT5;
-    wire OUT4;
-    wire OUT3;
-    wire OUT2;
-    wire OUT1;
-    wire OUT0;
+    wire [15:0] OUT;
 
     // Iterator
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
-    part9e part9e_1 (
+    part9c part9c_1 (
       //inputs
       .Wire_100(IN[3]),
       .Wire_84 (IN[2]),
@@ -39,20 +32,28 @@ module part9e_tb;
       .Wire_99 (IN[0]),
       //outputs
 
-      .Wire_397(OUT7),
-      .Wire_398(OUT6),
-      .Wire_45 (OUT5),
-      .Wire_47 (OUT4),
-      .Wire_48 (OUT3),
-      .Wire_49 (OUT2),
-      .Wire_50 (OUT1),
-      .Wire_51 (OUT0)
+      .Wire_400(OUT[15]),
+      .Wire_56 (OUT[14]),
+      .Wire_53 (OUT[13]),
+      .Wire_69 (OUT[12]),
+      .Wire_466(OUT[11]),
+      .Wire_59 (OUT[10]),
+      .Wire_68 (OUT[9]),
+      .Wire_467(OUT[8]),
+      .Wire_55 (OUT[7]),
+      .Wire_70 (OUT[6]),
+      .Wire_60 (OUT[5]),
+      .Wire_52 (OUT[4]),
+      .Wire_468(OUT[3]),
+      .Wire_103(OUT[2]),
+      .Wire_57 (OUT[1]),
+      .Wire_399(OUT[0])
     );
 
     initial begin
 
-        $dumpfile("waveform/part9e.vcd");
-        $dumpvars(0, part9e_tb);
+        $dumpfile("waveform/part9c.vcd");
+        $dumpvars(0, part9c_tb);
 
         // Track changes directly in the terminal window
         // $monitor("Time=%0t | A=%b B=%b CLK=%b EN=%b RESET_B=%b | X=%b", $time, A, B, CLK, EN, RESET_B, X);
