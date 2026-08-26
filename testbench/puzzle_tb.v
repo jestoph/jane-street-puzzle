@@ -82,61 +82,34 @@ module puzzle_tb;
         );
 
 
-        // clk -> !
-        // " -> rst_n
-        // # -> enable
-        // $ -> I
-        // & -> success
-        // % -> O
-        // #0
-        // 0$
-        // 0#
-        // 0"
-        // 0!
-        // $end
-        // #5000
-        // b0 %
-        // 0&
-        // 1!
-        // #10000
-        // 0!
-        // #15000
-
         #0
-        I = 0;
+        I = 1;
         enable = 0;
         rst_n = 0;
         clk = 0;
 
         #5000; clk = ~clk;
-        #5000; clk = ~clk;
-        #5000; clk = ~clk;
-        #5000; clk = ~clk;
-        #5000; clk = ~clk;
-        #5000; clk = ~clk;
 
         rst_n = 1;
 
         #5000; clk = ~clk;
-        #5000; clk = ~clk;
 
         enable = 1;
-        #5000; clk = ~clk;
-
-        #5000; clk = ~clk;
 
 
 
-        for( i = 0 ; i < 130 ; i = i + 1)
+        for( i = 0 ; i < 140 ; i = i + 1)
         begin
+          if( i == 7)
+          begin
+            I = ~I;
+          end
           #5000; clk = ~clk;
         end
 
         enable = 0;
-        #5000; clk = ~clk;
-        #5000; clk = ~clk;
 
-        for( i = 0 ; i < 130 ; i = i + 1)
+        for( i = 0 ; i < 140 ; i = i + 1)
         begin
           #5000; clk = ~clk;
         end

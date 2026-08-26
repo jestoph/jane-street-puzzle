@@ -2,16 +2,16 @@ import subprocess as sp
 import sys
 
 components = """\
+output_section
 puzzle
-adder
-comparitor
-sr1
-sr2
-all
 """.split() # TODO: add 'all.v'
 
-components = ["puzzle"]
-# components = ["blob"]
+# adder
+# comparitor
+# sr1
+# sr2
+# all
+
 
 VERBOSE = True
 

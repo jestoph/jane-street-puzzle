@@ -121,7 +121,7 @@
 ### Simplify Network by working backwards from output
 
 [x] Output errors on `O[7:0]` are likely due to issues with `Wire_3` or `Wire_488` as they're the common wires across all the outputs- nope was bad components
-[ ] The detection of inputs and outputs in my sub circuits is not good enough to be useful - there are better heuristics I think
+[ ] Fix detection of inputs and outputs - two heuristics should help
 [ ] Confirm that regions are correct for th simple sections
  [x] outputs/part1.json
  [x] outputs/part2.json
@@ -145,3 +145,10 @@
  [ ] outputs/output.v
 [ ] Consider splitting the later parts into more? Could maybe do 15 or so?
 
+### Run Simulations
+[x] Output section - Got pattern `5'b11111` as the 'success' pattern, other patterns with output A and B though.
+    Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
+[ ] Blob - is easy as is deterministic, but need to add outputs/inputs to script
+
+### Quality-of-life
+[ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying

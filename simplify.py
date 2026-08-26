@@ -251,8 +251,11 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
     lines.append("")
 
     for nodename, ports in sorted(element_to_ports.items()):
+        if 'diode' in nodename: continue # Not sure why this is necessary
         node_type = nodename.split(":")[0]
         node_name = "_".join(nodename.split(":"))
+        lines.append("")
+        lines.append(f"  // ref component/{node_type}.v")
         lines.append(f"  {node_type} {node_name} (")
 
         port_lines = []
@@ -323,28 +326,45 @@ def print_unconnected_elements(revd):
         if len(ports) == 1:
             print("print", ports[0], "is unconnected")
 
-def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
+def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases):
+    """
+    Heuristic should be
+    * If all references to the wire are in this circuit, it cannot be an output
+    * if anyone in this circuit is driving the wire it cannot be an input
+    * If no-one in this circuit is driving the wire it _must_ be an input
+    """
     inputs = set()
     outputs = set()
     for cell, wire in subcircuit.items():
+
+        # All references are internal - it must be an internal wire
+        if all([ port in subcircuit for port in wire_to_ports[wire]]):
+            print(f"{wire} is internal")
+            continue
+
+        # If we get here it must be an input or an output
+        isOutput = False
+
         for port in wire_to_ports[wire]:
-            if port not in subcircuit:
-                _, _, _, _, cname, cnt, pname = cell.split(":")
-                if pname in IO_PORTS[cname][1]:
-                    # port is an output
-                    outputs.add(wire)
-                else:
-                    # port is an input
-                    inputs.add(wire)
+            _, _, _, _, cname, cnt, pname = port.split(":")
+            if pname not in IO_PORTS[cname][1]: continue
+
+            # We have an output. If it's in the circuit it's an output
+            if port in subcircuit:
+                # port is an output
+                outputs.add(aliases.get(wire, wire))
+            else:
+                # port is an input
+                inputs.add(aliases.get(wire,wire))
 
     return inputs, outputs
 
-def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports):
+def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases):
     print()
     print("---------------")
     print()
 
-    inputs, outputs = get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports)
+    inputs, outputs = get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases)
 
     for wire in outputs:
         print(f"Output: [inside] -> {wire} -> [outside]")
@@ -419,7 +439,11 @@ if __name__ == '__main__':
         "part7": (set(), set()),
         "part8": (set(), set()),
         "part9": (set(), set()),
-        "output": (set(), set()),
+        "output_section": (
+                set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
+                set([ "Wire:140", "Wire:3", "Wire:2" ]) # TODO: Allow aliases here, this is very annoying
+                ),
+
         "blob": (set(), set()),
     }
 
@@ -460,7 +484,7 @@ if __name__ == '__main__':
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
@@ -504,7 +528,7 @@ if __name__ == '__main__':
                 ('part6', ((61, 10),  (100, 67))),
                 ('part7', ((100, 179), (138, 300))),
                 ('part8', ((100, 34), (138, 174))),
-                ('output', ((151, 266), (200, 300))), # Checked and this looks to be correct
+                ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
                 ('part9', ((138, 70), (200, 266))),
                 ('blob', ((138, 5), (200, 70))),
                 ]:
@@ -512,8 +536,8 @@ if __name__ == '__main__':
             revd = reverse_map(sub_circuit)
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
-            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
-            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
+            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
