@@ -339,9 +339,7 @@ def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, ali
 
         if alias := aliases.get(wire):
             # TODO: This is very hard-coded, we should fix this
-            if 'O' in alias or 'success' in alias:
-                outputs.add(alias)
-            else:
+            if 'O' not in alias or 'success' not in alias:
                 inputs.add(alias)
             continue
 
@@ -352,8 +350,9 @@ def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, ali
             continue
 
         # If we get here it must be an input or an output
-        isOutput = False
-
+        # Find whatever pin is driving it. If that pin is
+        # in this subcircuit, it is an output. Otherwise,
+        # It is an input
         for port in wire_to_ports[wire]:
             _, _, _, _, cname, cnt, pname = port.split(":")
             if pname not in IO_PORTS[cname][1]: continue
@@ -439,11 +438,23 @@ if __name__ == '__main__':
             set(["Wire:15","Wire:39","Wire:429","Wire:34"]),
             set(["Wire:412","Wire:392","Wire:405","Wire:430","Wire:431","Wire:433","Wire:81","Wire:435","Wire:2"])
             ),
-        "part1": (set(), set()),
-        "part2": (set(), set()),
-        "part3": (set(), set()),
+        "part1": (
+            set(["Wire:34", "Wire:39", "Wire:429", "Wire:428", "Wire:395"]), # rst:n, clk, enable, input0, input1
+            set(["Wire:42", "Wire:9"])), # Wire:9 acts as the '.S' signal for the shift registers in part4
+        "part2": (
+            set(["Wire:34", "Wire:39", "Wire:9"]), # rst_n, clk, S
+            set(["Wire:80", "Wire:130", "Wire:428", "Wire:110", "Wire:79"])),
+        "part3": (
+            set(["Wire:34", "Wire:39", "Wire:9", "Wire:428"]), # rst_n, clk, S, A
+            set(["Wire:71", "Wire:28", "Wire:316", "Wire:395", "Wire:310"])),
+
         "part4": (set(), set()),
-        "part5": (set(), set()),
+
+        "part4": ( set(["Wire:34", "Wire:39", "Wire:15", "Wire:9", "Wire:184", "Wire:189", "Wire:624", "Wire:648", "Wire:449", "Wire:632", "Wire:371", "Wire:290", "Wire:625", "Wire:192", "Wire:448", "Wire:446", "Wire:650", "Wire:649"]),
+                  set([ "Wire:222", "Wire:491" ])),
+        "part5": (
+            set([ "Wire:79", "Wire:110", "Wire:428", "Wire:80", "Wire:130", "Wire:9", "Wire:34", "Wire:39", "Wire:15" ]),
+            set([ "Wire:162", "Wire:449", "Wire:446", "Wire:448" ])),
         "part6": (set(), set()),
         "part7a": (set(), set()),
         "part7b": (set(), set()),
@@ -453,7 +464,9 @@ if __name__ == '__main__':
         "part9b": (set(), set()),
         "part9c": (set(), set()),
         "part9d": (set(), set()),
-        "part9e": (set(), set()),
+        "part9e": (
+            set([ "Wire:99", "Wire:84", "Wire:100", "Wire:95" ]),
+              set([ "Wire:398", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" ])),
         "output_section": (
                 set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
                 set([ "Wire:140", "Wire:3", "Wire:2" ]) # TODO: Allow aliases here, this is very annoying
@@ -498,7 +511,7 @@ if __name__ == '__main__':
             revd = reverse_map(sub_circuit)
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
-            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports)
+            print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
@@ -569,7 +582,7 @@ if __name__ == '__main__':
             total_io[name]['out'] = [wire_to_alias.get(_out,_out) for _out in sorted(outputs)]
 
         with open("total_io.json", "w") as fp:
-            json.dump(total_io, fp)
+            json.dump(total_io, fp, indent=2)
 
 
     else:

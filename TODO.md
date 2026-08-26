@@ -128,7 +128,7 @@
 [x] Confirm that regions are correct for the simple regions
  [x] outputs/part1.json
  [x] outputs/part2.json
- [x] outputs/part3.json
+ [x] outputs/part3.jsonv
  [x] outputs/part4.json <- Probably a 12 or 13 bit shift register! Has 13 x drftp and 12 x mux like in warmup puzzle
  [x] outputs/part5.json
  [x] outputs/part6.json
@@ -150,10 +150,10 @@
     Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
 [ ] Write test benches for:
  [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully io determined
- [ ] outputs/part1.v
- [ ] outputs/part2.v
- [ ] outputs/part3.v
- [ ] outputs/part4.v
+ [x] outputs/part1.v -> Latches in when the two input wires are both high
+ [x] outputs/part2.v -> Some sort of lfsr or something? It cycles through 12 values
+ [x] outputs/part3.v -> Another lfsr? This time 11 values.
+ [x] outputs/part4.v -> Shift register with an 'enable' via muxes on Wire_9
  [ ] outputs/part5.v
  [ ] outputs/part6.v
  [ ] outputs/part7a.v
@@ -164,8 +164,12 @@
  [ ] outputs/part9b.v
  [ ] outputs/part9c.v
  [ ] outputs/part9d.v
- [ ] outputs/part9e.v
+ [ ] outputs/part9e.v <- Should be easy
  [x] outputs/output_section.v
+[ ] Draw out the circuit for outputs/part4.v
 
 ### Quality-of-life
 [ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying
+```
+"Wire_9", // Wire_9 is the 'S' signal for the Muxes, which is like the 'en' for the thing
+```

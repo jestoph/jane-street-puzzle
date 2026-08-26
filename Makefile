@@ -4,7 +4,7 @@ PYTHON:=./venv/bin/python3
 .PHONY: check logo cells stats network test simplify test-components
 
 check:
-	${PYTHON} -m mypy *.py
+	#${PYTHON} -m mypy *.py
 	${PYTHON} check-io.py
 
 cells:

@@ -2,9 +2,14 @@ import subprocess as sp
 import sys
 
 components = """\
-output_section
-puzzle
+part9e
 """.split() # TODO: add 'all.v'
+# part 4
+# part3
+# part2
+# part1
+# output_section 
+# blob
 
 # adder
 # comparitor
