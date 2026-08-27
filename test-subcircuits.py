@@ -2,14 +2,18 @@ import subprocess as sp
 import sys
 
 components = """\
+puzzle
+part9a
+part9c
 part9e
+part9d
+part4
+part3
+part2
+part1
+output_section
+blob
 """.split() # TODO: add 'all.v'
-# part 4
-# part3
-# part2
-# part1
-# output_section 
-# blob
 
 # adder
 # comparitor
@@ -23,7 +27,7 @@ VERBOSE = True
 def compile(component):
     print(f"Compiling {component}...", end="")
     sim, comp, tb = f"simulation/{component}_sim.vvp", f"outputs/{component}.v", f"testbench/{component}_tb.v"
-    cmd = ["iverilog", "-g2012", "-y", "./component", "-o", sim, comp, tb]
+    cmd = ["iverilog", "-Wfloating-nets", "-g2012", "-y", "./component", "-o", sim, comp, tb]
     ret = sp.run(cmd, capture_output=True, text=True)
     if ret.returncode or VERBOSE:
         print()
@@ -58,4 +62,5 @@ def run_sim(component):
 if __name__ == '__main__':
     for component in components:
         compile(component)
+    for component in components:
         run_sim(component)

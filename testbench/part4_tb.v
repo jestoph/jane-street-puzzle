@@ -29,7 +29,6 @@ module part4_tb;
       .rst_n(rst_n),
       .clk(clk),
       .S(S),
-
       .Wire_183(IN[13]),
       .Wire_188(IN[12]),
       .Wire_191(IN[11]),
@@ -45,8 +44,8 @@ module part4_tb;
       .Wire_648(IN[1]),
       .Wire_649(IN[0]),
       // outputs
-      .Wire_222(O1),
-      .Wire_491(O2)
+      .Wire_221(O1),
+      .Wire_490(O2)
     );
 
     initial begin

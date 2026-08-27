@@ -69,6 +69,7 @@ module puzzle_tb;
         $dumpvars(0, puzzle_tb);
 
         // Track changes directly in the terminal window
+        /*
         $monitor("Time=%0t | I=%b clk=%b enable=%b rst_n=%b | success=%b O[0]=%b Wire_3=%b Wire_488=%b",
           $time,
           I,
@@ -80,6 +81,7 @@ module puzzle_tb;
           puzzle_1.Wire_3,
           puzzle_1.Wire_488,
         );
+        */
 
 
         #0

@@ -27,7 +27,7 @@ module part2_tb;
       .rst_n(rst_n),
       .clk(clk),
       .S(S),
-      .Wire_130(O[3]),
+      .Wire_129(O[3]),
       .Wire_110(O[2]),
       .Wire_80 (O[1]),
       .Wire_79 (O[0])

@@ -33,14 +33,13 @@ module part9e_tb;
 
     part9e part9e_1 (
       //inputs
-      .Wire_100(IN[3]),
-      .Wire_84 (IN[2]),
-      .Wire_95 (IN[1]),
-      .Wire_99 (IN[0]),
+      .OB4(IN[3]),
+      .OB3(IN[2]),
+      .OB2(IN[1]),
+      .OB1(IN[0]),
       //outputs
-
-      .Wire_397(OUT7),
-      .Wire_398(OUT6),
+      .Wire_396(OUT7),
+      .Wire_397(OUT6),
       .Wire_45 (OUT5),
       .Wire_47 (OUT4),
       .Wire_48 (OUT3),

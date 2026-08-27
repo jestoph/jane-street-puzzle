@@ -26,28 +26,27 @@ module part9c_tb;
 
     part9c part9c_1 (
       //inputs
-      .Wire_100(IN[3]),
-      .Wire_84 (IN[2]),
-      .Wire_95 (IN[1]),
-      .Wire_99 (IN[0]),
+      .OB4(IN[3]),
+      .OB3(IN[2]),
+      .OB2(IN[1]),
+      .OB1(IN[0]),
       //outputs
-
-      .Wire_400(OUT[15]),
-      .Wire_56 (OUT[14]),
-      .Wire_53 (OUT[13]),
-      .Wire_69 (OUT[12]),
+      .Wire_103(OUT[15]),
+      .Wire_398(OUT[14]),
+      .Wire_399(OUT[13]),
+      .Wire_465(OUT[12]),
       .Wire_466(OUT[11]),
-      .Wire_59 (OUT[10]),
-      .Wire_68 (OUT[9]),
-      .Wire_467(OUT[8]),
+      .Wire_467(OUT[10]),
+      .Wire_52 (OUT[9]),
+      .Wire_54 (OUT[8]),
       .Wire_55 (OUT[7]),
-      .Wire_70 (OUT[6]),
-      .Wire_60 (OUT[5]),
-      .Wire_52 (OUT[4]),
-      .Wire_468(OUT[3]),
-      .Wire_103(OUT[2]),
-      .Wire_57 (OUT[1]),
-      .Wire_399(OUT[0])
+      .Wire_56 (OUT[6]),
+      .Wire_57 (OUT[5]),
+      .Wire_59 (OUT[4]),
+      .Wire_60 (OUT[3]),
+      .Wire_68 (OUT[2]),
+      .Wire_69 (OUT[1]),
+      .Wire_70 (OUT[0])
     );
 
     initial begin

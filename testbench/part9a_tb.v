@@ -23,7 +23,7 @@ module part9a_tb;
     // Outputs
     wire [7:0] OUT;
     wire [3:0] W_OUT;
-    wire [2:0] W2_OUT;
+    wire [3:0] W2_OUT;
 
     // Iterator
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
@@ -50,14 +50,15 @@ module part9a_tb;
       .O2(OUT[2]),
       .O1(OUT[1]),
       .O0(OUT[0]),
-      .Wire_462(W2_OUT[2]),
-      .Wire_463(W2_OUT[1]),
-      .Wire_464(W2_OUT[0]),
+      .Wire_459(W2_OUT[3]),
+      .Wire_463(W2_OUT[2]),
+      .Wire_462(W2_OUT[1]),
+      .Wire_461(W2_OUT[0]),
   // These feed 9c, 9d, 9e
-      .Wire_100(W_OUT[3]),
-      .Wire_84 (W_OUT[2]),
-      .Wire_95 (W_OUT[1]),
-      .Wire_99 (W_OUT[0])
+      .OB4(W_OUT[3]),
+      .OB3 (W_OUT[2]),
+      .OB2(W_OUT[1]),
+      .OB1(W_OUT[0])
 
     );
 

@@ -28,9 +28,9 @@ module part3_tb;
       .Wire_427(A),
       .S(S),
       .Wire_28 (O[4]),
-      .Wire_310(O[3]),
-      .Wire_316(O[2]),
-      .Wire_395(O[1]),
+      .Wire_309(O[3]),
+      .Wire_315(O[2]),
+      .Wire_394(O[1]),
       .Wire_71 (O[0])
     );
 

@@ -26,16 +26,16 @@ module part9d_tb;
 
     part9d part9d_1 (
       //inputs
-      .Wire_100(IN[3]),
-      .Wire_84 (IN[2]),
-      .Wire_95 (IN[1]),
-      .Wire_99 (IN[0]),
+      .OB4(IN[3]),
+      .OB3(IN[2]),
+      .OB2(IN[1]),
+      .OB1(IN[0]),
       //outputs
       .Wire_101(OUT[7]),
       .Wire_61 (OUT[6]),
       .Wire_62 (OUT[5]),
       .Wire_63 (OUT[4]),
-      .Wire_64 (OUT[3]),
+      .Wire_65 (OUT[3]),
       .Wire_67 (OUT[2]),
       .Wire_82 (OUT[1]),
       .Wire_83 (OUT[0])

@@ -31,7 +31,6 @@ module output_section_tb;
     output_section output_section_1 (
       .rst_n(rst_n),
       .clk(clk),
-
       .Wire_161(IN[5]),
       .Wire_221(IN[4]),
       .Wire_395(IN[3]),
@@ -39,7 +38,7 @@ module output_section_tb;
       .Wire_437(IN[1]),
       .Wire_490(IN[0]),
 
-      .Wire_140(A),
+      .Wire_138(A),
       .Wire_3(B),
       .success(success)
 
