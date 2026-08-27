@@ -1,6 +1,3 @@
-## Questions
-[ ] What are boundaries in the gds2text output?
-[ ] Why does the text file have more types?
 
 ## Warmup Circuit
 
@@ -92,11 +89,6 @@
       [x] Get all components in to simulator - they are stateless
       [x] Write tests for all of them
 
-## Real Circuit
-[ ] What is the pattern in the example input? Does it give a hint?
-[x] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct? - seems to be right
-[ ] What are `INTERNAL_3` and `INTERNAL_7`?
-
 ### Basic validation
 [x] Check all cells are showing ports correctly - they all look OK
 [x] Check stats
@@ -141,43 +133,34 @@
  [x] outputs/part9e.json
  [x] outputs/output_section.json
  [x] outputs/blob.json - is probably fine as has no memory
-[ ] Confirm that regions are correct for the less simple regions
- [ ] outputs/part7b.json
- [ ] outputs/part8.json
- [ ] outputs/part9b.json
+[x] Confirm that regions are correct for the less simple regions
+ [x] outputs/part7b.json
+ [x] outputs/part8.json
+ [x] outputs/part9b.json
 
 ### Understand top-down information of circuit
-[ ] Rename appropriate areas to be busses instead
+[x] Rename appropriate areas to be busses instead
+[x] Draw on excalidraw
+[x] BUG! Wire_536 is driven in two circuits! But somehow not getting picked up? Was a slight overlap in areas.
+    Added a validation check to prevent it again
+[x] Draw out inter-section maps - it's confusing at the moment but maybe there's structure?
 
 ### Run Simulations
 [x] Output section - Got pattern `5'b11111` as the 'success' pattern, other patterns with output A and B though.
     Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
-[ ] Write test benches for easy ones:
+[x] Write test benches for easy ones:
  [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully io determined
- [x] outputs/part1.v -> Latches in when the two input wires are both high
+ [x] outputs/part1.v -> Latches in when the two inputs and 'enable' is high. When enable is high, the output and
+     'S' seem to always be inverted?
  [x] outputs/part2.v -> Some sort of lfsr or something? It cycles through 12 values
  [x] outputs/part3.v -> Another lfsr? This time 11 values.
  [x] outputs/part4.v -> Shift register with an 'enable' via muxes on Wire_9/S
- [ ] Output generation circuit:
+ [x] Output generation circuit:
      [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
      [x] outputs/part9c.v -> Easy
      [x] outputs/part9d.v -> Easy
      [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
  [x] outputs/output_section.v
-[ ] Write testbenches for the hard ones:
- [ ] outputs/part7c.v -> Actually should be easy
- [ ] outputs/part5.v
- [ ] outputs/part6.v
- [ ] outputs/part7a.v
- [ ] outputs/part7b.v
- [ ] outputs/part8.v  <- Probably too hard
- [ ] outputs/part9b.v <- Probably very hard
-[ ] Draw out the circuit for the easy candidates:
- [ ] outputs/part4.v
- [ ] outputs/part2.v
-[ ] Draw out inter-section maps - it's confusing at the moment but maybe there's structure?
-
-part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:95 Wire:99
 
 ### Working on undriven wire
 [x] Add ability to set the pin to a label
@@ -187,14 +170,41 @@ part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:9
  [x] A3 -> Results in wire driven by two outputs
  [x] B1 -> Results in wire driven by two outputs
  [x] Y -> Results in wire driven by two outputs
-[ ] Should I add a validation step to find any other mcon elements connected to random pins?
-
 
 ### Quality-of-life
 [x] Move wires to be `Wire_<n>`
-[ ] Move ports etc to be `<type>_<n>.<pin>`. The colon is annoying
+[x] Move ports etc to be `<type>_<n>.<pin>`. The colon is annoying
 [x] I've added warning for dangling wires. Can I promote them to error? Yep just checking the stderr
-[ ] Create
-```
-"Wire_9", // Wire_9 is the 'S' signal for the Muxes, which is like the 'en' for the thing
-```
+
+## Questions/Concerns
+[ ] What are 'boundaries' in the gds2text output?
+[ ] Why does the text file have more types?
+[ ] What is the pattern in the example input? Does it give a hint?
+[ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
+[ ] What are `INTERNAL_3` and `INTERNAL_7`? Do they have a location?
+[ ] Should I add a validation step to find any other mcon elements connected to random pins?
+
+
+
+
+## NEXT as of Thu 27 Aug 2026
+[ ] Write testbenches for the hard ones - roughly in ascending order of difficulty:
+ [ ] outputs/part7c.v -> Actually should be easy
+ [ ] outputs/part5.v
+ [ ] outputs/part7a.v
+ [ ] outputs/part6.v
+ [ ] outputs/part7b.v
+ [ ] outputs/part8.v  <- Probably too hard
+ [ ] outputs/part9b.v <- Probably very hard
+[ ] Draw out the circuit for the easy candidates:
+ [ ] outputs/part4.v
+ [ ] outputs/part2.v
+[ ] Test new logical divisions -
+ [x] testbench/part123_tb.v - Could act like a signal generator, with a single output bit?
+      It's also like a timer! That's why you have 121 clocks to get your password in
+      Now down to only 2^121 bits, less than the numbers of atoms in the universe!
+ [ ] Part 7a,b,c is relatively small
+ [ ] Part 9a,b,c,d,e 'should' be easy enough to get an output from. It would at least prove that things aren't
+     broken - because when I simulate the whole circuit I get no output.
+ [ ] Part 5,7,4 is self contained and has 3 output bits
+ [ ] Part Blob,8,6 has two output bits

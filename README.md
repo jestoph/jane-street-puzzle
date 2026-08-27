@@ -582,3 +582,20 @@ It seems like part9a generates a series of 'addresses' or something that are use
 their outputs. I suppose it then somehow transfers them to the output string. But I don't know what role
 part9b (the biggest) plays in this.
 
+### Looking from a bird's eye view
+I've spent a long time mapping out sections of subcircuits and the busses connecting them, and I think things are
+starting to fall in to place. I can now see that the output depends on 6 bits that come from various parts of the
+circuit, and when they're all high (ie 0x3f), the 'success' pin also goes high. That means that if I trace these
+6 wires I can go one-by one working out how to make each one go high.
+
+[Excalidraw of circuit](image.jpg)
+
+I can see other patterns too. The left-most subcircuits seem to act like a LFSR, a type of pseudo random number
+generator, which then feeds in to other sections of the circuit. So maybe the 'password' is hidden inside the
+structure of these elements?
+
+Combining the three, I can see it gives 121 clock transitions before the output goes high. That matches the given
+waveform, so maybe you need to have the password correct in 121 clocks otherwise you get the message?
+
+This section seems to feed the rest of the circuit, so this might be the start of a clue.
+

@@ -13,19 +13,21 @@ module part1_tb;
 
     // Outputs
     // These are always opposite when enable=1
-    // Otherwise, S is low and Q is just latched to whatever it was
-    wire Q;
+    // Otherwise, S is low and TO_OUTPUT0 is just latched to whatever it was
+    wire TO_OUTPUT0;
     wire S;
 
     integer i; // 32 bit
 
     part1 part1_1 (
+      // inputs
       .rst_n(rst_n),
       .clk(clk),
       .enable(enable),
-      .Wire_394(A),
-      .Wire_427(B),
-      .TO_OUTPUT0(Q),
+      .FROM_PART34(A),
+      .FROM_PART24(B),
+      // outputs
+      .TO_OUTPUT0(TO_OUTPUT0),
       .S(S)
     );
 
@@ -51,43 +53,43 @@ module part1_tb;
         #5000; enable = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 0, "When starting up should be 0 I think");
+        `assert(TO_OUTPUT0, 0, "When starting up should be 0 I think");
         `assert(S, 1, "When starting up should be 1 I think");
 
         #5000; A = 0; B = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 0, "Need A & B to be high");
+        `assert(TO_OUTPUT0, 0, "Need A & B to be high");
         `assert(S, 1, "When starting up should be 1 I think");
 
         #5000; A = 1; B = 0;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 0, "Need A & B to be high");
+        `assert(TO_OUTPUT0, 0, "Need A & B to be high");
         `assert(S, 1, "When starting up should be 1 I think");
 
         #5000; A = 1; B = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 1, "What A=1 & B=1 we latch in 1")
+        `assert(TO_OUTPUT0, 1, "What A=1 & B=1 we latch in 1")
         `assert(S, 0, "When starting up should be 1 I think");
 
         #5000; A = 1; B = 0;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 1, "Should latch in high value");
+        `assert(TO_OUTPUT0, 1, "Should latch in high value");
         `assert(S, 0, "When starting up should be 1 I think");
 
         #5000; A = 0; B = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 1, "Should latch in high value");
+        `assert(TO_OUTPUT0, 1, "Should latch in high value");
         `assert(S, 0, "When starting up should be 1 I think");
 
         #5000; A = 0; B = 0;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 1, "Should latch in high value");
+        `assert(TO_OUTPUT0, 1, "Should latch in high value");
         `assert(S, 0, "When starting up should be 1 I think");
 
         #5000; rst_n = 0;
@@ -104,12 +106,12 @@ module part1_tb;
         #5000; A = 1; B = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 0, "No latching behaviour when en=0")
+        `assert(TO_OUTPUT0, 0, "No latching behaviour when en=0")
         `assert(S, 0, "When starting up should be 1 I think");
         #3000; enable = 1;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
-        `assert(Q, 1, "Latching works when en=1")
+        `assert(TO_OUTPUT0, 1, "Latching works when en=1")
 
 
         $finish; // End the simulation

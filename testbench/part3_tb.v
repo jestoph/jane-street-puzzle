@@ -13,8 +13,7 @@ module part3_tb;
     // Outputs
     // These are always opposite when A=1
     // Otherwise, S is low and Q is just latched to whatever it was
-    wire [3:0] O;
-    wire X;
+    wire [4:0] O;
 
     integer i; // 32 bit
 
@@ -22,14 +21,14 @@ module part3_tb;
       // inputs
       .rst_n(rst_n),
       .clk(clk),
-      .Wire_427(A),
+      .FROM_PART24(A),
       .S(S),
       // outputs
+      .FROM_PART34(O[4]),
       .FROM_PART33(O[3]),
       .FROM_PART32(O[2]),
       .FROM_PART31(O[1]),
-      .FROM_PART30(O[0]),
-      .Wire_394(X)
+      .FROM_PART30(O[0])
     );
 
     initial begin

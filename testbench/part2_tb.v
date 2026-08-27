@@ -9,8 +9,7 @@ module part2_tb;
     reg clk;
     reg S;
 
-    wire [3:0] O;
-    wire X;
+    wire [4:0] O;
 
 
     integer i; // 32 bit
@@ -19,11 +18,11 @@ module part2_tb;
       .rst_n(rst_n),
       .clk(clk),
       .S(S),
+      .FROM_PART24(O[4]),
       .FROM_PART23(O[3]),
       .FROM_PART22(O[2]),
       .FROM_PART21(O[1]),
-      .FROM_PART20(O[0]),
-      .Wire_427(X)
+      .FROM_PART20(O[0])
     );
 
     initial begin

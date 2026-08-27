@@ -1,12 +1,14 @@
 
 PYTHON:=./venv/bin/python3
 
-.PHONY: check logo cells stats network test simplify test-components
+.PHONY: check cells stats network simplify
 
 check:
-	#${PYTHON} -m mypy *.py
+	# ${PYTHON} -m mypy *.py
 	${PYTHON} check-io.py
 	${PYTHON} check-subcircuit-elements.py
+	${PYTHON} test-components.py
+	${PYTHON} test-subcircuits.py
 
 cells:
 	${PYTHON} cells.py puzzle
@@ -20,17 +22,6 @@ network:
 simplify:
 	${PYTHON} simplify.py puzzle
 
-#
-# Build and test all components
-#
-test-components:
-	python3 test-components.py
-
-test-subcircuits:
-	python3 test-subcircuits.py
-
 clean:
 	rm -f outputs/*
 
-find-unfinished-components:
-	grep -r "TODO: provide" component
