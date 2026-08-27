@@ -6,6 +6,7 @@ PYTHON:=./venv/bin/python3
 check:
 	#${PYTHON} -m mypy *.py
 	${PYTHON} check-io.py
+	${PYTHON} check-subcircuit-elements.py
 
 cells:
 	${PYTHON} cells.py puzzle

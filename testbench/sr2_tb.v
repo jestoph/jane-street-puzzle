@@ -1,10 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/sr2.v */
 module sr2_tb;

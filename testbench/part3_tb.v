@@ -1,10 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal (%b) != value (%b) %s", signal, value, msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part3.v */
 module part3_tb;
@@ -18,20 +13,23 @@ module part3_tb;
     // Outputs
     // These are always opposite when A=1
     // Otherwise, S is low and Q is just latched to whatever it was
-    wire [4:0] O;
+    wire [3:0] O;
+    wire X;
 
     integer i; // 32 bit
 
     part3 part3_1 (
+      // inputs
       .rst_n(rst_n),
       .clk(clk),
       .Wire_427(A),
       .S(S),
-      .Wire_28 (O[4]),
-      .Wire_309(O[3]),
-      .Wire_315(O[2]),
-      .Wire_394(O[1]),
-      .Wire_71 (O[0])
+      // outputs
+      .FROM_PART33(O[3]),
+      .FROM_PART32(O[2]),
+      .FROM_PART31(O[1]),
+      .FROM_PART30(O[0]),
+      .Wire_394(X)
     );
 
     initial begin

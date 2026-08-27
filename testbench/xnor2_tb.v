@@ -1,13 +1,7 @@
 `timescale 1ns/1ps
+`include "testbench/assert.vh"
 
 /* ref component/xnor2.v */
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
 module xnor2_tb;
 
     // Inputs

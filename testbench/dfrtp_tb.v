@@ -1,19 +1,7 @@
 `timescale 1ns/1ps
+`include "testbench/assert.vh"
 
 /* ref component/dfrtp.v */
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
-`define assertn(signal, value, msg) \
-        if (signal === value) begin \
-            $display("ASSERTION FAILED in %m: signal == value %s", msg); \
-            $finish; \
-        end
-
 module dfrtp_tb;
 
     // Inputs

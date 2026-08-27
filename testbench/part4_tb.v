@@ -1,10 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal (%b) != value (%b) %s", signal, value, msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part4.v */
 module part4_tb;
@@ -14,7 +9,9 @@ module part4_tb;
     reg rst_n;
     reg clk;
     reg S;
-    reg [13:0] IN;
+    reg [2:0] A;
+    reg [2:0] B;
+    reg [7:0] C;
 
     // Outputs
     wire O1;
@@ -29,20 +26,23 @@ module part4_tb;
       .rst_n(rst_n),
       .clk(clk),
       .S(S),
-      .Wire_183(IN[13]),
-      .Wire_188(IN[12]),
-      .Wire_191(IN[11]),
-      .Wire_288(IN[10]),
-      .Wire_370(IN[9]),
-      .Wire_446(IN[8]),
-      .Wire_447(IN[7]),
-      .Wire_448(IN[6]),
-      .Wire_623(IN[5]),
-      .Wire_624(IN[4]),
-      .Wire_631(IN[3]),
-      .Wire_647(IN[2]),
-      .Wire_648(IN[1]),
-      .Wire_649(IN[0]),
+
+      .Wire_191(C[7]),
+      .Wire_370(C[6]),
+      .Wire_623(C[5]),
+      .Wire_624(C[4]),
+      .Wire_631(C[3]),
+      .Wire_647(C[2]),
+      .Wire_648(C[1]),
+      .Wire_649(C[0]),
+
+      .FROM_PART52(A[2]),
+      .FROM_PART51(A[1]),
+      .FROM_PART50(A[0]),
+
+      .FROM_PART7A2(B[2]),
+      .FROM_PART7A1(B[1]),
+      .FROM_PART7A0(B[0]),
 
       .TO_OUTPUT1(O1),
       .TO_OUTPUT2(O2)
@@ -65,7 +65,6 @@ module part4_tb;
         clk = 0;
         S = 0;
         I = 0;
-        IN = 0;
         rst_n = 0;
         #5000; clk = ~clk;
         #5000; rst_n = 1;
@@ -74,7 +73,11 @@ module part4_tb;
         begin
           #5000; rst_n = 0;
           #5000; rst_n = 1;
-          IN = j;
+
+          A = j[2:0];
+          B = j[5:3];
+          C = j[13:6];
+
           for(i = 0; i < 130 ; i = i + 1)
           begin
             #5000; clk = ~clk;

@@ -1,10 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal (%b) != value (%b) %s", signal, value, msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part2.v */
 module part2_tb;
@@ -15,6 +10,8 @@ module part2_tb;
     reg S;
 
     wire [3:0] O;
+    wire X;
+
 
     integer i; // 32 bit
 
@@ -22,10 +19,11 @@ module part2_tb;
       .rst_n(rst_n),
       .clk(clk),
       .S(S),
-      .Wire_129(O[3]),
-      .Wire_110(O[2]),
-      .Wire_80 (O[1]),
-      .Wire_79 (O[0])
+      .FROM_PART23(O[3]),
+      .FROM_PART22(O[2]),
+      .FROM_PART21(O[1]),
+      .FROM_PART20(O[0]),
+      .Wire_427(X)
     );
 
     initial begin

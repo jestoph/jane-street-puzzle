@@ -1,16 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
-`define assertn(signal, value, msg) \
-        if (signal === value) begin \
-            $display("ASSERTION FAILED in %m: signal == value %s", msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part9d.v */
 module part9d_tb;
@@ -25,20 +14,23 @@ module part9d_tb;
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
     part9d part9d_1 (
+
       //inputs
       .OB4(IN[3]),
       .OB3(IN[2]),
       .OB2(IN[1]),
       .OB1(IN[0]),
+
       //outputs
-      .Wire_101(OUT[7]),
-      .Wire_61 (OUT[6]),
-      .Wire_62 (OUT[5]),
-      .Wire_63 (OUT[4]),
-      .Wire_65 (OUT[3]),
-      .Wire_67 (OUT[2]),
-      .Wire_82 (OUT[1]),
-      .Wire_83 (OUT[0])
+      .FROM_PART9D7(OUT[7]),
+      .FROM_PART9D6(OUT[6]),
+      .FROM_PART9D5(OUT[5]),
+      .FROM_PART9D4(OUT[4]),
+      .FROM_PART9D3(OUT[3]),
+      .FROM_PART9D2(OUT[2]),
+      .FROM_PART9D1(OUT[1]),
+      .FROM_PART9D0(OUT[0])
+
     );
 
     initial begin

@@ -1,12 +1,7 @@
 `timescale 1ns/1ps
+`include "testbench/assert.vh"
 
 /* ref component/a21boi.v */
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
 module a21boi_tb;
 
     // Inputs

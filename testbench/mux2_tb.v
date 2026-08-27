@@ -1,13 +1,7 @@
 `timescale 1ns/1ps
+`include "testbench/assert.vh"
 
 /* ref component/mux2.v */
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("A0SSERTION FA0ILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
 module mux2_tb;
 
     // Inputs

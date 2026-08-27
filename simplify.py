@@ -474,20 +474,20 @@ if __name__ == '__main__':
     puzzle_io_map = {
             # TODO: This is all computed now, not really needed
         "part1": (
-            {"rst_n", "clk", "enable", "Wire_427", "Wire_394"}, # rst:n, clk, enable, input0, input1
+            {"rst_n", "clk", "enable", "FROM_PART2[4]", "FROM_PART3[4]"}, # rst:n, clk, enable, input0, input1
             {"TO_OUTPUT[0]", "S"}),
         "part2": (
             {"rst_n", "clk", "S"}, # rst_n, clk, S
-            {"FROM_PART2[3]", "FROM_PART2[1]", "FROM_PART2[0]", "FROM_PART2[2]", "Wire_427"}),
+            {"FROM_PART2[3]", "FROM_PART2[1]", "FROM_PART2[0]", "FROM_PART2[2]", "FROM_PART2[4]"}),
         "part3": (
-            {"rst_n", "clk", "S", "Wire_427"}, # rst_n, clk, S, A
-            {"FROM_PART3[3]", "FROM_PART3[0]", "FROM_PART3[2]", "Wire_394", "FROM_PART3[1]"}),
+            {"rst_n", "clk", "S", "FROM_PART2[4]"}, # rst_n, clk, S, A
+            {"FROM_PART3[3]", "FROM_PART3[0]", "FROM_PART3[2]", "FROM_PART3[4]", "FROM_PART3[1]"}),
         "part4": (
             {"rst_n", "clk", "I", "S",
                 "FROM_PART7A[0]", "FROM_PART7A[1]", "FROM_PART7A[2]", "Wire_623", "Wire_647", "FROM_PART5[0]", "Wire_631", "Wire_370", "FROM_PART5[2]", "Wire_624", "Wire_191", "FROM_PART5[1]", "Wire_649", "Wire_648"},
             { "TO_OUTPUT[2]", "TO_OUTPUT[1]" }),
         "part5": (
-            { "FROM_PART2[2]", "FROM_PART2[0]", "Wire_427", "FROM_PART2[3]", "FROM_PART2[1]", "S", "rst_n", "clk", "I" },
+            { "FROM_PART2[2]", "FROM_PART2[0]", "FROM_PART2[4]", "FROM_PART2[3]", "FROM_PART2[1]", "S", "rst_n", "clk", "I" },
             { "TO_OUTPUT[3]", "FROM_PART5[0]", "FROM_PART5[1]", "FROM_PART5[2]" }),
         "part6": (
             {'I', 'clk', 'rst_n', 'S', 'FROM_PART8[6]', 'FROM_PART8[7]', 'FROM_PART8[2]', 'FROM_PART8[9]', 'FROM_PART8[1]', 'FROM_PART8[5]', 'FROM_PART8[3]', 'FROM_PART8[10]', 'FROM_PART8[0]', 'FROM_PART8[4]', 'FROM_PART8[8]'},
@@ -499,7 +499,7 @@ if __name__ == '__main__':
             {'FROM_PART2[2]', 'I', 'clk', 'rst_n', 'S', 'FROM_PART2[0]', 'FROM_PART2[3]', 'FROM_PART2[1]'},
             {'Wire_536', 'Wire_370', 'Wire_191', 'Wire_649', 'Wire_631', 'Wire_648', 'Wire_624', 'Wire_623'}),
         "part7c": (
-            {'S', 'I', 'FROM_PART2[1]', 'FROM_PART2[3]', 'clk', 'rst_n', 'FROM_PART2[0]', 'FROM_PART2[2]'},
+            {'S', 'I', 'clk', 'rst_n', "Wire_536"},
             {'Wire_647'}),
         "part8": (
             {'rst_n', 'I', 'S', 'clk', "FROM_BLOB[0]", "FROM_BLOB[1]", "FROM_BLOB[2]", "FROM_BLOB[3]" },
@@ -540,23 +540,28 @@ if __name__ == '__main__':
     }
 
     puzzle_extra_aliases = {
+
         "Wire_8": "S",
+
         # This is the wierd 'output bus' on part9 that does ... something
         "Wire_95": "OB[1]",
         "Wire_99": "OB[2]",
         "Wire_100":"OB[3]",
         "Wire_84": "OB[4]",
+
         # The blob only generates a single output
         "Wire_44": "FROM_BLOB[0]",
         "Wire_46": "FROM_BLOB[1]",
         "Wire_58": "FROM_BLOB[2]",
         "Wire_66": "FROM_BLOB[3]",
+
         "Wire_42":  "TO_OUTPUT[0]",
         "Wire_490": "TO_OUTPUT[1]",
         "Wire_221": "TO_OUTPUT[2]",
         "Wire_161": "TO_OUTPUT[3]",
         "Wire_437": "TO_OUTPUT[4]",
         "Wire_395": "TO_OUTPUT[5]",
+
         'Wire_183': "FROM_PART7A[0]",
         'Wire_188': "FROM_PART7A[1]",
         'Wire_288': "FROM_PART7A[2]",
@@ -565,6 +570,7 @@ if __name__ == '__main__':
         "Wire_129": "FROM_PART2[1]",
         "Wire_79":  "FROM_PART2[2]",
         "Wire_80":  "FROM_PART2[3]",
+        "Wire_427": "FROM_PART2[4]",
 
         "Wire_448": "FROM_PART5[0]",
         "Wire_446": "FROM_PART5[1]",
@@ -574,6 +580,7 @@ if __name__ == '__main__':
         "Wire_309": "FROM_PART3[1]",
         "Wire_315": "FROM_PART3[2]",
         "Wire_71" : "FROM_PART3[3]",
+        "Wire_394": "FROM_PART3[4]",
 
         'Wire_1'  : "FROM_PART8[10]",
         'Wire_165': "FROM_PART8[9]",
@@ -721,7 +728,7 @@ if __name__ == '__main__':
                 ('part6', ((61, 10),  (100, 67))),
                 ('part7a', ((100, 266), (138, 300))),
                 ('part7b', ((100, 195), (138, 266))),
-                ('part7c', ((100, 179), (138, 198))),
+                ('part7c', ((100, 179), (138, 195))),
                 ('part8', ((100, 34), (138, 174))),
                 ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
                 ('part9b', ((138, 163), (200, 235))),

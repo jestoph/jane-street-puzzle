@@ -1,16 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
-`define assertn(signal, value, msg) \
-        if (signal === value) begin \
-            $display("ASSERTION FAILED in %m: signal == value %s", msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part9e.v */
 module part9e_tb;
@@ -31,14 +20,14 @@ module part9e_tb;
       .OB2(IN[1]),
       .OB1(IN[0]),
       //outputs
-      .Wire_396(OUT[7]),
-      .Wire_397(OUT[6]),
-      .Wire_45 (OUT[5]),
-      .Wire_47 (OUT[4]),
-      .Wire_48 (OUT[3]),
-      .Wire_49 (OUT[2]),
-      .Wire_50 (OUT[1]),
-      .Wire_51 (OUT[0])
+      .FROM_PART9E7(OUT[7]),
+      .FROM_PART9E6(OUT[6]),
+      .FROM_PART9E5(OUT[5]),
+      .FROM_PART9E4(OUT[4]),
+      .FROM_PART9E3(OUT[3]),
+      .FROM_PART9E2(OUT[2]),
+      .FROM_PART9E1(OUT[1]),
+      .FROM_PART9E0(OUT[0])
     );
 
     initial begin

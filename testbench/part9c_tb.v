@@ -1,16 +1,5 @@
 `timescale 1ns/1ps
-
-`define assert(signal, value, msg) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value %s", msg); \
-            $finish; \
-        end
-
-`define assertn(signal, value, msg) \
-        if (signal === value) begin \
-            $display("ASSERTION FAILED in %m: signal == value %s", msg); \
-            $finish; \
-        end
+`include "testbench/assert.vh"
 
 /* ref outputs/part9c.v */
 module part9c_tb;
@@ -31,22 +20,23 @@ module part9c_tb;
       .OB2(IN[1]),
       .OB1(IN[0]),
       //outputs
-      .Wire_103(OUT[15]),
-      .Wire_398(OUT[14]),
-      .Wire_399(OUT[13]),
-      .Wire_465(OUT[12]),
-      .Wire_466(OUT[11]),
-      .Wire_467(OUT[10]),
-      .Wire_52 (OUT[9]),
-      .Wire_54 (OUT[8]),
-      .Wire_55 (OUT[7]),
-      .Wire_56 (OUT[6]),
-      .Wire_57 (OUT[5]),
-      .Wire_59 (OUT[4]),
-      .Wire_60 (OUT[3]),
-      .Wire_68 (OUT[2]),
-      .Wire_69 (OUT[1]),
-      .Wire_70 (OUT[0])
+      .FROM_PART9C15(OUT[15]),
+      .FROM_PART9C14(OUT[14]),
+      .FROM_PART9C13(OUT[13]),
+      .FROM_PART9C12(OUT[12]),
+      .FROM_PART9C11(OUT[11]),
+      .FROM_PART9C10(OUT[10]),
+      .FROM_PART9C9(OUT[9]),
+      .FROM_PART9C8(OUT[8]),
+      .FROM_PART9C7(OUT[7]),
+      .FROM_PART9C6(OUT[6]),
+      .FROM_PART9C5(OUT[5]),
+      .FROM_PART9C4(OUT[4]),
+      .FROM_PART9C3(OUT[3]),
+      .FROM_PART9C2(OUT[2]),
+      .FROM_PART9C1(OUT[1]),
+      .FROM_PART9C0(OUT[0])
+
     );
 
     initial begin
