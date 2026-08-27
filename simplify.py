@@ -218,6 +218,11 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
     I sort the outputs as it makes it easier to compare changes
     """
 
+    inputs = {get_wire_name(x, wire_to_alias) for x in inputs}
+    outputs = {get_wire_name(x, wire_to_alias) for x in outputs}
+
+    print(f"{inputs=} {outputs=}")
+
     element_to_ports = {}
     for port in port_wire_map:
         el = element(port)
@@ -230,11 +235,9 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
     lines.append(f"module {name}(")
 
     io_lines = []
-    for _in in sorted(inputs):
-        wirename = get_wire_name(_in, wire_to_alias)
+    for wirename in sorted(inputs):
         io_lines.append(f"  input wire {wirename}")
-    for _out in sorted(outputs):
-        wirename = get_wire_name(_out, wire_to_alias)
+    for wirename in sorted(outputs):
         io_lines.append(f"  output wire {wirename}")
 
     lines.append(",\n".join(io_lines))
@@ -243,9 +246,9 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
     lines.append("")
 
     for wire in sorted(wire_port_map):
-        if wire in inputs: continue
-        if wire in outputs: continue
         wirename = get_wire_name(wire, wire_to_alias)
+        if wirename in inputs: continue
+        if wirename in outputs: continue
         lines.append(f"  wire {wirename};")
 
     lines.append("")
@@ -326,7 +329,7 @@ def print_unconnected_elements(revd):
         if len(ports) == 1:
             print("WARNING ", ports[0], "is unconnected")
 
-def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases):
+def get_possible_inputs_and_outputs(name, subcircuit, port_to_wire, wire_to_ports, aliases):
     """
     Heuristic should be
     * If all references to the wire are in this circuit, it cannot be an output
@@ -335,13 +338,20 @@ def get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, ali
     """
     inputs = set()
     outputs = set()
+    print(aliases)
     for cell, wire in subcircuit.items():
 
         if alias := aliases.get(wire):
+            print(f"HAVE ALIAS {alias=}")
             # TODO: This is very hard-coded, we should fix this
-            if 'O' not in alias or 'success' not in alias:
+            if 'success' in alias and 'output' in name:
+                outputs.add(alias)
+                continue
+            if 'O' not in alias:
+                print("ASDDING")
                 inputs.add(alias)
-            continue
+                continue
+
 
 
         # All references are internal - it must be an internal wire
@@ -372,7 +382,7 @@ def print_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, a
     print("---------------")
     print()
 
-    inputs, outputs = get_possible_inputs_and_outputs(subcircuit, port_to_wire, wire_to_ports, aliases)
+    inputs, outputs = get_possible_inputs_and_outputs("unknown", subcircuit, port_to_wire, wire_to_ports, aliases)
 
     for wire in outputs:
         print(f"Output: [inside] -> {wire} -> [outside]")
@@ -416,6 +426,12 @@ def print_wire_aliases(segment_aliases, segment_to_wire):
     for segment, alias in segment_aliases:
         print(f"ALIAS {segment_to_wire[segment]} -> {alias}")
 
+def compare_io(name, computed, written):
+    input_computed, output_computed = computed
+    input_written, output_written = written
+
+    assert input_computed == input_written, f"ERROR in {name}: {input_computed-input_written=} {input_written-input_computed=}"
+
 if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
@@ -425,14 +441,14 @@ if __name__ == '__main__':
 
     warmup_io_map = {
         "comparitor": (
-            set(["Wire:101","Wire:111","Wire:96","Wire:2","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"]),
+            set(["Wire:101","Wire:111","Wire:96","success","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"]),
             set(["Wire:33"])
             ),
         "adder": (
             # Possibly wrong here
             # set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
             sr1_out | sr2_out,
-            set(["Wire:101","Wire:111","Wire:96","Wire:2","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"])
+            set(["Wire:101","Wire:111","Wire:96","success","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"])
             ),
         "sr1": (
             set(["Wire:11", "Wire:3", "Wire:8", "Wire:32"]), # RESET_B, CLK, EN, A
@@ -450,51 +466,72 @@ if __name__ == '__main__':
 
     puzzle_io_map = {
         "puzzle": (
-            set(["Wire:15","Wire:39","Wire:429","Wire:34"]),
-            set(["Wire:412","Wire:392","Wire:405","Wire:430","Wire:431","Wire:433","Wire:81","Wire:435","Wire:2"])
+            {"I","clk","enable","rst_n"},
+            {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","success"}
             ),
+
         "part1": (
-            set(["Wire:34", "Wire:39", "Wire:429", "Wire:428", "Wire:395"]), # rst:n, clk, enable, input0, input1
-            set(["Wire:42", "Wire:9"])), # Wire:9 acts as the '.S' signal for the shift registers in part4
+            {"rst_n", "clk", "enable", "Wire:427", "Wire:394", "S"}, # rst:n, clk, enable, input0, input1
+            {"Wire:42", "Wire:9"}), # Wire:9 acts as the '.S' signal for the shift registers in part4
         "part2": (
-            set(["Wire:34", "Wire:39", "Wire:9"]), # rst_n, clk, S
-            set(["Wire:80", "Wire:130", "Wire:428", "Wire:110", "Wire:79"])),
+            {"rst_n", "clk", "S"}, # rst_n, clk, S
+            {"Wire:80", "Wire:130", "Wire:110", "Wire:79"}),
         "part3": (
-            set(["Wire:34", "Wire:39", "Wire:9", "Wire:428"]), # rst_n, clk, S, A
-            set(["Wire:71", "Wire:28", "Wire:316", "Wire:395", "Wire:310"])),
+            {"rst_n", "clk", "S", "Wire:427"}, # rst_n, clk, S, A
+            {"Wire:71", "Wire:28", "Wire:316", "Wire:395", "Wire:310"}),
 
         "part4": (set(), set()),
 
-        "part4": ( set(["Wire:34", "Wire:39", "Wire:15", "Wire:9", "Wire:184", "Wire:189", "Wire:624", "Wire:648", "Wire:449", "Wire:632", "Wire:371", "Wire:290", "Wire:625", "Wire:192", "Wire:448", "Wire:446", "Wire:650", "Wire:649"]),
-                  set([ "Wire:222", "Wire:491" ])),
+        "part4": (
+            {
+                "rst_n", "clk", "I", "S",
+                "Wire:183", "Wire:188", "Wire:623", "Wire:647", "Wire:448", "Wire:631", "Wire:370", "Wire:288", "Wire:447", "Wire:624", "Wire:191", "Wire:448", "Wire:446", "Wire:649", "Wire:648"},
+            { "Wire:222", "Wire:491" }),
         "part5": (
-            set([ "Wire:79", "Wire:110", "Wire:428", "Wire:80", "Wire:130", "Wire:9", "Wire:34", "Wire:39", "Wire:15" ]),
-            set([ "Wire:162", "Wire:449", "Wire:446", "Wire:448" ])),
+            { "Wire:79", "Wire:110", "Wire:427", "Wire:80", "Wire:129", "S", "rst_n", "clk", "I" },
+            { "Wire:162", "Wire:449", "Wire:446", "Wire:448" }),
 
-        "part6": (set(), set()),
-        "part7a": (set(), set()),
-        "part7b": (set(), set()),
-        "part7c": (set(), set()),
-        "part8": (set(), set()),
-
+        "part6": (
+            {'Wire:31', 'Wire:216', 'Wire:41', 'clk', 'Wire:165', 'rst_n', 'Wire:458', 'Wire:33', 'I', 'Wire:38', 'Wire:1', 'Wire:650', 'Wire:37', 'S', 'Wire:196'},
+            set()),
+        "part7a": (
+            {'Wire:129', 'rst_n', 'I', 'Wire:79', 'S', 'Wire:80', 'clk', 'Wire:110'},
+            set()),
+        "part7b": (
+            {'Wire:79', 'I', 'clk', 'rst_n', 'S', 'Wire:110', 'Wire:80', 'Wire:129'},
+            set()),
+        "part7c": (
+            {'S', 'I', 'Wire:129', 'Wire:80', 'clk', 'rst_n', 'Wire:110', 'Wire:79'},
+            set()),
+        "part8": (
+            {'rst_n', 'I', 'S', 'Wire:44', 'clk', 'Wire:58', 'Wire:46', 'Wire:66'},
+            set()),
         "part9a": (
-          set([ "Wire:39", "Wire:2", "Wire:511", "Wire:508", "Wire:461", "Wire:140", "Wire:483", "Wire:510", "Wire:496", "Wire:3", "Wire:495", "Wire:393", "Wire:394", "Wire:494" ]),
-          set([ "Wire:412", "Wire:392", "Wire:405", "Wire:430", "Wire:431", "Wire:433", "Wire:81", "Wire:435",
-                "Wire:463", "Wire:84", "Wire:99", "Wire:462", "Wire:464", "Wire:100", "Wire:460", "Wire:95" ])),
-        "part9b": (set(), set()),
+            { "clk", "success", "Wire:509", "Wire:507", "Wire:460", "Wire:138", "Wire:483", "Wire:509", "Wire:510", "Wire:3", "Wire:495", "Wire:393", "Wire:494", "Wire:493", "Wire:392" },
+            { "O[0]", "O[1]", "O[2]", "O[3]", "O[4]", "O[5]", "O[6]", "O[7]",
+                "Wire:463", "Wire:84", "Wire:99", "Wire:462", "Wire:464", "Wire:100", "Wire:95" }),
+        "part9b": (
+            {'Wire:397', 'Wire:67', 'Wire:50', 'Wire:63', 'Wire:101', 'Wire:51', 'Wire:84', 'Wire:59', 'Wire:462', 'Wire:467', 'Wire:463', 'Wire:83', 'Wire:461', 'Wire:69', 'Wire:396', 'Wire:52', 'S', 'Wire:95', 'Wire:60', 'Wire:65', 'Wire:47', 'Wire:466', 'Wire:55', 'Wire:68', 'Wire:465', 'Wire:70', 'Wire:62', 'Wire:103', 'I', 'clk', 'Wire:56', 'Wire:82', 'Wire:48', 'Wire:99', 'Wire:57', 'Wire:398', 'Wire:54', 'Wire:45', 'Wire:61', 'Wire:100', 'Wire:459', 'rst_n', 'Wire:399', 'Wire:49'},
+            set()),
         "part9c": (
-              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
-              set([ "Wire:399", "Wire:468", "Wire:53", "Wire:70", "Wire:69", "Wire:60", "Wire:103", "Wire:55", "Wire:52", "Wire:466", "Wire:59", "Wire:467", "Wire:400", "Wire:68", "Wire:57", "Wire:56" ])),
+              { "Wire:95", "Wire:99", "Wire:100", "Wire:84" },
+              { "Wire:399", "Wire:468", "Wire:53", "Wire:70", "Wire:69", "Wire:60", "Wire:103", "Wire:55", "Wire:52", "Wire:466", "Wire:59", "Wire:467", "Wire:400", "Wire:68", "Wire:57", "Wire:56" }),
         "part9d": (
-              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
-              set([ "Wire:62", "Wire:101", "Wire:83", "Wire:82", "Wire:64", "Wire:61", "Wire:67", "Wire:63" ])),
+              { "Wire:95", "Wire:99", "Wire:100", "Wire:84" },
+              { "Wire:62", "Wire:101", "Wire:83", "Wire:82", "Wire:64", "Wire:61", "Wire:67", "Wire:63" }),
         "part9e": (
-              set([ "Wire:95", "Wire:99", "Wire:100", "Wire:84" ]),
-              set([ "Wire:398", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" ])),
+              { "Wire:95", "Wire:99", "Wire:100", "Wire:84" },
+              { "Wire:398", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" }),
         "output_section": (
-              set([ "Wire:42", "Wire:438", "Wire:491", "Wire:162", "Wire:222", "Wire:396", "Wire:34", "Wire:39"]),
-              set([ "Wire:140", "Wire:3", "Wire:2" ])), # TODO: Allow aliases here, this is very annoying
-        "blob": (set(), set()),
+              { "Wire:42", "Wire:437", "Wire:490", "Wire:161", "Wire:221", "Wire:395", "rst_n", "clk"},
+              { "Wire:140", "Wire:3", "success" }), # TODO: Allow aliases here, this is very annoying
+        "blob": (
+                {'Wire:110', 'Wire:309', 'Wire:71', 'Wire:129', 'Wire:79', 'Wire:315', 'Wire:80', 'Wire:28'},
+                {"Wire:44", "Wire:58", "Wire:66", "Wire:46"}),
+    }
+
+    puzzle_extra_aliases = {
+        "Wire:8": "S",
     }
 
     if sys.argv[1] == 'warmup':
@@ -537,7 +574,7 @@ if __name__ == '__main__':
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
-            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
+            inputs, outputs = get_possible_inputs_and_outputs(name, sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, warmup_io_map[name][0], warmup_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
@@ -561,6 +598,9 @@ if __name__ == '__main__':
             wire_to_alias = {
                 segment_to_wire[segment]: alias for segment, alias in segment_aliases
             }
+
+            for wire, alias in puzzle_extra_aliases.items():
+                wire_to_alias[wire] = alias
 
         with measure_time("reverse map"):
             wire_to_ports = reverse_map(port_to_wire)
@@ -589,22 +629,24 @@ if __name__ == '__main__':
                 ('part7c', ((100, 179), (138, 198))),
                 ('part8', ((100, 34), (138, 174))),
                 ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
-                ('part9a', ((138, 235), (200, 266))),
                 ('part9b', ((138, 163), (200, 235))),
                 ('part9c', ((138, 120), (200, 163))),
                 ('part9d', ((138, 105), (200, 120))),
                 ('part9e', ((138, 70), (200, 105))),
                 ('blob', ((138, 5), (200, 70))),
+                ('part9a', ((138, 235), (200, 266))),
                 ]:
             sub_circuit = find_bounding(port_to_wire, box)
             revd = reverse_map(sub_circuit)
             print_unconnected_elements(revd)
             print_element(name.upper(), sub_circuit)
             print_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
-            inputs, outputs = get_possible_inputs_and_outputs(sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
+            inputs, outputs = get_possible_inputs_and_outputs(name, sub_circuit, port_to_wire, wire_to_ports, wire_to_alias)
             print_element_as_json(name, sub_circuit, revd, wire_to_alias, segment_to_wire, inputs, outputs)
             print_element_as_verilog(name, sub_circuit, revd, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
             print_wire_aliases(segment_aliases, segment_to_wire)
+
+            compare_io(name, (inputs, outputs), puzzle_io_map[name])
 
             total_io[name] = {}
             total_io[name]['in'] = [wire_to_alias.get(_in,_in) for _in in sorted(inputs)]

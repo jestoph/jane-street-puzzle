@@ -25,11 +25,12 @@ module blob_tb;
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
     blob blob_1 (
-      .Wire_316(IN[7]),
+
+      .Wire_315(IN[7]),
       .Wire_110(IN[6]),
-      .Wire_130(IN[5]),
+      .Wire_129(IN[5]),
       .Wire_79 (IN[4]),
-      .Wire_310(IN[3]),
+      .Wire_309(IN[3]),
       .Wire_80 (IN[2]),
       .Wire_28 (IN[1]),
       .Wire_71 (IN[0]),

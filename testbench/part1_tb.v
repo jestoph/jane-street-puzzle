@@ -28,10 +28,10 @@ module part1_tb;
       .rst_n(rst_n),
       .clk(clk),
       .enable(enable),
-      .Wire_395(A),
-      .Wire_428(B),
+      .Wire_394(A),
+      .Wire_427(B),
       .Wire_42(Q),
-      .Wire_9(S)
+      .S(S)
     );
 
     initial begin

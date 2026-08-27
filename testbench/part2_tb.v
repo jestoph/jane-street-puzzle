@@ -14,7 +14,7 @@ module part2_tb;
     reg clk;
     reg S;
 
-    wire [4:0] O;
+    wire [3:0] O;
     wire O1;
     wire O2;
     wire O3;
@@ -26,10 +26,9 @@ module part2_tb;
     part2 part2_1 (
       .rst_n(rst_n),
       .clk(clk),
-      .Wire_9(S),
-      .Wire_130(O[4]),
-      .Wire_110(O[3]),
-      .Wire_428(O[2]),
+      .S(S),
+      .Wire_130(O[3]),
+      .Wire_110(O[2]),
       .Wire_80 (O[1]),
       .Wire_79 (O[0])
     );

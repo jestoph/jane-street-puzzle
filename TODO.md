@@ -186,6 +186,7 @@ part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:9
 
 ### Quality-of-life
 [ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying
+[ ] I've added warning for dangling wires. Can I promote them to error?
 ```
 "Wire_9", // Wire_9 is the 'S' signal for the Muxes, which is like the 'en' for the thing
 ```

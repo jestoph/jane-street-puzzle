@@ -16,7 +16,7 @@ module part3_tb;
     reg clk;
 
     // Outputs
-    // These are always opposite when enable=1
+    // These are always opposite when A=1
     // Otherwise, S is low and Q is just latched to whatever it was
     wire [4:0] O;
 
@@ -25,8 +25,8 @@ module part3_tb;
     part3 part3_1 (
       .rst_n(rst_n),
       .clk(clk),
-      .Wire_428(A),
-      .Wire_9(S),
+      .Wire_427(A),
+      .S(S),
       .Wire_28 (O[4]),
       .Wire_310(O[3]),
       .Wire_316(O[2]),
@@ -40,7 +40,7 @@ module part3_tb;
         $dumpvars(0, part3_tb);
 
         // Track changes directly in the terminal window
-        // $monitor("Time=%0t | A=%b B=%b | X[8]=%b X[7:0]=%b", $time, A, B, X[8], X[7:0]);
+        // $monitor("Time=%0t | A=%b B=%b | X[8]=%b X[7:0]=%b", $time, enable, B, X[8], X[7:0]);
 
 
         /****************************

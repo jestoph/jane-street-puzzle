@@ -32,12 +32,12 @@ module output_section_tb;
       .rst_n(rst_n),
       .clk(clk),
 
-      .Wire_162(IN[5]),
-      .Wire_222(IN[4]),
-      .Wire_396(IN[3]),
+      .Wire_161(IN[5]),
+      .Wire_221(IN[4]),
+      .Wire_395(IN[3]),
       .Wire_42 (IN[2]),
-      .Wire_438(IN[1]),
-      .Wire_491(IN[0]),
+      .Wire_437(IN[1]),
+      .Wire_490(IN[0]),
 
       .Wire_140(A),
       .Wire_3(B),
