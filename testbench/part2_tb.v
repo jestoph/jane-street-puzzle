@@ -15,11 +15,6 @@ module part2_tb;
     reg S;
 
     wire [3:0] O;
-    wire O1;
-    wire O2;
-    wire O3;
-    wire O4;
-    wire O5;
 
     integer i; // 32 bit
 

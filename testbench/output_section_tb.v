@@ -31,12 +31,12 @@ module output_section_tb;
     output_section output_section_1 (
       .rst_n(rst_n),
       .clk(clk),
-      .Wire_161(IN[5]),
-      .Wire_221(IN[4]),
-      .Wire_395(IN[3]),
-      .Wire_42 (IN[2]),
-      .Wire_437(IN[1]),
-      .Wire_490(IN[0]),
+      .TO_OUTPUT0(IN[0]),
+      .TO_OUTPUT1(IN[1]),
+      .TO_OUTPUT2(IN[2]),
+      .TO_OUTPUT3(IN[3]),
+      .TO_OUTPUT4(IN[4]),
+      .TO_OUTPUT5(IN[5]),
 
       .Wire_138(A),
       .Wire_3(B),

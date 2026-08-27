@@ -35,10 +35,10 @@ module blob_tb;
       .Wire_28 (IN[1]),
       .Wire_71 (IN[0]),
 
-      .Wire_46(OUT[3]),
-      .Wire_66(OUT[2]),
-      .Wire_44(OUT[1]),
-      .Wire_58(OUT[0])
+      .BLOB3(OUT[3]),
+      .BLOB2(OUT[2]),
+      .BLOB1(OUT[1]),
+      .BLOB0(OUT[0])
 
     );
 
@@ -51,7 +51,7 @@ module blob_tb;
         // $monitor("Time=%0t | A=%b B=%b CLK=%b EN=%b RESET_B=%b | X=%b", $time, A, B, CLK, EN, RESET_B, X);
         IN = 0;
 
-        for(i = 0; i <= 8'b11111111; i = i + 1)
+        for(i = 0; i <= 9'b100000000; i = i + 1)
         begin
           #10;
           IN = i[7:0];

@@ -43,9 +43,9 @@ module part4_tb;
       .Wire_647(IN[2]),
       .Wire_648(IN[1]),
       .Wire_649(IN[0]),
-      // outputs
-      .Wire_221(O1),
-      .Wire_490(O2)
+
+      .TO_OUTPUT1(O1),
+      .TO_OUTPUT2(O2)
     );
 
     initial begin

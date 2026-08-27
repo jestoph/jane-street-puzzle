@@ -2,7 +2,9 @@ import subprocess as sp
 import sys
 import glob
 
+import random
 comp1 = glob.glob("component/*.v")
+random.shuffle(comp1)
 
 components = """\
 component/and4bb.v
@@ -30,25 +32,25 @@ components = [x.replace("component/","").replace(".v","") for x in components]
 def run_and_log(cmd, log):
     print(log, end="")
     ret = sp.run(cmd, capture_output=True, text=True)
-    if ret.returncode or ret.stderr:
+    if ret.returncode or ret.stderr or 'warning' in ret.stderr:
         print()
         print(cmd)
         if ret.stdout:
             print(ret.stdout)
-        if ret.stderr:
+        if ret.returncode or 'FAILED' in ret.stdout or 'warning' in ret.stderr:
             print(ret.stderr)
         sys.exit(ret.returncode)
     else:
         print("ok")
 
 def standalone(component):
-    cmd = ["iverilog", "-o", "test.vpp", component]
+    cmd = ["iverilog", "-g2012", "-o", "test.vpp", component]
     run_and_log(cmd, f"Compiling {component} as standalone...")
 
 
 def compile(component):
     sim, comp, tb = f"simulation/{component}_sim.vvp", f"component/{component}.v", f"testbench/{component}_tb.v"
-    cmd = ["iverilog", "-g2012", "-y", "./component", "-o", sim, comp, tb]
+    cmd = ["iverilog", "-Wfloating-nets", "-g2012", "-y", "./component", "-o", sim, comp, tb]
     run_and_log(cmd, f"Compiling simulation for {component}...")
 
 def run_sim(component):
@@ -56,9 +58,15 @@ def run_sim(component):
     cmd = ["vvp", sim]
     run_and_log(cmd, f"Running {component} simulation ...")
 
+def verilate(component):
+    if 'diode' in component: return
+    cmd = ["verilator", "--lint-only", "-Wall", component]
+    run_and_log(cmd, f"verilating {component}...")
+
 
 if __name__ == '__main__':
     for component in comp1:
+        verilate(component)
         standalone(component)
     for component in components:
         compile(component)

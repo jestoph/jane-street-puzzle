@@ -19,14 +19,7 @@ module part9e_tb;
     reg [3:0] IN;
 
     // Outputs
-    wire OUT7;
-    wire OUT6;
-    wire OUT5;
-    wire OUT4;
-    wire OUT3;
-    wire OUT2;
-    wire OUT1;
-    wire OUT0;
+    wire [7:0] OUT;
 
     // Iterator
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
@@ -38,14 +31,14 @@ module part9e_tb;
       .OB2(IN[1]),
       .OB1(IN[0]),
       //outputs
-      .Wire_396(OUT7),
-      .Wire_397(OUT6),
-      .Wire_45 (OUT5),
-      .Wire_47 (OUT4),
-      .Wire_48 (OUT3),
-      .Wire_49 (OUT2),
-      .Wire_50 (OUT1),
-      .Wire_51 (OUT0)
+      .Wire_396(OUT[7]),
+      .Wire_397(OUT[6]),
+      .Wire_45 (OUT[5]),
+      .Wire_47 (OUT[4]),
+      .Wire_48 (OUT[3]),
+      .Wire_49 (OUT[2]),
+      .Wire_50 (OUT[1]),
+      .Wire_51 (OUT[0])
     );
 
     initial begin

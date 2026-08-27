@@ -133,7 +133,9 @@
  [x] outputs/part6.json
  [x] outputs/part7a.json
  [x] outputs/part7c.json
- [x] outputs/part9a.json
+ [x] outputs/part9a.json - Seems to generate some signal, i think it sends out 'reads' and pushes the response to the output port?
+      It also has the behaviour of clocking through all the values, then stopping (all outputs go high). There are 14 values, with
+      0 before anything happens and F after it's all done
  [x] outputs/part9c.json
  [x] outputs/part9d.json
  [x] outputs/part9e.json
@@ -152,11 +154,12 @@
  [x] outputs/part1.v -> Latches in when the two input wires are both high
  [x] outputs/part2.v -> Some sort of lfsr or something? It cycles through 12 values
  [x] outputs/part3.v -> Another lfsr? This time 11 values.
- [x] outputs/part4.v -> Shift register with an 'enable' via muxes on Wire_9
- [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
- [x] outputs/part9c.v
- [x] outputs/part9d.v -> Easy
- [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
+ [x] outputs/part4.v -> Shift register with an 'enable' via muxes on Wire_9/S
+ [ ] Output generation circuit:
+     [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
+     [x] outputs/part9c.v -> Easy
+     [x] outputs/part9d.v -> Easy
+     [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
  [x] outputs/output_section.v
 [ ] Write testbenches for the hard ones:
  [ ] outputs/part5.v

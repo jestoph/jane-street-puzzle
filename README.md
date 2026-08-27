@@ -575,3 +575,10 @@ and it should be connected to one of the inputs?
 Docs seem to agree `https://sky130-unofficial.readthedocs.io/en/latest/_images/sky130_fd_sc_hd__a31oi_2.svg`
 
 Anyway, I reported it, we'll see if they get back to me
+
+### Looking at the output generation circuit
+
+It seems like part9a generates a series of 'addresses' or something that are used by part9c,d,e for generating
+their outputs. I suppose it then somehow transfers them to the output string. But I don't know what role
+part9b (the biggest) plays in this.
+

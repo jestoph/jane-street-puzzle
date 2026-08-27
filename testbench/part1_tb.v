@@ -30,7 +30,7 @@ module part1_tb;
       .enable(enable),
       .Wire_394(A),
       .Wire_427(B),
-      .Wire_42(Q),
+      .TO_OUTPUT0(Q),
       .S(S)
     );
 

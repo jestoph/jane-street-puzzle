@@ -90,7 +90,7 @@ def find_wires(conns):
     print(f"Total number of wires: {len(all_wire_segments)=}")
     for wire_cluster in sorted(all_wire_segments): # Sort so wires are predictably named
         wire_id += 1
-        wire_name = f"Wire:{wire_id}"
+        wire_name = f"Wire_{wire_id}"
         for wire_segment in wire_cluster:
             segment_to_wire[wire_segment] = wire_name
 
@@ -352,7 +352,7 @@ def get_possible_inputs_and_outputs(name, subcircuit, port_to_wire, wire_to_port
                 print("ASDDING")
                 outputs.add(alias)
                 continue
-            if 'O' not in alias:
+            if alias in {"clk", "rst_n", "enable", "I"}:
                 print("ASDDING")
                 inputs.add(alias)
                 continue
@@ -443,101 +443,113 @@ if __name__ == '__main__':
     # for port, wire in port_to_wire.items():
     #     print(port, wire)
 
-    sr1_out = set(["Wire:1","Wire:31","Wire:12","Wire:14","Wire:13","Wire:23","Wire:10","Wire:9"])#  All the Q outputs
-    sr2_out = set(["Wire:19", "Wire:20", "Wire:24", "Wire:25", "Wire:26", "Wire:27", "Wire:28", "Wire:29"])
+    sr1_out = set(["Wire_1","Wire_31","Wire_12","Wire_14","Wire_13","Wire_23","Wire_10","Wire_9"])#  All the Q outputs
+    sr2_out = set(["Wire_19", "Wire_20", "Wire_24", "Wire_25", "Wire_26", "Wire_27", "Wire_28", "Wire_29"])
 
     warmup_io_map = {
         "comparitor": (
-            set(["Wire:101","Wire:111","Wire:96","success","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"]),
-            set(["Wire:33"])
+            set(["Wire_101","Wire_111","Wire_96","success","Wire_68","Wire_109","Wire_102","Wire_100","Wire_69"]),
+            set(["Wire_33"])
             ),
         "adder": (
             # Possibly wrong here
-            # set(["Wire:12","Wire:14","Wire:10","Wire:1","Wire:28","Wire:21","Wire:25","Wire:27","Wire:32","Wire:30","Wire:20","Wire:26","Wire:24","Wire:13","Wire:29","Wire:9"]),
+            # set(["Wire_12","Wire_14","Wire_10","Wire_1","Wire_28","Wire_21","Wire_25","Wire_27","Wire_32","Wire_30","Wire_20","Wire_26","Wire_24","Wire_13","Wire_29","Wire_9"]),
             sr1_out | sr2_out,
-            set(["Wire:101","Wire:111","Wire:96","success","Wire:68","Wire:109","Wire:102","Wire:100","Wire:69"])
+            set(["Wire_101","Wire_111","Wire_96","success","Wire_68","Wire_109","Wire_102","Wire_100","Wire_69"])
             ),
         "sr1": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:32"]), # RESET_B, CLK, EN, A
+            set(["Wire_11", "Wire_3", "Wire_8", "Wire_32"]), # RESET_B, CLK, EN, A
             sr1_out
             ),
         "sr2": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:30"]), # RESET_B, CLK, EN, B
+            set(["Wire_11", "Wire_3", "Wire_8", "Wire_30"]), # RESET_B, CLK, EN, B
             sr2_out
             ),
         "all": (
-            set(["Wire:11", "Wire:3", "Wire:8", "Wire:32", "Wire:30"]), # RESET_B, CLK, EN, A, B
-            set(["Wire:33"]), # Output is a bool
+            set(["Wire_11", "Wire_3", "Wire_8", "Wire_32", "Wire_30"]), # RESET_B, CLK, EN, A, B
+            set(["Wire_33"]), # Output is a bool
             )
     }
 
     puzzle_io_map = {
-        "puzzle": (
-            {"I","clk","enable","rst_n"},
-            {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","success"}
-            ),
         "part1": (
-            {"rst_n", "clk", "enable", "Wire:427", "Wire:394", "S"}, # rst:n, clk, enable, input0, input1
-            {"Wire:42" }),
+            {"rst_n", "clk", "enable", "Wire_427", "Wire_394"}, # rst:n, clk, enable, input0, input1
+            {"TO_OUTPUT[0]", "S"}),
         "part2": (
             {"rst_n", "clk", "S"}, # rst_n, clk, S
-            {"Wire:80", "Wire:129", "Wire:110", "Wire:79", "Wire:427"}),
+            {"Wire_80", "Wire_129", "Wire_110", "Wire_79", "Wire_427"}),
         "part3": (
-            {"rst_n", "clk", "S", "Wire:427"}, # rst_n, clk, S, A
-            {"Wire:71", "Wire:28", "Wire:315", "Wire:394", "Wire:309"}),
+            {"rst_n", "clk", "S", "Wire_427"}, # rst_n, clk, S, A
+            {"Wire_71", "Wire_28", "Wire_315", "Wire_394", "Wire_309"}),
         "part4": (
-            {
-                "rst_n", "clk", "I", "S",
-                "Wire:183", "Wire:188", "Wire:623", "Wire:647", "Wire:448", "Wire:631", "Wire:370", "Wire:288", "Wire:447", "Wire:624", "Wire:191", "Wire:448", "Wire:446", "Wire:649", "Wire:648"},
-            { "Wire:221", "Wire:490" }),
+            {"rst_n", "clk", "I", "S",
+                "Wire_183", "Wire_188", "Wire_623", "Wire_647", "Wire_448", "Wire_631", "Wire_370", "Wire_288", "Wire_447", "Wire_624", "Wire_191", "Wire_448", "Wire_446", "Wire_649", "Wire_648"},
+            { "TO_OUTPUT[2]", "TO_OUTPUT[1]" }),
         "part5": (
-            { "Wire:79", "Wire:110", "Wire:427", "Wire:80", "Wire:129", "S", "rst_n", "clk", "I" },
-            { "Wire:161", "Wire:448", "Wire:446", "Wire:447" }),
+            { "Wire_79", "Wire_110", "Wire_427", "Wire_80", "Wire_129", "S", "rst_n", "clk", "I" },
+            { "TO_OUTPUT[3]", "Wire_448", "Wire_446", "Wire_447" }),
         "part6": (
-            {'Wire:31', 'Wire:216', 'Wire:41', 'clk', 'Wire:165', 'rst_n', 'Wire:458', 'Wire:33', 'I', 'Wire:38', 'Wire:1', 'Wire:650', 'Wire:37', 'S', 'Wire:196'},
-            {'Wire:393', 'Wire:392', 'Wire:395', 'Wire:437'}),
+            {'Wire_31', 'Wire_216', 'Wire_41', 'clk', 'Wire_165', 'rst_n', 'Wire_458', 'Wire_33', 'I', 'Wire_38', 'Wire_1', 'Wire_650', 'Wire_37', 'S', 'Wire_196'},
+            {'Wire_393', 'Wire_392', 'TO_OUTPUT[5]', 'TO_OUTPUT[4]'}),
         "part7a": (
-            {'Wire:129', 'rst_n', 'I', 'Wire:79', 'S', 'Wire:80', 'clk', 'Wire:110'},
-            {'Wire:288', 'Wire:183', 'Wire:188'}),
+            {'Wire_129', 'rst_n', 'I', 'Wire_79', 'S', 'Wire_80', 'clk', 'Wire_110'},
+            {'Wire_288', 'Wire_183', 'Wire_188'}),
         "part7b": (
-            {'Wire:79', 'I', 'clk', 'rst_n', 'S', 'Wire:110', 'Wire:80', 'Wire:129'},
-            {'Wire:536', 'Wire:370', 'Wire:191', 'Wire:649', 'Wire:631', 'Wire:648', 'Wire:624', 'Wire:623'}),
+            {'Wire_79', 'I', 'clk', 'rst_n', 'S', 'Wire_110', 'Wire_80', 'Wire_129'},
+            {'Wire_536', 'Wire_370', 'Wire_191', 'Wire_649', 'Wire_631', 'Wire_648', 'Wire_624', 'Wire_623'}),
         "part7c": (
-            {'S', 'I', 'Wire:129', 'Wire:80', 'clk', 'rst_n', 'Wire:110', 'Wire:79'},
-            {'Wire:647'}),
+            {'S', 'I', 'Wire_129', 'Wire_80', 'clk', 'rst_n', 'Wire_110', 'Wire_79'},
+            {'Wire_647'}),
         "part8": (
-            {'rst_n', 'I', 'S', 'Wire:44', 'clk', 'Wire:58', 'Wire:46', 'Wire:66'},
-            {'Wire:31', 'Wire:37', 'Wire:650', 'Wire:165', 'Wire:458', 'Wire:196', 'Wire:33', 'Wire:38', 'Wire:1', 'Wire:216', 'Wire:41'}),
+            {'rst_n', 'I', 'S', 'clk', "BLOB[0]", "BLOB[1]", "BLOB[2]", "BLOB[3]" },
+            {'Wire_31', 'Wire_37', 'Wire_650', 'Wire_165', 'Wire_458', 'Wire_196', 'Wire_33', 'Wire_38', 'Wire_1', 'Wire_216', 'Wire_41'}),
         "part9a": (
-            { "clk", "success", "Wire:509", "Wire:507", "Wire:460", "Wire:138", "Wire:483", "Wire:509", "Wire:510", "Wire:3", "Wire:495", "Wire:393", "Wire:494", "Wire:493", "Wire:392" },
+            { "clk", "success", "Wire_509", "Wire_507", "Wire_460", "Wire_138", "Wire_483", "Wire_509", "Wire_510", "Wire_3", "Wire_495", "Wire_393", "Wire_494", "Wire_493", "Wire_392" },
             { "O[0]", "O[1]", "O[2]", "O[3]", "O[4]", "O[5]", "O[6]", "O[7]",
-             "Wire:463", "OB4", "OB2", "Wire:462", "Wire:461", "OB3", "OB1", "Wire:459" }),
+              "OB[1]", "OB[2]", "OB[3]", "OB[4]",
+              "Wire_461", "Wire_462", "Wire_463", "Wire_459" }),
         "part9b": (
-            {'Wire:397', 'Wire:67', 'Wire:50', 'Wire:63', 'Wire:101', 'Wire:51', 'OB4', 'Wire:59', 'Wire:462', 'Wire:467', 'Wire:463', 'Wire:83', 'Wire:461', 'Wire:69', 'Wire:396', 'Wire:52', 'S', 'OB1', 'Wire:60', 'Wire:65', 'Wire:47', 'Wire:466', 'Wire:55', 'Wire:68', 'Wire:465', 'Wire:70', 'Wire:62', 'Wire:103', 'I', 'clk', 'Wire:56', 'Wire:82', 'Wire:48', 'OB2', 'Wire:57', 'Wire:398', 'Wire:54', 'Wire:45', 'Wire:61', 'OB3', 'Wire:459', 'rst_n', 'Wire:399', 'Wire:49'},
-            {'Wire:510', 'Wire:483', 'Wire:509', 'Wire:460', 'Wire:507', 'Wire:495', 'Wire:494', 'Wire:493'}),
+            {'Wire_397', 'Wire_67', 'Wire_50', 'Wire_63', 'Wire_101', 'Wire_51', 'OB[4]', 'Wire_59', 'Wire_462', 'Wire_467', 'Wire_463', 'Wire_83', 'Wire_461', 'Wire_69', 'Wire_396', 'Wire_52', 'S', 'OB[1]', 'Wire_60', 'Wire_65', 'Wire_47', 'Wire_466', 'Wire_55', 'Wire_68', 'Wire_465', 'Wire_70', 'Wire_62', 'Wire_103', 'I', 'clk', 'Wire_56', 'Wire_82', 'Wire_48', 'OB[2]', 'Wire_57', 'Wire_398', 'Wire_54', 'Wire_45', 'Wire_61', 'OB[3]', 'Wire_459', 'rst_n', 'Wire_399', 'Wire_49'},
+            {'Wire_510', 'Wire_483', 'Wire_509', 'Wire_460', 'Wire_507', 'Wire_495', 'Wire_494', 'Wire_493'}),
         "part9c": (
-              { "OB1", "OB2", "OB3", "OB4" },
-              {'Wire:59', 'Wire:103', 'Wire:398', 'Wire:54', 'Wire:57', 'Wire:68', 'Wire:56', 'Wire:465', 'Wire:399', 'Wire:52', 'Wire:55', 'Wire:70', 'Wire:60', 'Wire:467', 'Wire:69', 'Wire:466'}),
+            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            {'Wire_59', 'Wire_103', 'Wire_398', 'Wire_54', 'Wire_57', 'Wire_68', 'Wire_56', 'Wire_465', 'Wire_399', 'Wire_52', 'Wire_55', 'Wire_70', 'Wire_60', 'Wire_467', 'Wire_69', 'Wire_466'}),
         "part9d": (
-              { "OB1", "OB2", "OB3", "OB4" },
-              { "Wire:62", "Wire:101", "Wire:83", "Wire:82", "Wire:65", "Wire:61", "Wire:67", "Wire:63" }),
+            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            { "Wire_62", "Wire_101", "Wire_83", "Wire_82", "Wire_65", "Wire_61", "Wire_67", "Wire_63" }),
         "part9e": (
-              { "OB1", "OB2", "OB3", "OB4" },
-              { "Wire:396", "Wire:48", "Wire:49", "Wire:45", "Wire:51", "Wire:397", "Wire:47", "Wire:50" }),
+            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            { "Wire_396", "Wire_48", "Wire_49", "Wire_45", "Wire_51", "Wire_397", "Wire_47", "Wire_50" }),
         "output_section": (
-              { "Wire:42", "Wire:437", "Wire:490", "Wire:161", "Wire:221", "Wire:395", "rst_n", "clk"},
-              { "Wire:138", "Wire:3", "success" }),
+            { "TO_OUTPUT[0]", "TO_OUTPUT[4]", "TO_OUTPUT[1]", "TO_OUTPUT[3]", "TO_OUTPUT[2]", "TO_OUTPUT[5]", "rst_n", "clk"},
+            { "Wire_138", "Wire_3", "success" }),
         "blob": (
-                {'Wire:110', 'Wire:309', 'Wire:71', 'Wire:129', 'Wire:79', 'Wire:315', 'Wire:80', 'Wire:28'},
-                {"Wire:44", "Wire:58", "Wire:66", "Wire:46"}),
+            {'Wire_110', 'Wire_309', 'Wire_71', 'Wire_129', 'Wire_79', 'Wire_315', 'Wire_80', 'Wire_28'},
+            { "BLOB[0]", "BLOB[1]", "BLOB[2]", "BLOB[3]" }),
+        "puzzle": (
+            {"I","clk","enable","rst_n"},
+            {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","success"}),
     }
 
     puzzle_extra_aliases = {
-        "Wire:8": "S",
-        "Wire:95": "OB1",
-        "Wire:99": "OB2",
-        "Wire:100": "OB3",
-        "Wire:84": "OB4",
+        "Wire_8": "S",
+        # This is the wierd 'output bus' on part9 that does ... something
+        "Wire_95": "OB[1]",
+        "Wire_99": "OB[2]",
+        "Wire_100":"OB[3]",
+        "Wire_84": "OB[4]",
+        # The blob only generates a single output
+        "Wire_44": "BLOB[0]",
+        "Wire_46": "BLOB[1]",
+        "Wire_58": "BLOB[2]",
+        "Wire_66": "BLOB[3]",
+        "Wire_42":  "TO_OUTPUT[0]",
+        "Wire_490": "TO_OUTPUT[1]",
+        "Wire_221": "TO_OUTPUT[2]",
+        "Wire_161": "TO_OUTPUT[3]",
+        "Wire_437": "TO_OUTPUT[4]",
+        "Wire_395": "TO_OUTPUT[5]",
+
     }
 
     if sys.argv[1] == 'warmup':
