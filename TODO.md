@@ -146,6 +146,9 @@
  [ ] outputs/part8.json
  [ ] outputs/part9b.json
 
+### Understand top-down information of circuit
+[ ] Rename appropriate areas to be busses instead
+
 ### Run Simulations
 [x] Output section - Got pattern `5'b11111` as the 'success' pattern, other patterns with output A and B though.
     Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
@@ -162,11 +165,11 @@
      [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
  [x] outputs/output_section.v
 [ ] Write testbenches for the hard ones:
+ [ ] outputs/part7c.v -> Actually should be easy
  [ ] outputs/part5.v
  [ ] outputs/part6.v
  [ ] outputs/part7a.v
  [ ] outputs/part7b.v
- [ ] outputs/part7c.v
  [ ] outputs/part8.v  <- Probably too hard
  [ ] outputs/part9b.v <- Probably very hard
 [ ] Draw out the circuit for the easy candidates:
@@ -188,8 +191,10 @@ part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:9
 
 
 ### Quality-of-life
-[ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying
-[ ] I've added warning for dangling wires. Can I promote them to error?
+[x] Move wires to be `Wire_<n>`
+[ ] Move ports etc to be `<type>_<n>.<pin>`. The colon is annoying
+[x] I've added warning for dangling wires. Can I promote them to error? Yep just checking the stderr
+[ ] Create
 ```
 "Wire_9", // Wire_9 is the 'S' signal for the Muxes, which is like the 'en' for the thing
 ```

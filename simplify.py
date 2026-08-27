@@ -472,60 +472,68 @@ if __name__ == '__main__':
     }
 
     puzzle_io_map = {
+            # TODO: This is all computed now, not really needed
         "part1": (
             {"rst_n", "clk", "enable", "Wire_427", "Wire_394"}, # rst:n, clk, enable, input0, input1
             {"TO_OUTPUT[0]", "S"}),
         "part2": (
             {"rst_n", "clk", "S"}, # rst_n, clk, S
-            {"Wire_80", "Wire_129", "Wire_110", "Wire_79", "Wire_427"}),
+            {"FROM_PART2[3]", "FROM_PART2[1]", "FROM_PART2[0]", "FROM_PART2[2]", "Wire_427"}),
         "part3": (
             {"rst_n", "clk", "S", "Wire_427"}, # rst_n, clk, S, A
-            {"Wire_71", "Wire_28", "Wire_315", "Wire_394", "Wire_309"}),
+            {"FROM_PART3[3]", "FROM_PART3[0]", "FROM_PART3[2]", "Wire_394", "FROM_PART3[1]"}),
         "part4": (
             {"rst_n", "clk", "I", "S",
-                "Wire_183", "Wire_188", "Wire_623", "Wire_647", "Wire_448", "Wire_631", "Wire_370", "Wire_288", "Wire_447", "Wire_624", "Wire_191", "Wire_448", "Wire_446", "Wire_649", "Wire_648"},
+                "FROM_PART7A[0]", "FROM_PART7A[1]", "FROM_PART7A[2]", "Wire_623", "Wire_647", "FROM_PART5[0]", "Wire_631", "Wire_370", "FROM_PART5[2]", "Wire_624", "Wire_191", "FROM_PART5[1]", "Wire_649", "Wire_648"},
             { "TO_OUTPUT[2]", "TO_OUTPUT[1]" }),
         "part5": (
-            { "Wire_79", "Wire_110", "Wire_427", "Wire_80", "Wire_129", "S", "rst_n", "clk", "I" },
-            { "TO_OUTPUT[3]", "Wire_448", "Wire_446", "Wire_447" }),
+            { "FROM_PART2[2]", "FROM_PART2[0]", "Wire_427", "FROM_PART2[3]", "FROM_PART2[1]", "S", "rst_n", "clk", "I" },
+            { "TO_OUTPUT[3]", "FROM_PART5[0]", "FROM_PART5[1]", "FROM_PART5[2]" }),
         "part6": (
-            {'Wire_31', 'Wire_216', 'Wire_41', 'clk', 'Wire_165', 'rst_n', 'Wire_458', 'Wire_33', 'I', 'Wire_38', 'Wire_1', 'Wire_650', 'Wire_37', 'S', 'Wire_196'},
+            {'I', 'clk', 'rst_n', 'S', 'FROM_PART8[6]', 'FROM_PART8[7]', 'FROM_PART8[2]', 'FROM_PART8[9]', 'FROM_PART8[1]', 'FROM_PART8[5]', 'FROM_PART8[3]', 'FROM_PART8[10]', 'FROM_PART8[0]', 'FROM_PART8[4]', 'FROM_PART8[8]'},
             {'Wire_393', 'Wire_392', 'TO_OUTPUT[5]', 'TO_OUTPUT[4]'}),
         "part7a": (
-            {'Wire_129', 'rst_n', 'I', 'Wire_79', 'S', 'Wire_80', 'clk', 'Wire_110'},
-            {'Wire_288', 'Wire_183', 'Wire_188'}),
+            {'clk', 'I', 'rst_n', 'S', 'FROM_PART2[1]', 'FROM_PART2[2]', 'FROM_PART2[3]', 'FROM_PART2[0]'},
+            {'FROM_PART7A[2]', 'FROM_PART7A[0]', 'FROM_PART7A[1]'}),
         "part7b": (
-            {'Wire_79', 'I', 'clk', 'rst_n', 'S', 'Wire_110', 'Wire_80', 'Wire_129'},
+            {'FROM_PART2[2]', 'I', 'clk', 'rst_n', 'S', 'FROM_PART2[0]', 'FROM_PART2[3]', 'FROM_PART2[1]'},
             {'Wire_536', 'Wire_370', 'Wire_191', 'Wire_649', 'Wire_631', 'Wire_648', 'Wire_624', 'Wire_623'}),
         "part7c": (
-            {'S', 'I', 'Wire_129', 'Wire_80', 'clk', 'rst_n', 'Wire_110', 'Wire_79'},
+            {'S', 'I', 'FROM_PART2[1]', 'FROM_PART2[3]', 'clk', 'rst_n', 'FROM_PART2[0]', 'FROM_PART2[2]'},
             {'Wire_647'}),
         "part8": (
-            {'rst_n', 'I', 'S', 'clk', "BLOB[0]", "BLOB[1]", "BLOB[2]", "BLOB[3]" },
-            {'Wire_31', 'Wire_37', 'Wire_650', 'Wire_165', 'Wire_458', 'Wire_196', 'Wire_33', 'Wire_38', 'Wire_1', 'Wire_216', 'Wire_41'}),
+            {'rst_n', 'I', 'S', 'clk', "FROM_BLOB[0]", "FROM_BLOB[1]", "FROM_BLOB[2]", "FROM_BLOB[3]" },
+            {'FROM_PART8[6]', 'FROM_PART8[4]', 'FROM_PART8[0]', 'FROM_PART8[9]', 'FROM_PART8[1]', 'FROM_PART8[8]', 'FROM_PART8[5]', 'FROM_PART8[3]', 'FROM_PART8[10]', 'FROM_PART8[7]', 'FROM_PART8[2]'}),
         "part9a": (
             { "clk", "success", "Wire_509", "Wire_507", "Wire_460", "Wire_138", "Wire_483", "Wire_509", "Wire_510", "Wire_3", "Wire_495", "Wire_393", "Wire_494", "Wire_493", "Wire_392" },
             { "O[0]", "O[1]", "O[2]", "O[3]", "O[4]", "O[5]", "O[6]", "O[7]",
               "OB[1]", "OB[2]", "OB[3]", "OB[4]",
               "Wire_461", "Wire_462", "Wire_463", "Wire_459" }),
         "part9b": (
-            {'Wire_397', 'Wire_67', 'Wire_50', 'Wire_63', 'Wire_101', 'Wire_51', 'OB[4]', 'Wire_59', 'Wire_462', 'Wire_467', 'Wire_463', 'Wire_83', 'Wire_461', 'Wire_69', 'Wire_396', 'Wire_52', 'S', 'OB[1]', 'Wire_60', 'Wire_65', 'Wire_47', 'Wire_466', 'Wire_55', 'Wire_68', 'Wire_465', 'Wire_70', 'Wire_62', 'Wire_103', 'I', 'clk', 'Wire_56', 'Wire_82', 'Wire_48', 'OB[2]', 'Wire_57', 'Wire_398', 'Wire_54', 'Wire_45', 'Wire_61', 'OB[3]', 'Wire_459', 'rst_n', 'Wire_399', 'Wire_49'},
+            {
+                'clk', 'I', 'rst_n', 'S', 'Wire_459', 'Wire_461', 'Wire_462', 'Wire_463',
+                'FROM_PART9C[0]', 'FROM_PART9C[1]', 'FROM_PART9C[10]', 'FROM_PART9C[11]', 'FROM_PART9C[12]', 'FROM_PART9C[13]', 'FROM_PART9C[14]', 'FROM_PART9C[15]',
+                'FROM_PART9C[2]', 'FROM_PART9C[3]', 'FROM_PART9C[4]', 'FROM_PART9C[5]', 'FROM_PART9C[6]', 'FROM_PART9C[7]', 'FROM_PART9C[8]', 'FROM_PART9C[9]',
+                'FROM_PART9D[0]', 'FROM_PART9D[1]', 'FROM_PART9D[2]', 'FROM_PART9D[3]', 'FROM_PART9D[4]', 'FROM_PART9D[5]', 'FROM_PART9D[6]', 'FROM_PART9D[7]',
+                'FROM_PART9E[0]', 'FROM_PART9E[1]', 'FROM_PART9E[2]', 'FROM_PART9E[3]', 'FROM_PART9E[4]', 'FROM_PART9E[5]', 'FROM_PART9E[6]', 'FROM_PART9E[7]',
+                'OB[1]', 'OB[2]', 'OB[3]', 'OB[4]',
+             },
             {'Wire_510', 'Wire_483', 'Wire_509', 'Wire_460', 'Wire_507', 'Wire_495', 'Wire_494', 'Wire_493'}),
         "part9c": (
             { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
-            {'Wire_59', 'Wire_103', 'Wire_398', 'Wire_54', 'Wire_57', 'Wire_68', 'Wire_56', 'Wire_465', 'Wire_399', 'Wire_52', 'Wire_55', 'Wire_70', 'Wire_60', 'Wire_467', 'Wire_69', 'Wire_466'}),
+            {'FROM_PART9C[15]', 'FROM_PART9C[14]', 'FROM_PART9C[13]', 'FROM_PART9C[12]', 'FROM_PART9C[11]', 'FROM_PART9C[10]', 'FROM_PART9C[9]', 'FROM_PART9C[8]', 'FROM_PART9C[7]', 'FROM_PART9C[6]', 'FROM_PART9C[5]', 'FROM_PART9C[4]', 'FROM_PART9C[3]', 'FROM_PART9C[2]', 'FROM_PART9C[1]', 'FROM_PART9C[0]'}),
         "part9d": (
             { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
-            { "Wire_62", "Wire_101", "Wire_83", "Wire_82", "Wire_65", "Wire_61", "Wire_67", "Wire_63" }),
+            { "FROM_PART9D[7]", "FROM_PART9D[6]", "FROM_PART9D[5]", "FROM_PART9D[4]", "FROM_PART9D[3]", "FROM_PART9D[2]", "FROM_PART9D[1]", "FROM_PART9D[0]" }),
         "part9e": (
             { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
-            { "Wire_396", "Wire_48", "Wire_49", "Wire_45", "Wire_51", "Wire_397", "Wire_47", "Wire_50" }),
+            { "FROM_PART9E[7]", "FROM_PART9E[3]", "FROM_PART9E[2]", "FROM_PART9E[5]", "FROM_PART9E[0]", "FROM_PART9E[6]", "FROM_PART9E[4]", "FROM_PART9E[1]" }),
         "output_section": (
             { "TO_OUTPUT[0]", "TO_OUTPUT[4]", "TO_OUTPUT[1]", "TO_OUTPUT[3]", "TO_OUTPUT[2]", "TO_OUTPUT[5]", "rst_n", "clk"},
             { "Wire_138", "Wire_3", "success" }),
         "blob": (
-            {'Wire_110', 'Wire_309', 'Wire_71', 'Wire_129', 'Wire_79', 'Wire_315', 'Wire_80', 'Wire_28'},
-            { "BLOB[0]", "BLOB[1]", "BLOB[2]", "BLOB[3]" }),
+            {'FROM_PART2[0]', 'FROM_PART3[1]', 'FROM_PART3[3]', 'FROM_PART2[1]', 'FROM_PART2[2]', 'FROM_PART3[2]', 'FROM_PART2[3]', 'FROM_PART3[0]'},
+            { "FROM_BLOB[0]", "FROM_BLOB[1]", "FROM_BLOB[2]", "FROM_BLOB[3]" }),
         "puzzle": (
             {"I","clk","enable","rst_n"},
             {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","success"}),
@@ -539,16 +547,85 @@ if __name__ == '__main__':
         "Wire_100":"OB[3]",
         "Wire_84": "OB[4]",
         # The blob only generates a single output
-        "Wire_44": "BLOB[0]",
-        "Wire_46": "BLOB[1]",
-        "Wire_58": "BLOB[2]",
-        "Wire_66": "BLOB[3]",
+        "Wire_44": "FROM_BLOB[0]",
+        "Wire_46": "FROM_BLOB[1]",
+        "Wire_58": "FROM_BLOB[2]",
+        "Wire_66": "FROM_BLOB[3]",
         "Wire_42":  "TO_OUTPUT[0]",
         "Wire_490": "TO_OUTPUT[1]",
         "Wire_221": "TO_OUTPUT[2]",
         "Wire_161": "TO_OUTPUT[3]",
         "Wire_437": "TO_OUTPUT[4]",
         "Wire_395": "TO_OUTPUT[5]",
+        'Wire_183': "FROM_PART7A[0]",
+        'Wire_188': "FROM_PART7A[1]",
+        'Wire_288': "FROM_PART7A[2]",
+
+        "Wire_110": "FROM_PART2[0]",
+        "Wire_129": "FROM_PART2[1]",
+        "Wire_79":  "FROM_PART2[2]",
+        "Wire_80":  "FROM_PART2[3]",
+
+        "Wire_448": "FROM_PART5[0]",
+        "Wire_446": "FROM_PART5[1]",
+        "Wire_447": "FROM_PART5[2]",
+
+        "Wire_28" : "FROM_PART3[0]",
+        "Wire_309": "FROM_PART3[1]",
+        "Wire_315": "FROM_PART3[2]",
+        "Wire_71" : "FROM_PART3[3]",
+
+        'Wire_1'  : "FROM_PART8[10]",
+        'Wire_165': "FROM_PART8[9]",
+        'Wire_196': "FROM_PART8[8]",
+        'Wire_216': "FROM_PART8[7]",
+        'Wire_31' : "FROM_PART8[6]",
+        'Wire_33' : "FROM_PART8[5]",
+        'Wire_37' : "FROM_PART8[4]",
+        'Wire_38' : "FROM_PART8[3]",
+        'Wire_41' : "FROM_PART8[2]",
+        'Wire_458': "FROM_PART8[1]",
+        'Wire_650': "FROM_PART8[0]",
+
+        "Wire_396": "FROM_PART9E[7]",
+        "Wire_397": "FROM_PART9E[6]",
+        "Wire_45" : "FROM_PART9E[5]",
+        "Wire_47" : "FROM_PART9E[4]",
+        "Wire_48" : "FROM_PART9E[3]",
+        "Wire_49" : "FROM_PART9E[2]",
+        "Wire_50" : "FROM_PART9E[1]",
+        "Wire_51" : "FROM_PART9E[0]",
+
+
+        "Wire_62" : "FROM_PART9D[7]",
+        "Wire_101": "FROM_PART9D[6]",
+        "Wire_83" : "FROM_PART9D[5]",
+        "Wire_82" : "FROM_PART9D[4]",
+        "Wire_65" : "FROM_PART9D[3]",
+        "Wire_61" : "FROM_PART9D[2]",
+        "Wire_67" : "FROM_PART9D[1]",
+        "Wire_63" : "FROM_PART9D[0]",
+
+
+        'Wire_103': "FROM_PART9C[15]",
+        'Wire_398': "FROM_PART9C[14]",
+        'Wire_399': "FROM_PART9C[13]",
+        'Wire_465': "FROM_PART9C[12]",
+        'Wire_466': "FROM_PART9C[11]",
+        'Wire_467': "FROM_PART9C[10]",
+        'Wire_52' : "FROM_PART9C[9]",
+        'Wire_54' : "FROM_PART9C[8]",
+        'Wire_55' : "FROM_PART9C[7]",
+        'Wire_56' : "FROM_PART9C[6]",
+        'Wire_57' : "FROM_PART9C[5]",
+        'Wire_59' : "FROM_PART9C[4]",
+        'Wire_60' : "FROM_PART9C[3]",
+        'Wire_68' : "FROM_PART9C[2]",
+        'Wire_69' : "FROM_PART9C[1]",
+        'Wire_70' : "FROM_PART9C[0]",
+
+
+
 
     }
 
