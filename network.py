@@ -10,6 +10,12 @@ We build up the network like this:
     3. Flatten the design in a custom way so that we can also attach the reference id
 """
 
+newlabel = "A1" # No change to output, but validation succeeds
+# newlabel = "Y" # Leads to two outputs driving the same wire
+# newlabel = "A2" # Two outputs driving the same wire
+# newlabel = "A3" # Two outputs driving the same wire
+# newlabel = "B1" # Two outputs driving the same wire
+
 def write_files(library, cell, name):
     filename = f"{name}.svg"
     cell.write_svg(filename)
@@ -85,6 +91,10 @@ def filter_pads(library):
     for cell in library.cells:
 
         name = cell.name
+
+        if "a31oi" in name:
+            l = gdstk.Label(newlabel, (3.0, 1.1), layer=67, magnification=0.1)
+            cell.add(l)
 
         collected_labels = []
         for label in cell.labels:

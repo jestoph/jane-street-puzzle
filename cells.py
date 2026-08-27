@@ -2,6 +2,8 @@ import gdstk
 import sys
 from common import labels_i_care_about, increase_view, IO_PORTS
 
+newlabel = "UNDRIVEN WIRE"
+
 def write_files(cell, name):
     filename = f"{name}.svg"
     cell.write_svg(filename)
@@ -30,6 +32,10 @@ def cells_pads(filename):
 
         name = cell.name
         cell.filter([(67, 20)], remove=False, polygons=True, paths=True, labels=False)
+        # Fix for a bug?
+        if "a31oi" in cell.name:
+            l = gdstk.Label(newlabel, (3.0, 1.1), magnification=0.1)
+            cell.add(l)
         write_files(cell, f"outputs/{name}.li")
 
 def cells_io(filename):
@@ -38,12 +44,18 @@ def cells_io(filename):
 
     for cell in library.cells:
 
+
         name = cell.name
         cell.filter([(67, 20)], remove=False, polygons=True, paths=True, labels=False)
 
+        # Fix for a bug?
+        if "a31oi" in name:
+            l = gdstk.Label(newlabel, (3.0, 1.1), magnification=0.1)
+            cell.add(l)
+
         collected_labels = []
         for label in cell.labels:
-            if label.text not in labels_i_care_about:
+            if label.text not in labels_i_care_about | {newlabel}:
                 cell.remove(label)
             else:
                 collected_labels.append(label)
@@ -104,12 +116,14 @@ def check_ports(cell):
         seen.add(pname)
         assert cname in IO_PORTS, f"Don't have io ports for {cname}"
         if pname != 'DIODE':
-            # For some reason diodes don't count?
-            assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
+            if 'a31oi' not in cname:
+                # For some reason diodes don't count?
+                assert pname in all_pins, f"{pname} not in {all_pins} for {cname}"
 
     if 'DIODE' not in seen:
         # For some reason diodes don't count?
-        assert seen == all_pins, f"Missing some pins {seen=} {all_pins=} {seen^all_pins}"
+        if 'a31oi' not in cell.name:
+            assert seen == all_pins, f"Missing some pins {seen=} {all_pins=} {seen^all_pins}"
 
 if __name__ == '__main__':
     if sys.argv[1] == 'warmup':

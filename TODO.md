@@ -147,28 +147,42 @@
 ### Run Simulations
 [x] Output section - Got pattern `5'b11111` as the 'success' pattern, other patterns with output A and B though.
     Seems if you latch the B signal you'll never get a success though, and it latches on half the patterns
-[ ] Write test benches for:
+[ ] Write test benches for easy ones:
  [x] outputs/blob.v - was easy as doesn't contain any flipflops so is fully io determined
  [x] outputs/part1.v -> Latches in when the two input wires are both high
  [x] outputs/part2.v -> Some sort of lfsr or something? It cycles through 12 values
  [x] outputs/part3.v -> Another lfsr? This time 11 values.
  [x] outputs/part4.v -> Shift register with an 'enable' via muxes on Wire_9
+ [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
+ [x] outputs/part9c.v
+ [x] outputs/part9d.v -> Easy
+ [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
+ [x] outputs/output_section.v
+[ ] Write testbenches for the hard ones:
  [ ] outputs/part5.v
  [ ] outputs/part6.v
  [ ] outputs/part7a.v
  [ ] outputs/part7b.v
  [ ] outputs/part7c.v
  [ ] outputs/part8.v  <- Probably too hard
- [x] outputs/part9a.v -> Got this working but then overwrote the file and now it's not behaving that same!
  [ ] outputs/part9b.v <- Probably very hard
- [x] outputs/part9c.v
- [x] outputs/part9d.v -> Easy
- [x] outputs/part9e.v <- Should have been easy but there's an undriven wire! `a31oi:A1 <-> a311o:A1`
- [x] outputs/output_section.v
-[ ] Draw out the circuit for outputs/part4.v
+[ ] Draw out the circuit for the easy candidates:
+ [ ] outputs/part4.v
+ [ ] outputs/part2.v
 [ ] Draw out inter-section maps - it's confusing at the moment but maybe there's structure?
 
 part9c, part9d, part9e all read the same 4 input wires - Wire:100 Wire:84 Wire:95 Wire:99
+
+### Working on undriven wire
+[x] Add ability to set the pin to a label
+[x] Run sim with random pin set to
+ [x] A1 -> 'Works' as in validation succeeds
+ [x] A2 -> Results in wire driven by two outputs
+ [x] A3 -> Results in wire driven by two outputs
+ [x] B1 -> Results in wire driven by two outputs
+ [x] Y -> Results in wire driven by two outputs
+[ ] Should I add a validation step to find any other mcon elements connected to random pins?
+
 
 ### Quality-of-life
 [ ] Move wires and ports etc to be `Wire_<n>` and `<type>_<n>.<pin>`. The colon is annoying

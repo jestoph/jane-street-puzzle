@@ -563,3 +563,15 @@ The circuit is a lot more complicated, so I'm going to start working backwards t
 'success' output.
 
 The input to the last stage has 11 wires - does that correspond to the 121 clocks in the waveform file?
+
+### Is there a bug?
+I found in one section of my simulation that I had an undriven wire. That's a bit strange really, and I assumed it
+was a bug in my pin-detection logic. However by visual inspection I can see that my code is correctly picking up
+a wire that's only connected to two input pins.
+
+Even stranger, the circuit has a connection on a pin that isn't even an input or an output! Maybe there's a bug here
+and it should be connected to one of the inputs?
+
+Docs seem to agree `https://sky130-unofficial.readthedocs.io/en/latest/_images/sky130_fd_sc_hd__a31oi_2.svg`
+
+Anyway, I reported it, we'll see if they get back to me
