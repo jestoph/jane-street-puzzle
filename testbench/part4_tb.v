@@ -9,13 +9,14 @@ module part4_tb;
     reg rst_n;
     reg clk;
     reg S;
-    reg [2:0] A;
-    reg [2:0] B;
-    reg [7:0] C;
+    reg [2:0] FROM_PART5;
+    reg [2:0] FROM_PART7A;
+    reg [6:0] FROM_PART7B;
+    reg FROM_PART7C;
 
     // Outputs
-    wire O1;
-    wire O2;
+    wire TO_OUTPUT1;
+    wire TO_OUTPUT2;
 
     integer i; // 32 bit
     integer j; // 32 bit
@@ -27,25 +28,27 @@ module part4_tb;
       .clk(clk),
       .S(S),
 
-      .Wire_191(C[7]),
-      .Wire_370(C[6]),
-      .Wire_623(C[5]),
-      .Wire_624(C[4]),
-      .Wire_631(C[3]),
-      .Wire_647(C[2]),
-      .Wire_648(C[1]),
-      .Wire_649(C[0]),
+      .FROM_PART7B7(FROM_PART7B[6]),
+      .FROM_PART7B6(FROM_PART7B[5]),
+      .FROM_PART7B5(FROM_PART7B[4]),
+      .FROM_PART7B4(FROM_PART7B[3]),
+      .FROM_PART7B3(FROM_PART7B[2]),
+      .FROM_PART7B2(FROM_PART7B[1]),
+      .FROM_PART7B1(FROM_PART7B[0]),
 
-      .FROM_PART52(A[2]),
-      .FROM_PART51(A[1]),
-      .FROM_PART50(A[0]),
+      .FROM_PART7C0(FROM_PART7C),
 
-      .FROM_PART7A2(B[2]),
-      .FROM_PART7A1(B[1]),
-      .FROM_PART7A0(B[0]),
+      .FROM_PART52(FROM_PART5[2]),
+      .FROM_PART51(FROM_PART5[1]),
+      .FROM_PART50(FROM_PART5[0]),
 
-      .TO_OUTPUT1(O1),
-      .TO_OUTPUT2(O2)
+      .FROM_PART7A2(FROM_PART7A[2]),
+      .FROM_PART7A1(FROM_PART7A[1]),
+      .FROM_PART7A0(FROM_PART7A[0]),
+
+      // outputs
+      .TO_OUTPUT1(TO_OUTPUT1),
+      .TO_OUTPUT2(TO_OUTPUT2)
     );
 
     initial begin
@@ -63,41 +66,22 @@ module part4_tb;
 
         /* When A is zero, the output should be B */
         clk = 0;
-        S = 0;
-        I = 0;
+        S = 1'bx; //1;      // S seems to have no impact?
+        I = 1'bx;
         rst_n = 0;
-        #5000; clk = ~clk;
+
         #5000; rst_n = 1;
 
-        for( j = 0; j < 14'b10000000000000; j = j + 1)
-        begin
-          #5000; rst_n = 0;
-          #5000; rst_n = 1;
+        FROM_PART5  = 3'bx;
+        FROM_PART7A = 7;
+        FROM_PART7B = 8'h7f;
+        FROM_PART7C = 1;
 
-          A = j[2:0];
-          B = j[5:3];
-          C = j[13:6];
+        #5000;
 
-          for(i = 0; i < 130 ; i = i + 1)
-          begin
-            #5000; clk = ~clk;
-          end
-          S = 1;
-          for(i = 0; i < 130 ; i = i + 1)
-          begin
-            #5000; clk = ~clk;
-          end
-          I = 1;
-          for(i = 0; i < 130 ; i = i + 1)
-          begin
-            #5000; clk = ~clk;
-          end
-          S = 0;
-          for(i = 0; i < 130 ; i = i + 1)
-          begin
-            #5000; clk = ~clk;
-          end
-        end
+        `assert(TO_OUTPUT1, 1, "Should be high with this pattern")
+        `assert(TO_OUTPUT2, 1, "Should be high with this pattern")
+
 
 
         $finish; // End the simulation

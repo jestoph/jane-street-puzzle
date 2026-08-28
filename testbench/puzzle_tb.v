@@ -29,7 +29,7 @@ module puzzle_tb;
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
 
-    puzzle puzzle_1 (
+    puzzle my_thing (
 
       .I(I),
       .clk(clk),
@@ -79,7 +79,6 @@ module puzzle_tb;
         */
 
 
-        #0
         I = 1;
         enable = 0;
         rst_n = 0;

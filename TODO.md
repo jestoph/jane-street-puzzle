@@ -189,10 +189,10 @@
 
 ## NEXT as of Thu 27 Aug 2026
 [ ] Write testbenches for the hard ones - roughly in ascending order of difficulty:
- [ ] outputs/part7c.v -> Actually should be easy
- [ ] outputs/part5.v
+ [x] outputs/part7c.v -> Actually not too complicated. It seems to go high on the second A&B input, then low on the third?
+ [x] outputs/part5.v
+ [x] outputs/part6.v
  [ ] outputs/part7a.v
- [ ] outputs/part6.v
  [ ] outputs/part7b.v
  [ ] outputs/part8.v  <- Probably too hard
  [ ] outputs/part9b.v <- Probably very hard
@@ -202,9 +202,28 @@
 [ ] Test new logical divisions -
  [x] testbench/part123_tb.v - Could act like a signal generator, with a single output bit?
       It's also like a timer! That's why you have 121 clocks to get your password in
-      Now down to only 2^121 bits, less than the numbers of atoms in the universe!
+      Now down to only 2^121 bits, less than the numbers of atoms in the universe! Also it disables
+      the rest by setting the S to low after 121 clocks.
  [ ] Part 7a,b,c is relatively small
  [ ] Part 9a,b,c,d,e 'should' be easy enough to get an output from. It would at least prove that things aren't
      broken - because when I simulate the whole circuit I get no output.
  [ ] Part 5,7,4 is self contained and has 3 output bits
  [ ] Part Blob,8,6 has two output bits
+
+## How to make the 6 bits go high?
+[x] One bit from Part 1 - two inputs and 'enable' is high, and/or after 121 clock cycles after a reset
+[x] Two bits from Part 4 - Got it, a certain pattern from part 7a,b,c and the rest literally doesn't matter.
+[x] One bit from Part 5 - Got it - when S&I and bit 5 of FROM_PART2 is low.
+[x] Two bits from part 6 - Got it - input=0x7ff, S&I, and 22 clocks
+[ ] Make minimal examples
+
+testbench/part4_tb.v
+testbench/part5_tb.v
+testbench/part6_tb.v
+testbench/part7c_tb.v
+testbench/part9a_tb.v
+testbench/part9c_tb.v
+testbench/part9d_tb.v
+testbench/part9e_tb.v
+
+testbench/part123_tb.v
