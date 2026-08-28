@@ -574,7 +574,10 @@ and it should be connected to one of the inputs?
 
 Docs seem to agree `https://sky130-unofficial.readthedocs.io/en/latest/_images/sky130_fd_sc_hd__a31oi_2.svg`
 
-Anyway, I reported it, we'll see if they get back to me
+Anyway, I reported it, we'll see if they get back to me.
+
+Update: They confirmed that it's unconnected! But luckily it shouldn't have an impact on the actual results of
+the challenge. I quite sincerely think this might be my greatest technical achievements.
 
 ### Looking at the output generation circuit
 
