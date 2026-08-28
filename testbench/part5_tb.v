@@ -9,7 +9,7 @@ module part5_tb;
     reg rst_n;
     reg clk;
     reg S;
-    reg [5:0] FROM_PART2;
+    reg [4:0] FROM_PART2;
     reg Hello;
 
     // Outputs
@@ -45,7 +45,7 @@ module part5_tb;
         $dumpvars(0, part5_tb);
 
         // Track changes directly in the terminal window
-        $monitor("Time=%0t | FROM_PART2=%b | OUTPUT=%b", $time, FROM_PART2, OUTPUT);
+        // $monitor("Time=%0t | FROM_PART2=%b | OUTPUT=%b", $time, FROM_PART2, OUTPUT);
 
 
         /****************************
@@ -67,7 +67,7 @@ module part5_tb;
           #5000; rst_n = 0;
           #5000; rst_n = 1;
 
-          #5000; FROM_PART2 = j;
+          #5000; FROM_PART2 = 5'(j);
 
           #5000; clk = ~clk;
           #5000; clk = ~clk;

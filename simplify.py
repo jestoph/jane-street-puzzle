@@ -259,6 +259,8 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
         node_name = "_".join(nodename.split(":"))
         lines.append("")
         lines.append(f"  // ref component/{node_type}.v")
+        if 'conb' in node_type:
+            lines.append("/* verilator lint_off PINMISSING */")
         lines.append(f"  {node_type} {node_name} (")
 
         port_lines = []
@@ -267,6 +269,9 @@ def print_element_as_verilog(name, port_wire_map, wire_port_map, inputs, outputs
             wirename = port_to_wire[port]
             wirename = get_wire_name(wirename, wire_to_alias)
             port_lines.append(f"    .{pinname}({wirename})")
+
+        if 'conb' in node_type:
+            lines.append("/* verilator lint_on PINMISSING */")
 
         lines.append(",\n".join(port_lines))
         lines.append("  );")

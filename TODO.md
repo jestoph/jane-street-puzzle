@@ -186,16 +186,25 @@
 [ ] Was it the correct move to connect the undriven wire?
 
 
-
 ## NEXT as of Thu 27 Aug 2026
-[ ] Write testbenches for the hard ones - roughly in ascending order of difficulty:
+[x] Write testbenches for the hard ones - roughly in ascending order of difficulty:
  [x] outputs/part7c.v -> Actually not too complicated. It seems to go high on the second A&B input, then low on the third?
  [x] outputs/part5.v
  [x] outputs/part6.v
  [x] outputs/part7a.v - Actually got it to produce the '7' output that part4 needs - takes 6 clocks
  [x] outputs/part7b.v - got it to produce the 0x7f that part4 needs
  [x] outputs/part8.v - Managed to get 0x7ff which is what part6 needs
- [ ] outputs/part9b.v
+ [x] outputs/part9b.v -> Did it but it wasn't particularly insightful
+
+
+## How to make the 6 bits go high?
+[x] One bit from Part 1 - two inputs and 'enable' is high, and/or after 121 clock cycles after a reset
+[x] Two bits from Part 4 - Got it, a certain pattern from part 7a,b,c and the rest literally doesn't matter.
+[x] One bit from Part 5 - Got it - when S&I and bit 5 of FROM_PART2 is low.
+[x] Two bits from part 6 - Got it - input=0x7ff, S&I, and 22 clocks
+[x] Make minimal examples
+
+## Next as of Fri 28 Aug 2026
 [ ] Draw out the circuit for the easy candidates:
  [ ] outputs/part4.v
  [ ] outputs/part2.v
@@ -209,21 +218,3 @@
      broken - because when I simulate the whole circuit I get no output.
  [ ] Part 5,7,4 is self contained and has 3 output bits
  [ ] Part Blob,8,6 has two output bits
-
-## How to make the 6 bits go high?
-[x] One bit from Part 1 - two inputs and 'enable' is high, and/or after 121 clock cycles after a reset
-[x] Two bits from Part 4 - Got it, a certain pattern from part 7a,b,c and the rest literally doesn't matter.
-[x] One bit from Part 5 - Got it - when S&I and bit 5 of FROM_PART2 is low.
-[x] Two bits from part 6 - Got it - input=0x7ff, S&I, and 22 clocks
-[x] Make minimal examples
-
-testbench/part4_tb.v
-testbench/part5_tb.v
-testbench/part6_tb.v
-testbench/part7c_tb.v
-testbench/part9a_tb.v
-testbench/part9c_tb.v
-testbench/part9d_tb.v
-testbench/part9e_tb.v
-
-testbench/part123_tb.v

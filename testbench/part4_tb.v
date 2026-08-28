@@ -74,7 +74,7 @@ module part4_tb;
 
         FROM_PART5  = 3'bx;
         FROM_PART7A = 7;
-        FROM_PART7B = 8'h7f;
+        FROM_PART7B = 7'h7f;
         FROM_PART7C = 1;
 
         #5000;

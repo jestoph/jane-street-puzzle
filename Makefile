@@ -7,8 +7,8 @@ check:
 	# ${PYTHON} -m mypy *.py
 	${PYTHON} check-io.py
 	${PYTHON} check-unnamed-wires.py
-	${PYTHON} check-subcircuit-elements.py
 	${PYTHON} test-components.py
+	${PYTHON} check-subcircuit-elements.py
 	${PYTHON} test-subcircuits.py
 
 cells:

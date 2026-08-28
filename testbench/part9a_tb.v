@@ -18,20 +18,24 @@ module part9a_tb;
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
     part9a part9a_1 (
+      // inputs
       .success(success),
       .clk(clk),
-      .Wire_138(IN[11]),
-      .Wire_3  (IN[10]),
-      .Wire_392(IN[9]),
-      .Wire_393(IN[8]),
-      .Wire_460(IN[7]),
-      .Wire_483(IN[6]),
-      .Wire_493(IN[5]),
-      .Wire_494(IN[4]),
-      .Wire_495(IN[3]),
-      .Wire_507(IN[2]),
-      .Wire_509(IN[1]),
-      .Wire_510(IN[0]),
+
+      .FROM_PART9B0(IN[0]),
+      .FROM_PART9B1(IN[1]),
+      .FROM_PART9B2(IN[2]),
+      .FROM_PART9B3(IN[3]),
+      .FROM_PART9B4(IN[4]),
+      .FROM_PART9B5(IN[5]),
+      .FROM_PART9B6(IN[6]),
+      .FROM_PART9B7(IN[7]),
+      .MSG0        (IN[8]),
+      .MSG1        (IN[9]),
+      .MSG2        (IN[10]),
+      .MSG3        (IN[11]),
+
+      // outputs
       .O7(OUT[7]),
       .O5(OUT[6]),
       .O4(OUT[5]),
@@ -40,15 +44,14 @@ module part9a_tb;
       .O1(OUT[2]),
       .O2(OUT[1]),
       .O0(OUT[0]),
-      .Wire_459(W2_OUT[3]),
-      .Wire_463(W2_OUT[2]),
-      .Wire_462(W2_OUT[1]),
-      .Wire_461(W2_OUT[0]),
-  // These feed 9c, 9d, 9e
-      .OB4(W_OUT[3]),
-      .OB3(W_OUT[2]),
-      .OB2(W_OUT[1]),
-      .OB1(W_OUT[0])
+      .FROM_PART9A1(W2_OUT[3]),
+      .FROM_PART9A2(W2_OUT[2]),
+      .FROM_PART9A3(W2_OUT[1]),
+      .FROM_PART9A4(W2_OUT[0]),
+      .FROM_PART9A5(W_OUT[3]),
+      .FROM_PART9A6(W_OUT[2]),
+      .FROM_PART9A7(W_OUT[1]),
+      .FROM_PART9A8(W_OUT[0])
 
     );
 
@@ -65,7 +68,7 @@ module part9a_tb;
         success = 0;
         for(i = 0; i <= 12'b100000000000; i = i + 1)
         begin
-          #10 IN = i;
+          #10 IN = 12'(i);
           #10;
           #10; clk = ~clk;
           #10;
@@ -81,7 +84,7 @@ module part9a_tb;
         success = 1;
         for(i = 0; i <= 12'b100000000000; i = i + 1)
         begin
-          #10 IN = i;
+          #10 IN = 12'(i);
           #10;
           #10; clk = ~clk;
           #10;

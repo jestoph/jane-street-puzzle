@@ -15,10 +15,11 @@ module part9e_tb;
 
     part9e part9e_1 (
       //inputs
-      .OB4(IN[3]),
-      .OB3(IN[2]),
-      .OB2(IN[1]),
-      .OB1(IN[0]),
+      .FROM_PART9A1(IN[3]),
+      .FROM_PART9A2(IN[2]),
+      .FROM_PART9A3(IN[1]),
+      .FROM_PART9A4(IN[0]),
+
       //outputs
       .FROM_PART9E7(OUT[7]),
       .FROM_PART9E6(OUT[6]),
@@ -41,7 +42,7 @@ module part9e_tb;
         IN = 0;
         for(i = 0; i <= 5'b10000; i = i + 1)
         begin
-          IN = i;
+          IN = 4'(i);
           #10;
         end
 

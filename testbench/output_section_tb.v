@@ -18,6 +18,7 @@ module output_section_tb;
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
     output_section output_section_1 (
+      // inputs
       .rst_n(rst_n),
       .clk(clk),
       .TO_OUTPUT5(IN[5]),
@@ -27,8 +28,8 @@ module output_section_tb;
       .TO_OUTPUT1(IN[1]),
       .TO_OUTPUT0(IN[0]),
 
-      .Wire_138(A),
-      .Wire_3(B),
+      .MSG2(A),
+      .MSG3(B),
       .success(success)
 
     );
@@ -74,13 +75,13 @@ module output_section_tb;
         // #5000;
 
 
-        for(i = 7'b0000000; i <= 7'b1000000; i = i + 1)
+        for(i = 0; i <= 7'b1000000; i = i + 1)
         begin
           rst_n = 0;
           #5000;
           rst_n = 1;
           #5000;
-          IN = i[7:0];
+          IN = i[5:0];
           #5000; clk = ~clk;
           #5000; clk = ~clk;
           #5000;
