@@ -59,8 +59,8 @@ module part8_tb;
 
         /* When A is zero, the output should be B */
         clk = 0;
-        S = 0;
-        I = 0;
+        S = 1; // Can also be 0
+        I = 1; // Can also be 0
         rst_n = 0;
         FROM_BLOB = 0;
         #5000; rst_n = 1;

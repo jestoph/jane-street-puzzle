@@ -6,6 +6,7 @@ PYTHON:=./venv/bin/python3
 check:
 	# ${PYTHON} -m mypy *.py
 	${PYTHON} check-io.py
+	${PYTHON} check-unnamed-wires.py
 	${PYTHON} check-subcircuit-elements.py
 	${PYTHON} test-components.py
 	${PYTHON} test-subcircuits.py

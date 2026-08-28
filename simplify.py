@@ -348,7 +348,7 @@ def get_possible_inputs_and_outputs(name, subcircuit, port_to_wire, wire_to_port
                 print("ASDDING")
                 outputs.add(alias)
                 continue
-            if 'O' in alias and 'part9a' in name:
+            if alias.startswith('O') and 'part9a' in name:
                 print("ASDDING")
                 outputs.add(alias)
                 continue
@@ -508,28 +508,32 @@ if __name__ == '__main__':
             {"rst_n", "I", "S", "clk", "FROM_BLOB[0]", "FROM_BLOB[1]", "FROM_BLOB[2]", "FROM_BLOB[3]" },
             {"FROM_PART8[6]", "FROM_PART8[4]", "FROM_PART8[0]", "FROM_PART8[9]", "FROM_PART8[1]", "FROM_PART8[8]", "FROM_PART8[5]", "FROM_PART8[3]", "FROM_PART8[10]", "FROM_PART8[7]", "FROM_PART8[2]"}),
         "part9a": (
-            { "clk", "success", "Wire_509", "Wire_507", "Wire_460", "MSG[2]", "Wire_483", "Wire_510", "MSG[3]", "Wire_495", "MSG[0]", "Wire_494", "Wire_493", "MSG[1]" },
+            {
+                "clk", "success",
+                "FROM_PART9B[0]", "FROM_PART9B[1]", "FROM_PART9B[2]", "FROM_PART9B[3]", "FROM_PART9B[4]", "FROM_PART9B[5]", "FROM_PART9B[6]", "FROM_PART9B[7]",
+                "MSG[2]", "MSG[3]", "MSG[0]",  "MSG[1]"
+            },
             { "O[0]", "O[1]", "O[2]", "O[3]", "O[4]", "O[5]", "O[6]", "O[7]",
-              "OB[1]", "OB[2]", "OB[3]", "OB[4]",
-              "Wire_461", "Wire_462", "Wire_463", "Wire_459" }),
+              "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]",
+              "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]", "FROM_PART9A[8]" }),
         "part9b": (
             {
-                "clk", "I", "rst_n", "S", "Wire_459", "Wire_461", "Wire_462", "Wire_463",
+                "clk", "I", "rst_n", "S",
+                "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]", "FROM_PART9A[8]", "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]",
                 "FROM_PART9C[0]", "FROM_PART9C[1]", "FROM_PART9C[10]", "FROM_PART9C[11]", "FROM_PART9C[12]", "FROM_PART9C[13]", "FROM_PART9C[14]", "FROM_PART9C[15]",
                 "FROM_PART9C[2]", "FROM_PART9C[3]", "FROM_PART9C[4]", "FROM_PART9C[5]", "FROM_PART9C[6]", "FROM_PART9C[7]", "FROM_PART9C[8]", "FROM_PART9C[9]",
                 "FROM_PART9D[0]", "FROM_PART9D[1]", "FROM_PART9D[2]", "FROM_PART9D[3]", "FROM_PART9D[4]", "FROM_PART9D[5]", "FROM_PART9D[6]", "FROM_PART9D[7]",
                 "FROM_PART9E[0]", "FROM_PART9E[1]", "FROM_PART9E[2]", "FROM_PART9E[3]", "FROM_PART9E[4]", "FROM_PART9E[5]", "FROM_PART9E[6]", "FROM_PART9E[7]",
-                "OB[1]", "OB[2]", "OB[3]", "OB[4]",
              },
-            {"Wire_510", "Wire_483", "Wire_509", "Wire_460", "Wire_507", "Wire_495", "Wire_494", "Wire_493"}),
+            {"FROM_PART9B[4]", "FROM_PART9B[3]", "FROM_PART9B[0]", "FROM_PART9B[2]", "FROM_PART9B[1]", "FROM_PART9B[5]", "FROM_PART9B[6]", "FROM_PART9B[7]"}),
         "part9c": (
-            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            { "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]" },
             {"FROM_PART9C[15]", "FROM_PART9C[14]", "FROM_PART9C[13]", "FROM_PART9C[12]", "FROM_PART9C[11]", "FROM_PART9C[10]", "FROM_PART9C[9]", "FROM_PART9C[8]", "FROM_PART9C[7]", "FROM_PART9C[6]", "FROM_PART9C[5]", "FROM_PART9C[4]", "FROM_PART9C[3]", "FROM_PART9C[2]", "FROM_PART9C[1]", "FROM_PART9C[0]"}),
         "part9d": (
-            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            { "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]" },
             { "FROM_PART9D[7]", "FROM_PART9D[6]", "FROM_PART9D[5]", "FROM_PART9D[4]", "FROM_PART9D[3]", "FROM_PART9D[2]", "FROM_PART9D[1]", "FROM_PART9D[0]" }),
         "part9e": (
-            { "OB[1]", "OB[2]", "OB[3]", "OB[4]" },
+            { "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]" },
             { "FROM_PART9E[7]", "FROM_PART9E[3]", "FROM_PART9E[2]", "FROM_PART9E[5]", "FROM_PART9E[0]", "FROM_PART9E[6]", "FROM_PART9E[4]", "FROM_PART9E[1]" }),
         "output_section": (
             { "TO_OUTPUT[0]", "TO_OUTPUT[4]", "TO_OUTPUT[1]", "TO_OUTPUT[3]", "TO_OUTPUT[2]", "TO_OUTPUT[5]", "rst_n", "clk"},
@@ -547,10 +551,14 @@ if __name__ == '__main__':
         "Wire_8": "S",
 
         # This is the wierd 'output bus' on part9 that does ... something
-        "Wire_95": "OB[1]",
-        "Wire_99": "OB[2]",
-        "Wire_100":"OB[3]",
-        "Wire_84": "OB[4]",
+        "Wire_95" : "FROM_PART9A[1]",
+        "Wire_99" : "FROM_PART9A[2]",
+        "Wire_100": "FROM_PART9A[3]",
+        "Wire_84" : "FROM_PART9A[4]",
+        "Wire_461": "FROM_PART9A[5]",
+        "Wire_462": "FROM_PART9A[6]",
+        "Wire_463": "FROM_PART9A[7]",
+        "Wire_459": "FROM_PART9A[8]",
 
         # The blob only generates a single output
         "Wire_44": "FROM_BLOB[0]",
@@ -649,6 +657,15 @@ if __name__ == '__main__':
         "Wire_392": "MSG[1]",
         "Wire_138": "MSG[2]",
         "Wire_3"  : "MSG[3]",
+
+        "Wire_509": "FROM_PART9B[0]",
+        "Wire_507": "FROM_PART9B[1]",
+        "Wire_460": "FROM_PART9B[2]",
+        "Wire_483": "FROM_PART9B[3]",
+        "Wire_510": "FROM_PART9B[4]",
+        "Wire_495": "FROM_PART9B[5]",
+        "Wire_494": "FROM_PART9B[6]",
+        "Wire_493": "FROM_PART9B[7]",
 
     }
 
