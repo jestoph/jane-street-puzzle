@@ -3,8 +3,8 @@ import sys
 import glob
 
 import random
-comp1 = glob.glob("component/*.v")
-random.shuffle(comp1)
+all_components = glob.glob("component/*.v")
+random.shuffle(all_components)
 
 components = """\
 component/and4bb.v
@@ -24,8 +24,8 @@ component/or2.v
 component/a21boi.v
 """.split()
 
-if len(comp1) != len(components):
-    print(f"WARNING: We have components without tests! {set(comp1)^set(components)}")
+if len(all_components) != len(components):
+    print(f"WARNING: We have components without tests! {set(all_components)^set(components)}")
 
 components = [x.replace("component/","").replace(".v","") for x in components]
 
@@ -44,7 +44,7 @@ def run_and_log(cmd, log):
         print("ok")
 
 def standalone(component):
-    cmd = ["iverilog", "-g2012", "-o", "test.vpp", component]
+    cmd = ["iverilog", "-g2012", "-o", "outputs/test.vpp", component]
     run_and_log(cmd, f"Compiling {component} as standalone...")
 
 
@@ -65,7 +65,7 @@ def verilate(component):
 
 
 if __name__ == '__main__':
-    for component in comp1:
+    for component in all_components:
         verilate(component)
         standalone(component)
     for component in components:

@@ -59,7 +59,7 @@ module part6_tb;
         #5000; S=1; I=1;
 
 
-        FROM_PART8 = 12'h7ff;
+        FROM_PART8 = 11'h7ff;
         for( i = 0 ; i < 22; i = i + 1 )
         begin
             #5000; clk = ~clk;

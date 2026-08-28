@@ -24,4 +24,5 @@ simplify:
 
 clean:
 	rm -f outputs/*
+	rm -f waveform/*
 

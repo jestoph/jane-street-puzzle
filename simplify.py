@@ -770,7 +770,7 @@ if __name__ == '__main__':
             total_io[name]['in'] = [wire_to_alias.get(_in,_in) for _in in sorted(inputs)]
             total_io[name]['out'] = [wire_to_alias.get(_out,_out) for _out in sorted(outputs)]
 
-        with open("total_io.json", "w") as fp:
+        with open("outputs/total_io.json", "w") as fp:
             json.dump(total_io, fp, indent=2)
 
 

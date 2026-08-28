@@ -183,7 +183,7 @@
 [ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
 [ ] What are `INTERNAL_3` and `INTERNAL_7`? Do they have a location?
 [ ] Should I add a validation step to find any other mcon elements connected to random pins?
-
+[ ] Was it the correct move to connect the undriven wire?
 
 
 
@@ -192,10 +192,10 @@
  [x] outputs/part7c.v -> Actually not too complicated. It seems to go high on the second A&B input, then low on the third?
  [x] outputs/part5.v
  [x] outputs/part6.v
- [ ] outputs/part7a.v
- [ ] outputs/part7b.v
- [ ] outputs/part8.v  <- Probably too hard
- [ ] outputs/part9b.v <- Probably very hard
+ [x] outputs/part7a.v - Actually got it to produce the '7' output that part4 needs - takes 6 clocks
+ [x] outputs/part7b.v - got it to produce the 0x7f that part4 needs
+ [x] outputs/part8.v - Managed to get 0x7ff which is what part6 needs
+ [ ] outputs/part9b.v
 [ ] Draw out the circuit for the easy candidates:
  [ ] outputs/part4.v
  [ ] outputs/part2.v
@@ -203,7 +203,7 @@
  [x] testbench/part123_tb.v - Could act like a signal generator, with a single output bit?
       It's also like a timer! That's why you have 121 clocks to get your password in
       Now down to only 2^121 bits, less than the numbers of atoms in the universe! Also it disables
-      the rest by setting the S to low after 121 clocks.
+      the rest by setting the S to low after 121 clocks, which I guess lets part9 do its thing.
  [ ] Part 7a,b,c is relatively small
  [ ] Part 9a,b,c,d,e 'should' be easy enough to get an output from. It would at least prove that things aren't
      broken - because when I simulate the whole circuit I get no output.
@@ -215,7 +215,7 @@
 [x] Two bits from Part 4 - Got it, a certain pattern from part 7a,b,c and the rest literally doesn't matter.
 [x] One bit from Part 5 - Got it - when S&I and bit 5 of FROM_PART2 is low.
 [x] Two bits from part 6 - Got it - input=0x7ff, S&I, and 22 clocks
-[ ] Make minimal examples
+[x] Make minimal examples
 
 testbench/part4_tb.v
 testbench/part5_tb.v

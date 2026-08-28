@@ -2,20 +2,8 @@ import subprocess as sp
 import sys
 
 components = """\
-part1
-blob
-output_section
-part1
-part2
-part3
-part4
-part9a
-part9c
-part9d
-part9e
-part9e
-puzzle
-
+part6
+part8
 """.split() # TODO: add 'all.v'
 
 """
@@ -26,6 +14,11 @@ part1
 part2
 part3
 part4
+part5
+part7a
+part7b
+part7c
+part8
 part9a
 part9c
 part9d
@@ -59,13 +52,11 @@ def run_and_log(cmd, log):
         print("ok")
 
 def compile(component):
-    print(f"Compiling {component}...", end="")
     sim, comp, tb = f"simulation/{component}_sim.vvp", f"outputs/{component}.v", f"testbench/{component}_tb.v"
     cmd = ["iverilog", "-Wfloating-nets", "-g2012", "-y", "./component", "-o", sim, comp, tb]
     run_and_log(cmd, f"Compiling {component}...")
 
 def run_sim(component):
-    print(f"Running {component} simulation ...", end="")
     sim = f"simulation/{component}_sim.vvp"
     cmd = ["vvp", sim]
     run_and_log(cmd, f"Running {component} simulation ...")
@@ -79,11 +70,21 @@ def compile_run_part123():
     cmd = ["vvp", sim]
     run_and_log(cmd, f"Running {component} simulation ...")
 
+def verilate(component):
+    comp, tb = f"outputs/{component}.v", f"testbench/{component}_tb.v"
+
+    cmd = ["verilator", "--lint-only", "-Wall",
+           "-Wno-TIMESCALEMOD", "-Wno-UNUSEDSIGNAL", "-Wno-EOFNEWLINE", # These are just time wasters
+           "-y", "./component", comp, tb]
+    run_and_log(cmd, f"verilating {component}...")
+
 if __name__ == '__main__':
-    compile_run_part123()
+    for component in components:
+        verilate(component)
     for component in components:
         compile(component)
     for component in components:
         run_sim(component)
 
-
+    # Freestanding stuff. Can do last as we'd prefer to fail earlier
+    compile_run_part123()
