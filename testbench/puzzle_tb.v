@@ -12,24 +12,16 @@ module puzzle_tb;
 
     // Outputs
     wire success;
+    // wire flag;
 
-    // wire O[7:0]; Can't get this to work
-
-    wire O0;
-    wire O1;
-    wire O2;
-    wire O3;
-    wire O4;
-    wire O5;
-    wire O6;
-    wire O7;
+    wire [7:0] O;
 
 
     // Iterator
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
 
 
-    puzzle my_thing (
+    puzzle puzzle_1 (
 
       .I(I),
       .clk(clk),
@@ -38,23 +30,14 @@ module puzzle_tb;
 
       .success(success),
 
-      // .O0(O[0]),
-      // .O1(O[1]),
-      // .O2(O[2]),
-      // .O3(O[3]),
-      // .O4(O[4]),
-      // .O5(O[5]),
-      // .O6(O[6]),
-      // .O7(O[7])
-
-      .O0(O0),
-      .O1(O1),
-      .O2(O2),
-      .O3(O3),
-      .O4(O4),
-      .O5(O5),
-      .O6(O6),
-      .O7(O7)
+      .O0(O[0]),
+      .O1(O[1]),
+      .O2(O[2]),
+      .O3(O[3]),
+      .O4(O[4]),
+      .O5(O[5]),
+      .O6(O[6]),
+      .O7(O[7])
 
     );
 
@@ -79,27 +62,26 @@ module puzzle_tb;
         */
 
 
-        I = 1;
+        I = 0;
         enable = 0;
         rst_n = 0;
         clk = 0;
 
-        #5000; clk = ~clk;
+        #5000; rst_n = 1;
 
-        rst_n = 1;
-
-        #5000; clk = ~clk;
+        #5000; clk = ~clk; #5000; clk = ~clk;
+        #5000; clk = ~clk; #5000; clk = ~clk;
+        #5000; clk = ~clk; #5000; clk = ~clk;
+        #5000; clk = ~clk; #5000; clk = ~clk;
 
         enable = 1;
 
 
 
-        for( i = 0 ; i < 140 ; i = i + 1)
+        for( i = 0 ; i < 121 ; i = i + 1)
         begin
-          if( i == 7)
-          begin
-            I = ~I;
-          end
+          //I = 1'(i);
+          #5000; clk = ~clk;
           #5000; clk = ~clk;
         end
 
@@ -107,6 +89,7 @@ module puzzle_tb;
 
         for( i = 0 ; i < 140 ; i = i + 1)
         begin
+          #5000; clk = ~clk;
           #5000; clk = ~clk;
         end
 

@@ -184,7 +184,7 @@
 [ ] What are `INTERNAL_3` and `INTERNAL_7`? Do they have a location?
 [ ] Should I add a validation step to find any other mcon elements connected to random pins?
 [ ] Was it the correct move to connect the undriven wire? Would the true password appear if it wasn't connected?
-
+[x] What happens to `FROM_PART7B[0]` - it's internal to PART7
 
 ## NEXT as of Thu 27 Aug 2026
 [x] Write testbenches for the hard ones - roughly in ascending order of difficulty:
@@ -208,7 +208,7 @@
 [ ] Draw out the circuit for the easy candidates:
  [ ] outputs/part4.v
  [ ] outputs/part2.v
-[ ] Test new logical divisions -
+[x] Test new logical divisions -
  [x] testbench/part123_tb.v - Could act like a signal generator, with a single output bit?
       It's also like a timer! That's why you have 121 clocks to get your password in
       Now down to only 2^121 bits, less than the numbers of atoms in the universe! Also it disables
@@ -217,6 +217,6 @@
      broken - because when I simulate the whole circuit I get no output.
  [x] Part 9 fully extracted - Got it identical, so I guess things are internally consistent
  [x] Part 7a,b,c is relatively small -> Got all three outputs to be the right value
- [ ] Part 7 fully extracted
- [ ] Part 5,7,4 is self contained and has 3 output bits
- [ ] Part Blob,8,6 has two output bits
+ [x] Part 7 fully extracted -> Got matching output (But what's the deal with the goes-nowhere output?)
+ [x] Part 5,7,4 is self contained and has 3 output bits
+ [x] Part Blob,8,6 has two output bits -> Could not get this to output the correct bits - it will need time

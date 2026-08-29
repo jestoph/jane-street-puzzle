@@ -349,11 +349,11 @@ def get_possible_inputs_and_outputs(name, subcircuit, port_to_wire, wire_to_port
         if alias := aliases.get(wire):
             print(f"HAVE ALIAS {alias=}, {name=}")
             # TODO: This is very hard-coded, we should fix this
-            if 'success' in alias and 'output' in name:
+            if 'success' in alias and ('output' in name or 'puzzle' in name):
                 print("ASDDING")
                 outputs.add(alias)
                 continue
-            if alias.startswith('O') and 'part9' in name:
+            if alias.startswith('O') and ('part9' in name or 'puzzle' in name):
                 print("ASDDING")
                 outputs.add(alias)
                 continue
@@ -762,7 +762,10 @@ if __name__ == '__main__':
         with measure_time("Print as json"):
             print_element_as_json('puzzle', port_to_wire, wire_to_ports, wire_to_alias, segment_to_wire, [], [])
         print_wire_aliases(segment_aliases, segment_to_wire)
+
         print_element_as_verilog(name, port_to_wire, wire_to_ports, puzzle_io_map[name][0], puzzle_io_map[name][1], wire_to_alias)
+        inputs, outputs = get_possible_inputs_and_outputs("puzzle", port_to_wire, port_to_wire, wire_to_ports, wire_to_alias)
+        compare_io(name, (inputs, outputs), puzzle_io_map[name])
 
         total_io = {}
         for name, box in [

@@ -65,6 +65,7 @@ module part9_tb;
         S=1; I=1; // try all combos
         rst_n = 0;
         success = 0;
+        MSG=0;
         #5000; rst_n = 1;
         // #5000; S=0; I=0; // gives - e8e31774fae390a82ea9d494bcef8d
         // #5000; S=0; I=1; // gives - e8e31774fae390a82ea9d494bcef8d
@@ -81,15 +82,24 @@ module part9_tb;
           #5000; rst_n = ~rst_n;
           #5000; rst_n = ~rst_n;
           #5000; MSG = 4'(j); // try all 16 combos
+          #5000; S = 1;
 
 
-          for( i = 0 ; i < 100; i = i + 1 )
+          for( i = 0 ; i < 10; i = i + 1 )
           begin
             #5000; clk = ~clk;
             #5000; clk = ~clk;
 
           end
+          #5000; S = 0;
+          #5000; MSG = ~MSG;
 
+          for( i = 0 ; i < 10; i = i + 1 )
+          begin
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
+
+          end
 
         end
 

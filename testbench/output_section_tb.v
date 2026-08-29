@@ -10,8 +10,8 @@ module output_section_tb;
     reg [5:0] IN;
 
     // Outputs
-    wire A;
-    wire B;
+    wire MSG2;
+    wire MSG3;
     wire success;
 
     // Iterator
@@ -28,8 +28,8 @@ module output_section_tb;
       .TO_OUTPUT1(IN[1]),
       .TO_OUTPUT0(IN[0]),
 
-      .MSG2(A),
-      .MSG3(B),
+      .MSG2(MSG2),
+      .MSG3(MSG3),
       .success(success)
 
     );
@@ -85,8 +85,8 @@ module output_section_tb;
           #5000; clk = ~clk;
           #5000; clk = ~clk;
           #5000;
-          `assertn(A, 1'bx, "Signal should not be x");
-          `assertn(B, 1'bx, "Signal should not be x");
+          `assertn(MSG2, 1'bx, "Signal should not be x");
+          `assertn(MSG3, 1'bx, "Signal should not be x");
           `assertn(success, 1'bx, "Signal should not be x");
         end
 

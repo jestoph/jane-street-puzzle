@@ -617,3 +617,17 @@ Is it possible that setting the value of the unconnected pin is causing this beh
 | 0 | 1 | e8e31774fae390a82ea9d494bcef8d |
 | 1 | 0 | e8e76ea947d04f1237fefc1f7d2834 |
 | 1 | 1 | e8e66dae48ce7268c3162cbe3eaf3a |
+
+### It turns out I'm an idiot.
+
+I have not been able to get my overall sim working at all for 2 or 3 days, even though I've quite thoroughly tested
+each sub component. Well, it turns out that I had forgotten to set the reset pin, so the whole thing was not working.
+I fixed that and immediately saw 'TRY AGAIN' as expected. However! I deleted my random input and found the following:
+
+| Input          | Output      |
+--------------------------------
+| Wrong          | 'TRY AGAIN' |
+| All 0's        | 'EMPTY SKY' |
+| All 1's        | 'BIG BANG'  |
+| Correct Answer | TBD         |
+
