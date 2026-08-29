@@ -353,7 +353,7 @@ def get_possible_inputs_and_outputs(name, subcircuit, port_to_wire, wire_to_port
                 print("ASDDING")
                 outputs.add(alias)
                 continue
-            if alias.startswith('O') and 'part9a' in name:
+            if alias.startswith('O') and 'part9' in name:
                 print("ASDDING")
                 outputs.add(alias)
                 continue
@@ -520,11 +520,11 @@ if __name__ == '__main__':
             },
             { "O[0]", "O[1]", "O[2]", "O[3]", "O[4]", "O[5]", "O[6]", "O[7]",
               "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]",
-              "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]", "FROM_PART9A[8]" }),
+              "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]", "FROM_PART9A[0]" }),
         "part9b": (
             {
                 "clk", "I", "rst_n", "S",
-                "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]", "FROM_PART9A[8]", "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]",
+                "FROM_PART9A[1]", "FROM_PART9A[2]", "FROM_PART9A[3]", "FROM_PART9A[4]", "FROM_PART9A[0]", "FROM_PART9A[5]", "FROM_PART9A[6]", "FROM_PART9A[7]",
                 "FROM_PART9C[0]", "FROM_PART9C[1]", "FROM_PART9C[10]", "FROM_PART9C[11]", "FROM_PART9C[12]", "FROM_PART9C[13]", "FROM_PART9C[14]", "FROM_PART9C[15]",
                 "FROM_PART9C[2]", "FROM_PART9C[3]", "FROM_PART9C[4]", "FROM_PART9C[5]", "FROM_PART9C[6]", "FROM_PART9C[7]", "FROM_PART9C[8]", "FROM_PART9C[9]",
                 "FROM_PART9D[0]", "FROM_PART9D[1]", "FROM_PART9D[2]", "FROM_PART9D[3]", "FROM_PART9D[4]", "FROM_PART9D[5]", "FROM_PART9D[6]", "FROM_PART9D[7]",
@@ -549,6 +549,9 @@ if __name__ == '__main__':
         "puzzle": (
             {"I","clk","enable","rst_n"},
             {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]","success"}),
+        "part9":(
+            {"I","clk","S","rst_n", "success", "MSG[0]","MSG[1]","MSG[2]","MSG[3]"},
+            {"O[0]","O[1]","O[2]","O[3]","O[4]","O[5]","O[6]","O[7]"}),
     }
 
     puzzle_extra_aliases = {
@@ -556,6 +559,7 @@ if __name__ == '__main__':
         "Wire_8": "S",
 
         # This is the wierd 'output bus' on part9 that does ... something
+        "Wire_459": "FROM_PART9A[0]",
         "Wire_95" : "FROM_PART9A[1]",
         "Wire_99" : "FROM_PART9A[2]",
         "Wire_100": "FROM_PART9A[3]",
@@ -563,7 +567,6 @@ if __name__ == '__main__':
         "Wire_461": "FROM_PART9A[5]",
         "Wire_462": "FROM_PART9A[6]",
         "Wire_463": "FROM_PART9A[7]",
-        "Wire_459": "FROM_PART9A[8]",
 
         # The blob only generates a single output
         "Wire_44": "FROM_BLOB[0]",
@@ -769,12 +772,13 @@ if __name__ == '__main__':
                 ('part7c', ((100, 179), (138, 195))),
                 ('part8', ((100, 34), (138, 174))),
                 ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
+                ('part9a', ((138, 235), (200, 266))),
                 ('part9b', ((138, 163), (200, 235))),
                 ('part9c', ((138, 120), (200, 163))),
                 ('part9d', ((138, 105), (200, 120))),
                 ('part9e', ((138, 70), (200, 105))),
                 ('blob', ((138, 5), (200, 70))),
-                ('part9a', ((138, 235), (200, 266))),
+                ('part9', ((138, 70), (200, 266))),
                 ]:
             sub_circuit = find_bounding(port_to_wire, box)
             revd = reverse_map(sub_circuit)

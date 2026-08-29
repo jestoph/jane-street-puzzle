@@ -602,3 +602,18 @@ waveform, so maybe you need to have the password correct in 121 clocks otherwise
 
 This section seems to feed the rest of the circuit, so this might be the start of a clue.
 
+### Got the output generation to work!
+I managed to get the output circuit to say 'Try Again' during simulation! So at the very least my output generation
+circuit is functional. I also tried to see what would happen if I set the 'success' pin to low, maybe there'd be
+some other message? And it looks like there is, but I can't work out what it is. There are four circumstances of
+setting two other pins, which give the following results as hex strings. They are 15.... characters? long. I was
+hoping it'd be like a URL or something.
+
+Is it possible that setting the value of the unconnected pin is causing this behaviour?
+
+| S | I | Result                         |
+------------------------------------------
+| 0 | 0 | e8e31774fae390a82ea9d494bcef8d |
+| 0 | 1 | e8e31774fae390a82ea9d494bcef8d |
+| 1 | 0 | e8e76ea947d04f1237fefc1f7d2834 |
+| 1 | 1 | e8e66dae48ce7268c3162cbe3eaf3a |

@@ -29,7 +29,7 @@ module part7a_tb;
       .FROM_PART22(FROM_PART2[2]),
       .FROM_PART23(FROM_PART2[3]),
 
-      // outputs
+      // outputs - want this to be 7
       .FROM_PART7A0(FROM_PART7A[0]),
       .FROM_PART7A1(FROM_PART7A[1]),
       .FROM_PART7A2(FROM_PART7A[2])

@@ -183,7 +183,7 @@
 [ ] I guessed behaviour of 'dfst' and 'dfxtp'. Were these guesses correct?
 [ ] What are `INTERNAL_3` and `INTERNAL_7`? Do they have a location?
 [ ] Should I add a validation step to find any other mcon elements connected to random pins?
-[ ] Was it the correct move to connect the undriven wire?
+[ ] Was it the correct move to connect the undriven wire? Would the true password appear if it wasn't connected?
 
 
 ## NEXT as of Thu 27 Aug 2026
@@ -204,7 +204,7 @@
 [x] Two bits from part 6 - Got it - input=0x7ff, S&I, and 22 clocks
 [x] Make minimal examples
 
-## Next as of Fri 28 Aug 2026
+## Next as of Fri 28 Aug 2026 - Understand each logical division, try to get output message working
 [ ] Draw out the circuit for the easy candidates:
  [ ] outputs/part4.v
  [ ] outputs/part2.v
@@ -213,8 +213,10 @@
       It's also like a timer! That's why you have 121 clocks to get your password in
       Now down to only 2^121 bits, less than the numbers of atoms in the universe! Also it disables
       the rest by setting the S to low after 121 clocks, which I guess lets part9 do its thing.
- [ ] Part 7a,b,c is relatively small
- [ ] Part 9a,b,c,d,e 'should' be easy enough to get an output from. It would at least prove that things aren't
+ [x] Part 9a,b,c,d,e 'should' be easy enough to get an output from. It would at least prove that things aren't
      broken - because when I simulate the whole circuit I get no output.
+ [x] Part 9 fully extracted - Got it identical, so I guess things are internally consistent
+ [x] Part 7a,b,c is relatively small -> Got all three outputs to be the right value
+ [ ] Part 7 fully extracted
  [ ] Part 5,7,4 is self contained and has 3 output bits
  [ ] Part Blob,8,6 has two output bits
