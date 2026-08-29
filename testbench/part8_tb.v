@@ -30,7 +30,7 @@ module part8_tb;
       .FROM_BLOB2(FROM_BLOB[2]),
       .FROM_BLOB3(FROM_BLOB[3]),
 
-      // outputs
+      // outputs - want this to be 11'h7ff;
       .FROM_PART80(FROM_PART8[0]),
       .FROM_PART81(FROM_PART8[1]),
       .FROM_PART82(FROM_PART8[2]),

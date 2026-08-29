@@ -509,6 +509,11 @@ if __name__ == '__main__':
         "part7c": (
             {"S", "I", "clk", "rst_n", "FROM_PART7B[0]"},
             {"FROM_PART7C[0]"}),
+        "part7": (
+            {"clk", "I", "rst_n", "S", "FROM_PART2[1]", "FROM_PART2[2]", "FROM_PART2[3]", "FROM_PART2[0]"},
+            {"FROM_PART7A[2]", "FROM_PART7A[0]", "FROM_PART7A[1]"} |
+            {"FROM_PART7B[5]", "FROM_PART7B[3]", "FROM_PART7B[2]", "FROM_PART7B[6]", "FROM_PART7B[1]", "FROM_PART7B[4]", "FROM_PART7B[7]"} |
+            {"FROM_PART7C[0]"}),
         "part8": (
             {"rst_n", "I", "S", "clk", "FROM_BLOB[0]", "FROM_BLOB[1]", "FROM_BLOB[2]", "FROM_BLOB[3]" },
             {"FROM_PART8[6]", "FROM_PART8[4]", "FROM_PART8[0]", "FROM_PART8[9]", "FROM_PART8[1]", "FROM_PART8[8]", "FROM_PART8[5]", "FROM_PART8[3]", "FROM_PART8[10]", "FROM_PART8[7]", "FROM_PART8[2]"}),
@@ -770,6 +775,7 @@ if __name__ == '__main__':
                 ('part7a', ((100, 266), (138, 300))),
                 ('part7b', ((100, 195), (138, 266))),
                 ('part7c', ((100, 179), (138, 195))),
+                ('part7', ((100, 179), (138, 300))),
                 ('part8', ((100, 34), (138, 174))),
                 ('output_section', ((151, 266), (200, 300))), # Checked and this looks to be correct
                 ('part9a', ((138, 235), (200, 266))),
