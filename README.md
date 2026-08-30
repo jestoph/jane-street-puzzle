@@ -631,3 +631,14 @@ I fixed that and immediately saw 'TRY AGAIN' as expected. However! I deleted my 
 | All 1's        | 'BIG BANG'  |
 | Correct Answer | TBD         |
 
+
+## The doldrums
+I have a circuit sim that seemingly works, and I cannot find the answer. I've tried various exhaustive searches (though
+the input is 121 bits which is far too large to search exhaustively in this lifetime).
+
+I've tried tracing each output wire back directly, but the complexity of the inputs are too much for me. I need some
+new approach.
+
+I have a theory that there must be a but either in the signal generation area or in section 5. That is because in order
+to set the success flag, we need all 6 output lines to be high, but the output from section 1 only goes high after 120
+clocks, and the output of section 5 goes low after 12

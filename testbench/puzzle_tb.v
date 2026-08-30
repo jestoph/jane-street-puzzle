@@ -16,9 +16,13 @@ module puzzle_tb;
 
     wire [7:0] O;
 
+    reg flag;
+
 
     // Iterator
     integer i; // Defaults to 32 bit int - not sure if signed or unsigned
+    integer j; // Defaults to 32 bit int - not sure if signed or unsigned
+    integer k;
 
 
     puzzle puzzle_1 (
@@ -66,34 +70,134 @@ module puzzle_tb;
         enable = 0;
         rst_n = 0;
         clk = 0;
+        flag = 0;
 
+
+
+        /*
+
+        for ( j = 0 ; j < 121; j = j + 1 )
+        begin
+
+          #5000; rst_n = 0;
+          #5000; rst_n = 1;
+          #5000; enable = 1;
+
+          for( i = 0 ; i < 121 ; i = i + 1)
+          begin
+
+            I = 1'($random % 2);
+
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
+            if(O[0] + O[1] + O[2] + O[3] + O[4] + O[5] > 2)
+            begin
+              flag = 1;
+            end else begin
+              flag = 0;
+            end
+          end
+
+          enable = 0;
+
+          for( i = 0 ; i < 20; i = i + 1)
+          begin
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
+          end
+
+        end
+        */
+
+       /* THEORY -
+       * TO_OUTPUT[3] goes low after 11 clocks, so the password must be less
+       * than 11 bits?
+       * */
+
+        // for ( j = 0 ; j < 13; j = j + 1 )
+        // begin
+
+        //   #5000; rst_n = 0;
+        //   #5000; rst_n = 1;
+        //   #5000; enable = 1;
+
+        //   for( i = 0 ; i < 121 ; i = i + 1)
+        //   begin
+
+        //     if( i < 12 )
+        //     begin
+        //       if (((1 << (i)) & j) != 0)
+        //       begin
+        //         I = 1;
+        //       end else begin
+        //         I = 0;
+        //       end
+        //     end else begin
+        //         I = 0;
+        //     end
+
+        //     #5000; clk = ~clk;
+        //     #5000; clk = ~clk;
+        //     if(O[0] + O[1] + O[2] + O[3] + O[4] + O[5] > 2)
+        //     begin
+        //       flag = 1;
+        //     end else begin
+        //       flag = 0;
+        //     end
+        //   end
+
+        //   enable = 0;
+
+        //   for( i = 0 ; i < 20; i = i + 1)
+        //   begin
+        //     #5000; clk = ~clk;
+        //     #5000; clk = ~clk;
+        //   end
+
+        // end
+        //
+
+
+        #5000; rst_n = 0;
         #5000; rst_n = 1;
-
-        #5000; clk = ~clk; #5000; clk = ~clk;
-        #5000; clk = ~clk; #5000; clk = ~clk;
-        #5000; clk = ~clk; #5000; clk = ~clk;
-        #5000; clk = ~clk; #5000; clk = ~clk;
-
-        enable = 1;
-
-
-
+        #5000; enable = 1;
+        j = 0;
         for( i = 0 ; i < 121 ; i = i + 1)
         begin
-          //I = 1'(i);
+
+          if( j == 11 )
+          begin
+            j = 0;
+          end
+
+          I = 0;
+
+          case(i)
+            0,2, 19, 21, 23, 31
+            : I=1;
+            default: I=0;
+          endcase
+
           #5000; clk = ~clk;
           #5000; clk = ~clk;
+          if(O[0] + O[1] + O[2] + O[3] + O[4] + O[5] > 2)
+          begin
+            flag = 1;
+          end else begin
+            flag = 0;
+          end
+
+          j = j + 1;
+
         end
 
         enable = 0;
 
-        for( i = 0 ; i < 140 ; i = i + 1)
+        for( i = 0 ; i < 20; i = i + 1)
         begin
           #5000; clk = ~clk;
           #5000; clk = ~clk;
         end
-
-
 
 
 

@@ -680,6 +680,21 @@ if __name__ == '__main__':
         "Wire_494": "FROM_PART9B[6]",
         "Wire_493": "FROM_PART9B[7]",
 
+
+        # These are internal to part4 but will help debugging
+        "Wire_639": "SR[0]",
+        "Wire_641": "SR[1]",
+        "Wire_642": "SR[2]",
+        "Wire_643": "SR[3]",
+        "Wire_443": "SR[4]",
+        "Wire_651": "SR[5]",
+        "Wire_652": "SR[6]",
+        "Wire_653": "SR[7]",
+        "Wire_654": "SR[8]",
+        "Wire_444": "SR[9]",
+        "Wire_442": "SR[10]",
+        "Wire_640": "SR[11]",
+
     }
 
     if sys.argv[1] == 'warmup':

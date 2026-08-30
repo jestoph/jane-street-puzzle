@@ -13,7 +13,7 @@ module part5_tb;
     reg Hello;
 
     // Outputs
-    wire OUTPUT;
+    wire TO_OUTPUT3;
     wire [2:0] FROM_PART5;
 
     integer i; // 32 bit
@@ -36,7 +36,7 @@ module part5_tb;
       .FROM_PART51(FROM_PART5[1]),
       .FROM_PART52(FROM_PART5[2]),
 
-      .TO_OUTPUT3(OUTPUT)
+      .TO_OUTPUT3(TO_OUTPUT3)
     );
 
     initial begin
@@ -54,26 +54,31 @@ module part5_tb;
 
         /* When A is zero, the output should be B */
         clk = 0;
-        S = 0;
-        I = 0;
+        S = 1'bx;
+        I = 1'bx;
         rst_n = 0;
         Hello = 0;
         FROM_PART2 = 0;
         #5000; rst_n = 1;
-        #5000; S=1; I=1;
+        #5000; S=1; I=1'bx;
 
-        for( j = 0; j < 6'b100000; j = j + 1)
+        #5000; rst_n = 0;
+        #5000; rst_n = 1;
+        for( j = 0; j < 7'b1000000; j = j + 1)
         begin
-          #5000; rst_n = 0;
-          #5000; rst_n = 1;
 
           #5000; FROM_PART2 = 5'(j);
 
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
+          for( i = 0; i < 100; i = i + 1)
+          begin
 
-          `assertn(OUTPUT, FROM_PART2[4], "Output is opposite of bit 5");
 
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
+
+            // `assertn(TO_OUTPUT3, FROM_PART2[4], "Output is opposite of bit 5");
+
+          end
         end
 
 

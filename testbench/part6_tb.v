@@ -54,17 +54,30 @@ module part6_tb;
         clk = 0;
         S = 0;
         I = 0;
+        FROM_PART8=0;
         #5000; rst_n = 0;
         #5000; rst_n = 1;
         #5000; S=1; I=1;
 
 
         FROM_PART8 = 11'h7ff;
-        for( i = 0 ; i < 22; i = i + 1 )
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+
+        /* Look at part6, TO_OUTPUT4 is an AND of all from part8 */
+        `assert(TO_OUTPUT4, 1, "Should be high");
+
+        #5000; rst_n = 0;
+        #5000; rst_n = 1;
+        for( i = 0 ; i < 21; i = i + 1 )
         begin
             #5000; clk = ~clk;
             #5000; clk = ~clk;
+            `assert(TO_OUTPUT5, 0, "OUTPUT5 is low for 21 clicks");
         end
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+        `assert(TO_OUTPUT5, 1, "OUTPUT5 is high after the 22nd click");
         #5000;
         #5000;
         #5000;
@@ -72,8 +85,37 @@ module part6_tb;
         `assert(TO_OUTPUT5, 1, "Should be high");
 
 
+        /*
+        * Exhaustive search found that all 1's works
+        * Which is a pattern we already knew
+        * */
+        // I = 0;
+        // /* Exhaustive search - there's 21 bits here */
+        // for( j = 1 ; j < (1<<22); j = j + 1 )
+        // begin
+
+        //   #5000; rst_n = 0;
+        //   #5000; rst_n = 1;
+
+        //   for( i = 0 ; i < 25; i = i + 1 )
+        //   begin
+        //       if( ((1 << i) & j) != 0 )
+        //       begin
+        //         I = 1;
+        //       end else begin
+        //         I = 0;
+        //       end
+        //       #5000; clk = ~clk;
+        //       #5000; clk = ~clk;
+        //       `assert(TO_OUTPUT5, 0, "OUTPUT5 I HAVE FOUND THE PATTERN");
+        //   end
+
+        // end
+
+
         $finish; // End the simulation
     end
 
 endmodule
+
 

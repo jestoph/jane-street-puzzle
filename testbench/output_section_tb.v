@@ -44,12 +44,47 @@ module output_section_tb;
         IN = 0;
         rst_n = 0;
         clk = 0;
-        #5000; clk = 1;
-        rst_n = 1;
+        #5000; rst_n = 1;
+        #5000;
+        IN[0] = 1;
+        IN[1] = 1;
+        IN[2] = 1;
+        IN[3] = 1;
+        IN[4] = 1;
+        IN[5] = 1;
+        #5000;
         #5000; clk = ~clk;
         #5000; clk = ~clk;
+        `assert(success, 1, "Should be high when A1, A2, A3 are all high")
         #5000; clk = ~clk;
-        #5000; clk = 0;
+        #5000; clk = ~clk;
+
+        #5000; rst_n = 0;
+        #5000; rst_n = 1;
+
+        IN[0] = 0;
+        IN[1] = 1;
+        IN[2] = 1;
+        IN[3] = 1;
+        IN[4] = 1;
+        IN[5] = 1;
+
+
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+        IN[0] = 1;
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+        IN[0] = 0;
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+        IN = 0;
+        #5000; clk = ~clk;
+        #5000; clk = ~clk;
+
+        // `assert(MSG2, 1, "???");
+
+
 
         // IN = 6'b000100;
         // #5000; clk = ~clk;
@@ -75,20 +110,20 @@ module output_section_tb;
         // #5000;
 
 
-        for(i = 0; i <= 7'b1000000; i = i + 1)
-        begin
-          rst_n = 0;
-          #5000;
-          rst_n = 1;
-          #5000;
-          IN = i[5:0];
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000;
-          `assertn(MSG2, 1'bx, "Signal should not be x");
-          `assertn(MSG3, 1'bx, "Signal should not be x");
-          `assertn(success, 1'bx, "Signal should not be x");
-        end
+        // for(i = 0; i <= 7'b1000000; i = i + 1)
+        // begin
+        //   rst_n = 0;
+        //   #5000;
+        //   rst_n = 1;
+        //   #5000;
+        //   IN = i[5:0];
+        //   #5000; clk = ~clk;
+        //   #5000; clk = ~clk;
+        //   #5000;
+        //   `assertn(MSG2, 1'bx, "Signal should not be x");
+        //   `assertn(MSG3, 1'bx, "Signal should not be x");
+        //   `assertn(success, 1'bx, "Signal should not be x");
+        // end
 
         // `assert(success, 0, "Success won't go high if B is high first?");
         // `assert(A, 0, "Success won't go high if B is high");

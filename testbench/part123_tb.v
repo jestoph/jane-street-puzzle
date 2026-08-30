@@ -1,6 +1,9 @@
 `timescale 1ns/1ps
 `include "testbench/assert.vh"
 
+/* ref outputs/part1.v */
+/* ref outputs/part2.v */
+/* ref outputs/part3.v */
 module part123_tb;
 
     // Inputs
