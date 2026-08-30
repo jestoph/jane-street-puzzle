@@ -205,9 +205,6 @@
 [x] Make minimal examples
 
 ## Next as of Fri 28 Aug 2026 - Understand each logical division, try to get output message working
-[ ] Draw out the circuit for the easy candidates:
- [ ] outputs/part4.v
- [ ] outputs/part2.v
 [x] Test new logical divisions -
  [x] testbench/part123_tb.v - Could act like a signal generator, with a single output bit?
       It's also like a timer! That's why you have 121 clocks to get your password in
@@ -220,3 +217,63 @@
  [x] Part 7 fully extracted -> Got matching output (But what's the deal with the goes-nowhere output?)
  [x] Part 5,7,4 is self contained and has 3 output bits
  [x] Part Blob,8,6 has two output bits -> Could not get this to output the correct bits - it will need time
+
+## Next Sat 29 Aug 2026
+[x] Draw out the circuit for the easy candidates:
+ [x] outputs/output_section.v
+ [x] outputs/part4.v -> Was OK! Just a shift register and some other junk
+[x] Trace back the bits
+ [x] Bit 0 -> From part1 on a timer
+ [x] Bit 1
+ [x] Bit 2 -> Seems to not line pulses on I
+ [x] Bit 3 -> Seems to not rely on input at all, just on value of part2
+ [x] Bit 4
+ [x] Bit 5
+
+### TRY TO GET TO_OUTPUT3 TO STAY ALIVE
+
+- TO_OUTPUT0 goes high after 121 clocks
+- TO_OUTPUT3 wants two (or more?) clocks as a 'keep-alive' within every 11 clock. I tested all variations and they all worked
+- TO_OUTPUT5 seems to be similar, it comes in later if OUTPUT3 is high
+- TO_OUTPUT2 goes LOW after three rising edges of I signal TO_OUTPUT3
+- I've only seen OUTPUT1 and OUTPUT5 high when I is high the whole time
+
+### Looking at part 4
+There is a shift register that feeds some bits into a logical section
+
+| bit | dfrtp | mux | wire
+------------------------------
+| 0   | 43    | 8   | `Wire_639`
+| 1   | 53    | 3   | `Wire_641`
+| 2   | 45    | 2   | `Wire_642`
+| 3   | 52    | 4   | `Wire_643`
+| 4   | 44    | 12  | `Wire_443`
+| 5   | 49    | 5   | `Wire_651`
+| 6   | 42    | 6   | `Wire_652`
+| 7   | 54    | 7   | `Wire_653`
+| 8   | 50    | 13  | `Wire_654`
+| 9   | 51    | 11  | `Wire_444`
+| 10  | 48    | 9   | `Wire_442`
+| 11  | 46    | 10  | `Wire_640`
+
+Looking at the final structure, TO_OUTPUT1 will go high if all of PART7's outputs are high, but TO_OUTPUT2 is quite tricky. It
+depends on the values of the signal generator and the input, plus some delayed values from the input via the shift register
+
+Part5 seems to only have three patterns -
+ - 3'b011
+ - 3'b101
+ - 3'b111
+ This is correct as part5 basically proxies the output from part2, and the top bit is a `conb.HI` element
+
+
+[x] Encode two known behaviours of part4 in to the test bench
+ [x] When all PART7 outputs are high, TO_OUTPUT1 is high
+ [x] The shift register
+ [x] The logic for latching TO_OUTPUT2
+[x] Draw out circuit for part5 as OUTPUT3 relies on it
+ [x] Proxy is simple
+ [ ] The rest is deceptively complicated
+[x] Build a part12345 testbench that aimt to set output2 and output3 to show how to solve it
+ [x] Encode understanding of IO from PART24 and I into the testbench
+ [x] Actually I just encoded this in the puzzle itself
+[ ] Build a part1237 testbench that works out how to set all outputs of 7 to 1

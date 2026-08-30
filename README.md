@@ -642,3 +642,17 @@ new approach.
 I have a theory that there must be a but either in the signal generation area or in section 5. That is because in order
 to set the success flag, we need all 6 output lines to be high, but the output from section 1 only goes high after 120
 clocks, and the output of section 5 goes low after 12
+
+There's some tricky constraints actually, I can tell it depends on previous values in the shift register, this probably
+needs some tricky constraint solver to solve. Constraint solvers are notoriously complicated to understand, but luckily
+I know the perfect tool
+
+### On using a spreadsheet to write verilog
+I'm sorry for the abomination that I'm about to show you.
+
+[Verilog in gsheet](image.jpg)
+
+Yes, that's a spreadsheet that I used to write verilog. Surprisingly, spreadsheets are actually under the hood incredibly
+complicated constraint solvers. I dumped the output into a giant 'case' statement and ..... it worked! But it does look
+like this approach will be underpowered in general because it relies on me eyeballing the output and toggling bits here
+and there. I might need to use a real constraint solver, or write a backtracking algorithm to find solutions for me
