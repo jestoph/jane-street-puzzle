@@ -140,16 +140,34 @@ print(blob)
 # Want it at clk120 eg data[120]
 
 """
-THIS IS (ON OF) THE CIRCUIT(S) WE WANT TO SOLVE
-/***********************************  FROM_PART88 **************************************/
+/***********************************  FROM_PART80 **************************************/
 
 // ref component/and2b.v
-assign FROM_PART810  = (~Q1_CURR ) & Q2_CURR ;
+assign FROM_PART80  = (~q1[curr] ) & q2[curr] ;
 
-assign Q1_NEXT  = ((Q2_CURR  | (~(I  & Q1_CURR  & BLOB ))) & (Q1_CURR  | ( I  & S  & BLOB  )));
-assign Q2_NEXT  = ~((~Q2_CURR ) & (~(I  & Q1_CURR  & BLOB ))); // Syntax?
+// ref component/dfrtp.v
+dfrtp dfrtp_28 (
+  .CLK(clk),
+  .D(q1[next]),
+  .Q(q1[curr]),
+  .RESET_B(rst_n)
+);
 
-assign BLOB  = ( ~ FROM_BLOB3  ) & FROM_BLOB2  & FROM_BLOB0  & FROM_BLOB1  ;
+// ref component/dfrtp.v
+dfrtp dfrtp_25 (
+  .CLK(clk),
+  .D(q2[next]),
+  .Q(q2[curr]),
+  .RESET_B(rst_n)
+);
+
+assign q1[next]  = ((q2[curr]  | (~(I  & q1[curr]  & blob[curr] ))) & (q1[curr]  | (I  & blob[curr] )));
+assign q2[next]  = ~((~q2[curr] ) & (~(I  & q1[curr]  & blob[curr] ))); // Syntax?
+// assign Wire_141  = (q1[curr]  | (I  & blob[curr] ));
+// assign Wire_150  = (~(I  & q1[curr]  & blob[curr] ));
+
+// assign blob[curr]  = ( ~ FROM_BLOB1  & ~ FROM_BLOB2  ) & FROM_BLOB3  & FROM_BLOB0  ;
+
 
 """
 
@@ -162,35 +180,37 @@ if __name__ == '__main__':
     out = [BitVec(f'out[{i}]', 1) for i in range(121)]
 
 
-    blob = [(~blob[i][0] ) & blob[i][1] & blob[i][2] & blob[i][3] for i in range(len(blob))]
+    blob = [(blob[i][0] ) & ~blob[i][1] & ~blob[i][2] & blob[i][3] for i in range(len(blob))]
     for i in range(1,121):
-        # blob_val = (1 ^ blob[i][0] ) & blob[i][1] & blob[i][2] & blob[i][3]
-        curr = i
-        prev = i-1
+        nxt = i
+        curr = i-1
 
         # assign FROM_PART810  = (~Q1_CURR ) & Q2_CURR ;
         s.add(out[i] == (~q1[curr]) & q2[curr])
 
-        # assign Q1_CURR  = ((Q2_PREV  | (~(I    & Q1_PREV  & BLOB    ))) & (Q1_PREV  | ( I    & BLOB    )));
-        s.add(q1[curr] ==   ((q2[prev] | (~(I[prev] & q1[prev] & blob[prev] ))) & (q1[prev] | ( I[prev] & blob[prev] ))))
-        # assign Q2_CURR = ~(  (~Q2_PREV ) & (~(I         & Q1_PREV  & BLOB ))); // Syntax?
-        s.add(q2[curr] == ~((~q2[prev])  & (~I[prev]  & q1[prev] & blob[prev] )))
+        # assign q1[next]  = ((q2[curr] | (~(I[curr] & q1[curr] & blob[curr] ))) & (q1[curr] | (I[curr]  & blob[curr] )));
+        s.add(q1[nxt] ==    ((q2[curr] | (~(I[curr] & q1[curr] & blob[curr] ))) & (q1[curr] | (I[curr]  & blob[curr] ))))
+        # assign q2[next]  = ~((~q2[curr]) & (~(I[curr]  & q1[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2[nxt] ==     ~((~q2[curr]) & (~(I[curr]  & q1[curr] & blob[curr] ))))
 
     s.add(out[120] == 1)
 
     if s.check() == sat:
         print("Solution!")
         m = s.model()
-        for var in m:
-            print(var, "|", m[var])
-        for i, x in enumerate():
-            print(i, x, m.evaluate(x, model_completion=True))
-        print(i, x, m.evaluate("out[120]", model_completion=True))
+        # for var in m:
+        #     print(var, "|", m[var])
+        for i, x in enumerate(I):
+            val = m.evaluate(x, model_completion=True)
+            print(f"    {i}: I = {val};")
+
+        # print(i, x, m.evaluate("out[120]", model_completion=True))
 
         # for i in range(121):
         #     v = "I[{i}]"
         #     print(f"i {m[v]}")
     else:
         print("Unsatisfyable")
+        sys.exit(1)
 
 
