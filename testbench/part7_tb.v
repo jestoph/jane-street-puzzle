@@ -1,6 +1,9 @@
 `timescale 1ns/1ps
 `include "testbench/assert.vh"
 
+/* ref outputs/part7a.v */
+/* ref outputs/part7b.v */
+/* ref outputs/part7c.v */
 /* ref outputs/part7.v */
 module part7_tb;
 
@@ -68,7 +71,6 @@ module part7_tb;
         * MAP BITS TO OUTPUT
         *****************************/
 
-        /* When A is zero, the output should be B */
         clk = 0;
         S = 0;
         I = 0;
@@ -101,6 +103,14 @@ module part7_tb;
             flag = 0;
           end
 
+        end
+        I = 0;
+        FROM_PART2 = 4'b0100;
+
+        for( j = 0 ; j < 10 ; j = j + 1 )
+        begin
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
         end
 
 

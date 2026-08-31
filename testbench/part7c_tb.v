@@ -9,12 +9,13 @@ module part7c_tb;
     reg clk;
     reg S;
     reg rst_n;
-    reg A;
+    reg FROM_PART7B0;
 
     // Outputs
-    wire O;
+    wire FROM_PART7C0;
 
     integer i; // 32 bit
+    integer j; // 32 bit
 
     part7c part7c_1 (
       // Inputs
@@ -22,9 +23,9 @@ module part7c_tb;
       .S(S),
       .rst_n(rst_n),
       .clk(clk),
-      .FROM_PART7B0(A),
+      .FROM_PART7B0(FROM_PART7B0),
       // Outputs
-      .FROM_PART7C0(O)
+      .FROM_PART7C0(FROM_PART7C0)
     );
 
     initial begin
@@ -44,40 +45,50 @@ module part7c_tb;
         clk = 0;
         S = 0;
         I = 0;
-        rst_n = 0;
+        #5000; rst_n = 0;
         #5000; rst_n = 1;
         #5000; S = 1;
 
-        for( i = 0; i < 5'b100; i = i + 1)
+        for (j = 0 ; j < 1<<12; j = j + 1)
         begin
+          #5000; rst_n = 0;
+          #5000; rst_n = 1;
+          FROM_PART7B0 = 1;
 
-          #5000; A = i[0];
-          #5000; I = i[1];
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
+          for( i = 0; i < 11; i = i + 1)
+          begin
+
+            #5000;
+            FROM_PART7B0 = 0;
+            I = 0;
+            if(i==0)
+            begin
+              FROM_PART7B0 = 1;
+            end
+
+            if( (32'(1<<i) & j) != 0)
+            begin
+              I=1;
+            end
+
+            #5000; clk = ~clk;
+            #5000; clk = ~clk;
+
+          end
+          FROM_PART7B0 = 0;
 
         end
 
-        #5000; rst_n = ~rst_n;
-        #5000; rst_n = ~rst_n;
-
-        for( i = 0; i < 5'b100; i = i + 1)
+        for( i = 0; i < 11; i = i + 1)
         begin
 
-          #5000; A = i[0];
-          #5000; I = i[1];
+          #5000;
+          FROM_PART7B0 = 0;
+          I=1;
           #5000; clk = ~clk;
           #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-          #5000; clk = ~clk;
-
         end
+
 
         $finish; // End the simulation
     end

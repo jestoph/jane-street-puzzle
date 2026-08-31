@@ -277,3 +277,24 @@ Part5 seems to only have three patterns -
  [x] Encode understanding of IO from PART24 and I into the testbench
  [x] Actually I just encoded this in the puzzle itself
 [ ] Build a part1237 testbench that works out how to set all outputs of 7 to 1
+
+
+Is part7c just a popcount? It seems that if popcnt(FROM_PART2) > 1 then it is high? Not quite - in the sim
+it doesn't quite do that
+
+
+
+```
+  // ref component/nor4.v
+  nor4 nor4_1 (
+    .A(FROM_PART21),
+    .B(FROM_PART22),
+    .C(FROM_PART23),
+    .D(FROM_PART20),
+    .Y(FROM_PART7B0) // output to part 7c
+  );
+```
+
+## Working on Part 7 Outputs
+- Part 7c is surprisingly tricky. I haven't been able to work it out
+
