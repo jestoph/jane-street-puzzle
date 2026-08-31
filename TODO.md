@@ -298,3 +298,22 @@ it doesn't quite do that
 ## Working on Part 7 Outputs
 - Part 7c is surprisingly tricky. I haven't been able to work it out
 
+## Working on TO_OUTPUT4
+- Turns out part6 proxies all of part8 as a big AND for TO_OUTPUT4
+- But 8 is fed from BLOB. BLOB is relatively simple though
+- Turns out part8 is 11 repetitions of a similar structure. If there was some way of cracking each element I'd have a solution
+
+
+## HOW TO SOLVE THE DOUBLE FLIP FLOP ISSUE??????
+
+I get that theres some recurrance relationship that I can use but I can't quite work it out
+```
+O1_0, O1_1 = 0,0                              # Because we have a reset
+O1_n+1, O2_n+1 = fn(O1_n, O2_n, BLOB_n, I_n)  # Defined for each section
+O1_121, O2_121 = <desired final value>        # Defined for each section
+
+```
+
+There are libraries sympy and z3, I've used z3 before.
+
+Maybe we can solve them backwards?

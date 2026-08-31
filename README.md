@@ -656,3 +656,10 @@ Yes, that's a spreadsheet that I used to write verilog. Surprisingly, spreadshee
 complicated constraint solvers. I dumped the output into a giant 'case' statement and ..... it worked! But it does look
 like this approach will be underpowered in general because it relies on me eyeballing the output and toggling bits here
 and there. I might need to use a real constraint solver, or write a backtracking algorithm to find solutions for me
+
+### Part 7 and part 8 rely on the same structure
+Both of these sections are 11 copies of a very similar structure. I need a way of cracking this. It's hard as each element
+depends on the previous element in strange ways, but I can understand how given the known constraints it's technically
+solvable. If I'm unable to finish this I'll probably have to reach for a real solver or write a custom one
+
+I think that these might be solvable backwards?
