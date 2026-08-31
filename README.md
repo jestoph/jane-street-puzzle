@@ -663,3 +663,12 @@ depends on the previous element in strange ways, but I can understand how given 
 solvable. If I'm unable to finish this I'll probably have to reach for a real solver or write a custom one
 
 I think that these might be solvable backwards?
+
+### Beating my head against z3
+Ok so I ended up using z3. It's kind of magical? Every time it finds a solution I get a surge of joy. But debugging it
+is a bit of a nightmare. Luckily I got 20 out of 22 wires solved with constraints. Unluckily, that leaves two wires I
+can't seem to solve at all. Maybe a fresh brain tomorrow will fix it.
+
+### Part two is a counter!
+
+All this time I had no idea, I'm not sure how I managed to miss this?

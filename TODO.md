@@ -314,6 +314,19 @@ O1_121, O2_121 = <desired final value>        # Defined for each section
 
 ```
 
-There are libraries sympy and z3, I've used z3 before.
+There are libraries sympy and z3, I've played with z3 before.
 
-Maybe we can solve them backwards?
+Maybe we can solve them backwards? Ok using z3 hasn't been too bad, but there's something going on that's a bit wierd - the
+constraints don't seem to play nice together? As in they all mostly work (except one) but together they produce just an
+empty output?
+
+
+## Tue 01 Sep 2026
+[ ] The outputs are be independant. Can I use this fact to gather them in to my spreadsheet
+ [ ] Part7
+ [ ] Part8
+[x] Finish off writing up constraints for part7 - am up to A2
+[ ] Investigate not-working bit on part8
+[ ] Investigate two not-working bits on part7
+[ ] Do I need to add my other constraints to the same program?
+[ ] Why are my constraints interferring with each other?

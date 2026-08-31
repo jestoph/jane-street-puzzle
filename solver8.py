@@ -304,7 +304,6 @@ if __name__ == '__main__':
 
 
     for i in range(NUMELS):
-        print("WARNING: TEMPORARILY CHANGED CONSTRAINTS", file=sys.stderr)
         s.add(out[i][120] == 1)
 
     if s.check() == sat:
