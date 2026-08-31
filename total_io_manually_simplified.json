@@ -1,0 +1,224 @@
+{
+  "part1": {
+    "in": [
+      "FROM_PART2[4]",
+      "FROM_PART3[4]",
+      "clk",
+      "enable",
+      "rst_n"
+    ],
+    "out": [
+      "S",
+      "TO_OUTPUT[0]"
+    ]
+  },
+  "part2": {
+    "in": [
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART2[4:0]"
+    ]
+  },
+  "part3": {
+    "in": [
+      "FROM_PART2[4]",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART3[4:0]"
+    ]
+  },
+  "part4": {
+    "in": [
+      "FROM_PART5[2:0]",
+      "FROM_PART7A[2:0]",
+      "FROM_PART7B[7:0]",
+      "FROM_PART7C[0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "TO_OUTPUT[2:1]"
+    ]
+  },
+  "part5": {
+    "in": [
+      "FROM_PART2[4:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART5[2:0]",
+      "TO_OUTPUT[3]"
+    ]
+  },
+  "part6": {
+    "in": [
+      "FROM_PART8[10:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "MSG[1:0]",
+      "TO_OUTPUT[5:4]"
+    ]
+  },
+  "part7a": {
+    "in": [
+      "FROM_PART2[3:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART7A[2:0]"
+    ]
+  },
+  "part7b": {
+    "in": [
+      "FROM_PART2[3:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART7B[7:0]"
+    ]
+  },
+  "part7c": {
+    "in": [
+      "FROM_PART7B[0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART7C[0]"
+    ]
+  },
+  "part7": {
+    "in": [
+      "FROM_PART2[3:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART7A[2:0]",
+      "FROM_PART7B[7:1]",
+      "FROM_PART7C[0]"
+    ]
+  },
+  "part8": {
+    "in": [
+      "FROM_BLOB[3:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART8[10:0]"
+    ]
+  },
+  "output_section": {
+    "in": [
+      "TO_OUTPUT[5:0]",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "MSG[2]",
+      "MSG[3]",
+      "success"
+    ]
+  },
+  "part9a": {
+    "in": [
+      "FROM_PART9B[7:0]",
+      "MSG[3:0]",
+      "clk",
+      "success"
+    ],
+    "out": [
+      "FROM_PART9A[7:0]",
+      "O[7:0]"
+    ]
+  },
+  "part9b": {
+    "in": [
+      "FROM_PART9A[7:0]",
+      "FROM_PART9C[15:0]",
+      "FROM_PART9D[7:0]",
+      "FROM_PART9E[7:0]",
+      "I",
+      "S",
+      "clk",
+      "rst_n"
+    ],
+    "out": [
+      "FROM_PART9B[7:0]"
+    ]
+  },
+  "part9c": {
+    "in": [
+      "FROM_PART9A[4:1]"
+    ],
+    "out": [
+      "FROM_PART9C[15:0]"
+    ]
+  },
+  "part9d": {
+    "in": [
+      "FROM_PART9A[4:1]"
+    ],
+    "out": [
+      "FROM_PART9D[7:0]"
+    ]
+  },
+  "part9e": {
+    "in": [
+      "FROM_PART9A[4:1]"
+    ],
+    "out": [
+      "FROM_PART9E[7:0]"
+    ]
+  },
+  "blob": {
+    "in": [
+      "FROM_PART2[3:0]",
+      "FROM_PART3[3:0]"
+    ],
+    "out": [
+      "FROM_BLOB[3:0]"
+    ]
+  },
+  "part9": {
+    "in": [
+      "I",
+      "MSG[3:0]",
+      "S",
+      "clk",
+      "rst_n",
+      "success"
+    ],
+    "out": [
+      "O[7:0]"
+    ]
+  }
+}
