@@ -1,6 +1,141 @@
 import sys
 from z3 import *
 
+blob_data="""\
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 0 0 1
+0 0 0 1
+1 0 1 0
+0 0 1 0
+0 0 1 0
+1 0 0 1
+0 1 1 0
+0 1 1 0
+0 0 0 0
+0 1 1 0
+0 1 1 0
+0 0 0 1
+1 0 1 0
+1 0 1 0
+0 0 1 0
+0 0 1 0
+1 0 0 1
+0 1 1 0
+0 1 1 0
+0 0 0 0
+0 0 0 1
+0 0 0 1
+0 0 0 1
+0 0 0 1
+1 0 1 0
+1 0 1 0
+0 0 1 0
+1 0 0 1
+0 1 1 0
+0 1 1 0
+0 0 0 0
+0 0 0 1
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 1
+1 0 1 0
+1 0 1 0
+1 0 0 1
+0 0 0 0
+0 1 1 0
+0 0 0 0
+0 0 0 1
+1 0 0 0
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+0 0 0 0
+0 0 0 0
+0 0 0 0
+0 0 0 1
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 1
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 0 0 1
+0 0 0 1
+0 0 0 1
+0 0 0 1
+0 0 0 1
+0 0 0 1
+1 0 0 0
+1 0 0 1
+0 1 0 0
+0 1 0 1
+0 1 0 1
+0 0 0 1
+1 1 1 0
+1 1 1 0
+1 1 1 0
+1 0 0 0
+1 0 0 0
+1 0 0 0
+1 0 0 1
+0 1 0 0
+0 1 0 1
+0 1 0 1
+0 0 0 1
+1 1 1 0
+1 1 1 0
+1 1 0 0
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+0 1 0 0
+0 1 0 1
+0 1 0 1
+0 0 0 1
+0 0 0 1
+1 1 1 0
+1 1 0 0
+1 1 0 0
+1 0 0 1
+1 0 0 1
+1 0 0 1
+0 1 0 0
+0 1 0 0
+0 1 0 0
+0 0 0 1
+1 1 1 0
+1 1 1 0
+1 1 0 0
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+1 0 0 1
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+0 1 1 0
+"""
+BLOB = tuple(tuple(int(y) for y in line.split()) for line in blob_data.splitlines())
+
+
 part5_data="""\
 1	0	1
 1	1	1
@@ -461,6 +596,147 @@ if __name__ == '__main__':
     s.add(p4_out[121] == 1)
 
 
+    ################################## THIS WORKS FOR TO_OUTPUT4 ###############################
+
+    q1_p8 =  [[BitVec(f'q1_p8[{j}][{i}]', 1) for i in range(122) ] for j in range(NUMELS)]
+    q2_p8 =  [[BitVec(f'q2_p8[{j}][{i}]', 1) for i in range(122) ] for j in range(NUMELS)]
+    p8_out = [[BitVec(f'p8_out[{j}][{i}]', 1) for i in range(122)] for j in range(NUMELS)]
+    blob = [[BitVec(f'part2[{j}][{i}]', 1) for i in range(122)] for j in range(NUMELS)]
+
+
+    for i in range(1,122):
+        nxt = i
+        curr = i-1
+
+        # FROM_PART80 - works individually
+
+        # assign blob[curr]  = ( ~ FROM_BLOB1  & ~ FROM_BLOB2  ) & FROM_BLOB3  & FROM_BLOB0  ;
+        s.add(blob[0][curr] == (BLOB[curr][0] ) & ~BLOB[curr][1] & ~BLOB[curr][2] & BLOB[curr][3])
+        # assign FROM_PART810  = (~q1_p8_CURR ) & q2_p8_CURR ;
+        s.add(p8_out[0][curr] == (~q1_p8[0][curr]) & q2_p8[0][curr])
+        # assign q1_p8[next]  = ((q2_p8[curr] | (~(I[curr] & q1_p8[curr] & blob[curr] ))) & (q1_p8[curr] | (I[curr]  & blob[curr] )));
+        s.add(q1_p8[0][nxt] ==    ((q2_p8[0][curr] | (~(I[curr] & q1_p8[0][curr] & blob[0][curr] ))) & (q1_p8[0][curr] | (I[curr]  & blob[0][curr] ))))
+        # assign q2_p8[next]  = ~((~q2_p8[curr]) & (~(I[curr]  & q1_p8[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2_p8[0][nxt] ==     ~((~q2_p8[0][curr]) & (~(I[curr]  & q1_p8[0][curr] & blob[0][curr] ))))
+
+
+        # FROM_PART81 - works individually
+
+        # assign blob[curr]  = (~FROM_BLOB0  & ~FROM_BLOB2 ) & FROM_BLOB3  & FROM_BLOB1 ;
+        s.add(blob[1][curr] == ~BLOB[curr][0]  & BLOB[curr][1] & ~BLOB[curr][2] & BLOB[curr][3])
+        # assign FROM_PART81  = (~q1_p8[curr] )   & q2_p8[curr] ;
+        s.add(p8_out[1][curr] ==    (~q1_p8[1][curr]) & q2_p8[1][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]    | (~(I[curr] & q1_p8[curr]    & blob[curr] )))    & (q1_p8[curr]    | (I[curr]  & blob[curr] )));
+        s.add(q1_p8[1][nxt] == ((q2_p8[1][curr] | (~(I[curr] & q1_p8[1][curr] & blob[1][curr] ))) & (q1_p8[1][curr] | (I[curr]  & blob[1][curr] ))))
+        # assign q2_p8[nxt]  = ~((~q2_p8[curr] )   & (~(I[curr]  & q1_p8[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2_p8[1][nxt] == ~((~q2_p8[1][curr]) & (~(I[curr]  & q1_p8[1][curr] & blob[1][curr] ))))
+
+        # FROM_PART82 - doesn't work at all ???
+
+        # assign blob[curr]  = ( ~ FROM_BLOB3  & ~ FROM_BLOB2  ) & FROM_BLOB0  & FROM_BLOB1  ;
+        s.add(blob[2][curr] == BLOB[curr][0]  & BLOB[curr][1] & ~BLOB[curr][2] & ~BLOB[curr][3])
+        # assign FROM_PART82  = ( ~ q1_p8[curr]  ) & q2_p8[curr]  ;
+        s.add(p8_out[2][curr] ==    (~q1_p8[2][curr]) & q2_p8[2][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]    | (~(I       & q1_p8[curr]    & blob[curr]    ))) & (q1_p8[curr]    | ( I       & blob[curr]    ))) ;
+        s.add(q1_p8[2][nxt] == ((q2_p8[2][curr] | (~(I[curr] & q1_p8[2][curr] & blob[2][curr] ))) & (q1_p8[2][curr] | (I[curr]  & blob[2][curr] ))))
+        # assign q2_p8[nxt]  = ~ ( ( ~ q2_p8[curr]  ) & (~ ( I  & S  & q1_p8[curr]  & blob[curr]  ))) ; // Syntax?
+        s.add(q2_p8[2][nxt] == ~((~q2_p8[2][curr]) & (~(I[curr]  & q1_p8[2][curr] & blob[2][curr] ))))
+
+
+        # FROM_PART83 - works individually
+
+        # assign blob[curr]  = ~ ( FROM_BLOB1  | FROM_BLOB0  | FROM_BLOB3  | FROM_BLOB2  ) ;
+        s.add(blob[3][curr] == ~ (BLOB[curr][0] | BLOB[curr][1] | BLOB[curr][2] | BLOB[curr][3]))
+        # assign FROM_PART83  = (~q1_p8[curr] ) & q2_p8[curr] ;
+        s.add(p8_out[3][curr] ==    (~q1_p8[3][curr]) & q2_p8[3][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]  | (~(I  & q1_p8[curr]  & blob[curr] ))) & (q1_p8[curr]  | (I  & blob[curr] )));
+        s.add(q1_p8[3][nxt] == ((q2_p8[3][curr] | (~(I[curr] & q1_p8[3][curr] & blob[3][curr] ))) & (q1_p8[3][curr] | (I[curr]  & blob[3][curr] ))))
+        # assign q2_p8[nxt]  = ~((~q2_p8[curr] ) & (~(I  & q1_p8[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2_p8[3][nxt] == ~((~q2_p8[3][curr]) & (~(I[curr]  & q1_p8[3][curr] & blob[3][curr] ))))
+
+
+        # FROM_PART84 - works individually
+
+        # assign blob[curr]  = ( ~ FROM_BLOB0  & ~ FROM_BLOB3  ) & FROM_BLOB2  & FROM_BLOB1  ;
+        s.add(blob[4][curr] ==  ~BLOB[curr][0] & BLOB[curr][1] & BLOB[curr][2] & ~BLOB[curr][3])
+        # assign FROM_PART84  = (~q1_p8[curr] ) & q2_p8[curr] ;
+        s.add(p8_out[4][curr] ==    (~q1_p8[4][curr]) & q2_p8[4][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]  | (~(I  & q1_p8[curr]  & blob[curr] ))) & (q1_p8[curr]  | (I  & blob[curr] )));
+        s.add(q1_p8[4][nxt] == ((q2_p8[4][curr] | (~(I[curr] & q1_p8[4][curr] & blob[4][curr] ))) & (q1_p8[4][curr] | (I[curr]  & blob[4][curr] ))))
+        # assign q2_p8[nxt]  = ~((~q2_p8[curr] ) & (~(I  & q1_p8[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2_p8[4][nxt] == ~((~q2_p8[4][curr]) & (~(I[curr]  & q1_p8[4][curr] & blob[4][curr] ))))
+
+        # FROM_PART85 - works individually
+
+        # assign blob[curr]  = FROM_BLOB1  | FROM_BLOB0  | FROM_BLOB3  | ( ~ FROM_BLOB2  ) ;
+        s.add(blob[5][curr] ==  BLOB[curr][0] | BLOB[curr][1] | (~BLOB[curr][2]) | BLOB[curr][3])
+        # assign FROM_PART85  = ~q1_p8[curr] & q2_p8[curr];
+        s.add(p8_out[5][curr] ==    (~q1_p8[5][curr]) & q2_p8[5][curr])
+        # assign q1_p8[nxt]  = ((q1_p8[curr]  | (~blob[curr]      & I ))      & (q2_p8[curr]  | ~q1_p8[curr]  | blob[curr]  | ~I));
+        s.add(q1_p8[5][nxt] == ((q1_p8[5][curr] | (~blob[5][curr] & I[curr])) & (q2_p8[5][curr] | ~q1_p8[5][curr] | blob[5][curr] | ~I[curr])))
+        # assign q2_p8[nxt]  = q2_p8[curr]    | (q1_p8[curr]    & (~blob[curr]    & I ));
+        s.add(q2_p8[5][nxt] == q2_p8[5][curr] | (q1_p8[5][curr] & (~blob[5][curr] & I[curr])))
+
+        # FROM_PART86 - works individually
+
+        # assign blob[curr]  = FROM_BLOB1  | FROM_BLOB0  | FROM_BLOB2  | ( ~ FROM_BLOB3  ) ;
+        s.add(blob[6][curr] ==  BLOB[curr][0] | BLOB[curr][1] | (BLOB[curr][2]) | ~BLOB[curr][3])
+        # assign FROM_PART86  = ~q1_p8[curr] & q2_p8[curr];
+        s.add(p8_out[6][curr] ==    (~q1_p8[6][curr]) & q2_p8[6][curr])
+        # assign q1_p8[nxt]  = ((q1_p8[curr]  | (~blob[curr]  & I )) & (q2_p8[curr]  | ~q1_p8[curr]  | blob[curr]  | ~I));
+        s.add(q1_p8[6][nxt] == ((q1_p8[6][curr] | (~blob[6][curr] & I[curr])) & (q2_p8[6][curr] | ~q1_p8[6][curr] | blob[6][curr] | ~I[curr])))
+        # assign q2_p8[nxt]  = q2_p8[curr]  | (q1_p8[curr]  & (~blob[curr]  & I ));
+        s.add(q2_p8[6][nxt] == q2_p8[6][curr] | (q1_p8[6][curr] & (~blob[6][curr] & I[curr])))
+
+        # FROM_PART87 - works individually
+
+        # # assign blob[curr]  = FROM_BLOB1  | FROM_BLOB3  | FROM_BLOB2  | ( ~ FROM_BLOB0  ) ;
+        s.add(blob[7][curr] ==  ~BLOB[curr][0] | BLOB[curr][1] | (BLOB[curr][2]) | BLOB[curr][3])
+        # assign FROM_PART87  = ~q1_p8[curr] & q2_p8[curr];
+        s.add(p8_out[7][curr] ==    (~q1_p8[7][curr]) & q2_p8[7][curr])
+        # assign q1_p8[nxt]  = ((q1_p8[curr]  | (~blob[curr]  & I )) & (q2_p8[curr]  | ~q1_p8[curr]  | blob[curr]  | ~I));
+        s.add(q1_p8[7][nxt] == ((q1_p8[7][curr] | (~blob[7][curr] & I[curr])) & (q2_p8[7][curr] | ~q1_p8[7][curr] | blob[7][curr] | ~I[curr])))
+        # assign q2_p8[nxt]  = q2_p8[curr]  | (q1_p8[curr]  & (~blob[curr]  & I ));
+        s.add(q2_p8[7][nxt] == q2_p8[7][curr] | (q1_p8[7][curr] & (~blob[7][curr] & I[curr])))
+
+        # FROM_PART88 - works individually
+
+        # assign Wire_222  = FROM_BLOB0  | FROM_BLOB3  | FROM_BLOB2  | ( ~ FROM_BLOB1  ) ;
+        s.add(blob[8][curr] ==  BLOB[curr][0] | ~BLOB[curr][1] | (BLOB[curr][2]) | BLOB[curr][3])
+        # assign FROM_PART88  = ~q1_p8[curr] & q2_p8[curr];
+        s.add(p8_out[8][curr] ==    (~q1_p8[8][curr]) & q2_p8[8][curr])
+        # assign q1_p8[nxt]  = ((q1_p8[curr]  | (~blob[curr]  & I )) & (q2_p8[curr]  | ~q1_p8[curr]  | blob[curr]  | ~I));
+        s.add(q1_p8[8][nxt] == ((q1_p8[8][curr] | (~blob[8][curr] & I[curr])) & (q2_p8[8][curr] | ~q1_p8[8][curr] | blob[8][curr] | ~I[curr])))
+        # assign q2_p8[nxt]  = q2_p8[curr]  | (q1_p8[curr]  & (~blob[curr]  & I ));
+        s.add(q2_p8[8][nxt] == q2_p8[8][curr] | (q1_p8[8][curr] & (~blob[8][curr] & I[curr])))
+
+        # FROM_PART89 - Works individually
+
+        # assign blob[curr]  = ( ~ FROM_BLOB1  & ~ FROM_BLOB3  ) & FROM_BLOB2  & FROM_BLOB0  ;
+        s.add(blob[9][curr] ==  BLOB[curr][0] & ~BLOB[curr][1] & (BLOB[curr][2]) & ~BLOB[curr][3])
+        # assign FROM_PART89  = (~q1_p8[curr] ) & q2_p8[curr] ;
+        s.add(p8_out[9][curr] ==    (~q1_p8[9][curr]) & q2_p8[9][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]    | (~(I       & q1_p8[curr]      & blob[curr]    ))) & (q1_p8[curr]    | (I       & blob[curr]    )));
+        s.add(q1_p8[9][nxt] == ((q2_p8[9][curr] | (~(I[curr] & q1_p8[9][curr]   & blob[9][curr] ))) & (q1_p8[9][curr] | (I[curr] & blob[9][curr] ))))
+        # assign q2_p8[nxt]  = ~((~q2_p8[curr]   ) & (~(I       & q1_p8[curr]    & blob[curr] ))); // Syntax?
+        s.add(q2_p8[9][nxt] == ~((~q2_p8[9][curr]) & (~(I[curr] & q1_p8[9][curr] & blob[9][curr] ))))
+
+        # FROM_PART89 - Works individually
+
+        # assign blob[curr]  = ( ~ FROM_BLOB3  ) & FROM_BLOB2  & FROM_BLOB0  & FROM_BLOB1  ;
+        s.add(blob[10][curr] ==  BLOB[curr][0] & BLOB[curr][1] & (BLOB[curr][2]) & ~BLOB[curr][3])
+        # assign FROM_PART810  = (~q1_p8[curr] ) & q2_p8[curr] ;
+        s.add(p8_out[10][curr] ==    (~q1_p8[10][curr]) & q2_p8[10][curr])
+        # assign q1_p8[nxt]  = ((q2_p8[curr]  | (~(I  & q1_p8[curr]  & blob[curr] )) ) & (q1_p8[curr]  | ( I  & blob[curr]  )));
+        s.add(q1_p8[10][nxt] == ((q2_p8[10][curr] | (~(I[curr] & q1_p8[10][curr]   & blob[10][curr] ))) & (q1_p8[10][curr] | (I[curr] & blob[10][curr] ))))
+        # assign q2_p8[nxt]  = ~((~q2_p8[curr] ) & (~(I  & q1_p8[curr]  & blob[curr] ))); // Syntax?
+        s.add(q2_p8[10][nxt] == ~((~q2_p8[10][curr]) & (~(I[curr] & q1_p8[10][curr] & blob[10][curr] ))))
+
+
+    for i in range(NUMELS):
+        s.add(p8_out[i][119] == 1)
+
+
     ################################## SEARCH FOR A SOLUTION ###############################
 
 
@@ -493,5 +769,6 @@ if __name__ == '__main__':
     else:
         print("Unsatisfyable", file=sys.stderr)
         sys.exit(1)
+
 
 
