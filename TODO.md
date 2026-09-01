@@ -322,11 +322,14 @@ empty output?
 
 
 ## Tue 01 Sep 2026
-[ ] The outputs are be independant. Can I use this fact to gather them in to my spreadsheet
- [ ] Part7
- [ ] Part8
+[x] The outputs are be independant. Can I use this fact to gather them in to my spreadsheet - not necessary, fixed applying them
+    together
 [x] Finish off writing up constraints for part7 - am up to A2
-[ ] Investigate not-working bit on part8
-[ ] Investigate two not-working bits on part7
-[ ] Do I need to add my other constraints to the same program?
-[ ] Why are my constraints interferring with each other?
+[x] Do I need to add my other constraints to the same program?
+[x] Why are my constraints interferring with each other?
+[x] Should we be targetting clock cycle 119 or 120?
+[x] Investigate not-working bit on part8
+[x] Investigate two not-working bits on part7
+ [x] Fixed one
+ [x] FROM_PART7A1 is tricky, but I've gotten it sort of working? it seems like you need two pulses when FROM_PART2 is 1 (it's a
+ counter so this happens every 11 clocks)

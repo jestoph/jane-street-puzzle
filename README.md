@@ -672,3 +672,13 @@ can't seem to solve at all. Maybe a fresh brain tomorrow will fix it.
 ### Part two is a counter!
 
 All this time I had no idea, I'm not sure how I managed to miss this?
+
+### It turns out I've done this the hard way, as is characteristic.
+It turns out the structure of the inputs to many of the part7 element appears to just need two pulses at a multiple of
+a certain distance, determined by the value of the counter. If I'd just looked at that instead I might have worked it
+out, but I was stuck chasing a bunch of errors down a rabbit hole.
+
+I'm not at a position where I can make all of the inputs to the output element go high at the same time, which is what
+I believe is the requirement to get the 'success' pin to go high. I now need to incorporate all my constraints in to
+a single document and I 'should' be able to generate an output. Though given how I've hit every roadblock so far, I'm
+not sure if it'll be that easy.

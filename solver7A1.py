@@ -160,21 +160,22 @@ if __name__ == '__main__':
     s.add(q2[0] == 0)
 
 
-    for i in range(1,122):
-        nxt = i
-        curr = i-1
+    # for i in range(1,122):
+    #     nxt = i
+    #     curr = i-1
 
-        s.add(FROM_PART7A1[curr]  == q1[curr]  & Wire_522[curr])
-        s.add(Wire_522[curr]  == ~ q2[curr])
-        s.add(q1[nxt]  == q1[curr]  | ( q2[curr]  & Wire_516[curr]  ))
-        s.add(Wire_516[curr]  == ~ ( Wire_514[curr]  | Wire_515[curr]  ))
-        s.add(q2[nxt]  == ( ( q2[curr]  | Wire_516[curr]  ) & Wire_4[curr]  ))
-        s.add(Wire_4[curr]  == q1[curr]  | Wire_522[curr]  | Wire_514[curr]  | Wire_515[curr])
-        # Wire_514[curr]  == FROM_PART21[curr]  | FROM_PART22[curr]  | FROM_PART20[curr]  | ( ~ FROM_PART23[curr]  )
-        s.add(Wire_514[curr]  == PART2[curr][1]     | PART2[curr][2]     | PART2[curr][0]     | ( ~ PART2[curr][3]  ))
-        s.add(Wire_515[curr]  == ~ ( I[curr] ))
+    #     s.add(FROM_PART7A1[curr]  == q1[curr]  & Wire_522[curr])
+    #     s.add(Wire_522[curr]  == ~ q2[curr])
+    #     s.add(q1[nxt]  == q1[curr]  | ( q2[curr]  & Wire_516[curr]  ))
+    #     s.add(Wire_516[curr]  == ~ ( Wire_514[curr]  | Wire_515[curr]  ))
+    #     s.add(q2[nxt]  == ( ( q2[curr]  | Wire_516[curr]  ) & Wire_4[curr]  ))
+    #     s.add(Wire_4[curr]  == q1[curr]  | Wire_522[curr]  | Wire_514[curr]  | Wire_515[curr])
+    #     # Wire_514[curr]  == FROM_PART21[curr]  | FROM_PART22[curr]  | FROM_PART20[curr]  | ( ~ FROM_PART23[curr]  )
+    #     s.add(Wire_514[curr]  == PART2[curr][1]     | PART2[curr][2]     | PART2[curr][0]     | ( ~ PART2[curr][3]  ))
+    #     s.add(Wire_515[curr]  == ~ ( I[curr] ))
 
 
+    s.add(Sum([BV2Int(I[i]) for i in range(8, 123, 11)]) == 2)
 
     s.add(FROM_PART7A1[119] == 1)
 
