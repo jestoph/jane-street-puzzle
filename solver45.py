@@ -143,7 +143,7 @@ if __name__ == '__main__':
     out =  [BitVec(f'out[{i}]', 1) for i in range(123)]
 
     # This works for TO_OUTPUT3
-    i = 12
+    i = 11
     while i < 123:
         # Have to case a Int otherwise it truncates the addition
         s.add(Sum([BV2Int(x) for x in I[i-11:i]]) == 2)
