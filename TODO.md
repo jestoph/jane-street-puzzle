@@ -333,3 +333,6 @@ empty output?
  [x] Fixed one
  [x] FROM_PART7A1 is tricky, but I've gotten it sort of working? it seems like you need two pulses when FROM_PART2 is 1 (it's a
  counter so this happens every 11 clocks)
+[ ] Confirm that all elements need to be high to get the 'success' change
+ [ ] Used a solver to see this
+

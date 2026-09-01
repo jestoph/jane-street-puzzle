@@ -682,3 +682,6 @@ I'm not at a position where I can make all of the inputs to the output element g
 I believe is the requirement to get the 'success' pin to go high. I now need to incorporate all my constraints in to
 a single document and I 'should' be able to generate an output. Though given how I've hit every roadblock so far, I'm
 not sure if it'll be that easy.
+
+Welp. Yep it's not going to be easy - immediately when I added all the elements together I got an unsatisfyable constraint.
+I'm not even sure how to solve those outside of just staring at it for ages
