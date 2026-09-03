@@ -773,5 +773,7 @@ if __name__ == '__main__':
         print("Unsatisfyable", file=sys.stderr)
         sys.exit(1)
 
+    # print(s.to_smt2()) # It looks like lisp
+
 
 
